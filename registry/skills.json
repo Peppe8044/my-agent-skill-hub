@@ -1,0 +1,92 @@
+[
+  {
+    "name": "token-budget",
+    "description": "Use for all agent work to minimize needless context, model calls, retries and total token cost.",
+    "mandatory": true
+  },
+  {
+    "name": "documentation-ledger",
+    "description": "Use on every meaningful project task to record decisions, code changes, tests, quality evidence and handoff.",
+    "mandatory": true
+  },
+  {
+    "name": "project-intake",
+    "description": "Use when a project starts or its requirements change to define scope, risks and acceptance criteria before coding.",
+    "mandatory": false
+  },
+  {
+    "name": "stack-selection",
+    "description": "Use before a new project's technology selection or architectural migration; justify stack based on actual requirements.",
+    "mandatory": false
+  },
+  {
+    "name": "architecture-review",
+    "description": "Use for system design or changes affecting contracts, storage, security boundaries or production reliability.",
+    "mandatory": false
+  },
+  {
+    "name": "test-and-verify",
+    "description": "Use whenever code, configs, data pipelines or system behavior changes; enforce meaningful, reproducible quality checks.",
+    "mandatory": false
+  },
+  {
+    "name": "secure-development",
+    "description": "Use for all changes involving inputs, credentials, persistence, permissions, external access or sensitive data.",
+    "mandatory": false
+  },
+  {
+    "name": "code-review",
+    "description": "Use before merging changes to check correctness, maintainability, tests, security and adherence to project conventions.",
+    "mandatory": false
+  },
+  {
+    "name": "pr-handoff",
+    "description": "Use at the end of a feature, PR or deliverable to prepare trustworthy handoff and review.",
+    "mandatory": false
+  },
+  {
+    "name": "incident-analysis",
+    "description": "Use for operational incidents, outages, unexpected errors or postmortem drafting.",
+    "mandatory": false
+  },
+  {
+    "name": "agent-factory",
+    "description": "Use when creating, revising or retiring a reusable specialist agent within the hub.",
+    "mandatory": false
+  },
+  {
+    "name": "skill-factory",
+    "description": "Use when authoring or improving portable SKILL.md workflows and their supporting scripts or references.",
+    "mandatory": false
+  },
+  {
+    "name": "api-design",
+    "description": "Use when designing APIs, schemas and external or internal service contracts.",
+    "mandatory": false
+  },
+  {
+    "name": "data-science",
+    "description": "Use for statistical analysis, experiments, ML model development and reproducible research.",
+    "mandatory": false
+  },
+  {
+    "name": "data-pipelines",
+    "description": "Use for ETL, ingestion, transformations, analytics engineering and data quality.",
+    "mandatory": false
+  },
+  {
+    "name": "sre-operations",
+    "description": "Use for infra changes, reliability plans, monitoring, backup, deployment and incident prevention.",
+    "mandatory": false
+  },
+  {
+    "name": "integration-contracts",
+    "description": "Use when integrating APIs, webhooks, HL7, databases or external systems.",
+    "mandatory": false
+  },
+  {
+    "name": "web-ui",
+    "description": "Use when building frontend experiences, forms, data fetching and accessible component systems.",
+    "mandatory": false
+  }
+]
