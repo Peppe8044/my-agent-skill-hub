@@ -1,0 +1,172 @@
+[
+  {
+    "id": "web-typescript",
+    "kind": [
+      "web",
+      "api"
+    ],
+    "tags": [
+      "typescript",
+      "ui",
+      "api",
+      "persistence"
+    ],
+    "summary": "TypeScript + React when a rich UI is required; choose Hono/Express/Fastify with evidence; PostgreSQL and Drizzle only when useful.",
+    "tradeoffs": [
+      "Good shared typing",
+      "Avoid unnecessary React, ORM and database for APIs"
+    ]
+  },
+  {
+    "id": "python-api",
+    "kind": [
+      "api",
+      "web"
+    ],
+    "tags": [
+      "python",
+      "api",
+      "persistence"
+    ],
+    "summary": "Python with FastAPI or other fit-for-purpose framework; persistence only as needed.",
+    "tradeoffs": [
+      "Good for Python teams and models",
+      "Frontend can be separate or absent"
+    ]
+  },
+  {
+    "id": "data-ml",
+    "kind": [
+      "data-science",
+      "ai"
+    ],
+    "tags": [
+      "python",
+      "ml"
+    ],
+    "summary": "Python + selected data stack, reproducible experiments and baselines; deployment optional.",
+    "tradeoffs": [
+      "Strong scientific tools",
+      "Not every analysis needs MLflow, FastAPI or GPU"
+    ]
+  },
+  {
+    "id": "data-pipeline",
+    "kind": [
+      "data-pipeline",
+      "data-science"
+    ],
+    "tags": [
+      "python",
+      "etl",
+      "persistence"
+    ],
+    "summary": "SQL/Python with validated ingestion, contracts, schedules and lineage; orchestration only if justified.",
+    "tradeoffs": [
+      "Simple batch often sufficient",
+      "Distributed orchestration increases overhead"
+    ]
+  },
+  {
+    "id": "automation",
+    "kind": [
+      "automation",
+      "sre",
+      "cli"
+    ],
+    "tags": [
+      "python",
+      "automation"
+    ],
+    "summary": "Bash/Python scripts, scheduled jobs and minimal dependencies. Containerize only if useful.",
+    "tradeoffs": [
+      "Smallest deployment",
+      "Needs robust logging and re-run safety"
+    ]
+  },
+  {
+    "id": "sre-tool",
+    "kind": [
+      "sre",
+      "automation"
+    ],
+    "tags": [
+      "python",
+      "sre",
+      "automation"
+    ],
+    "summary": "Operational scripts and observability integrated with existing infrastructure; read-only first.",
+    "tradeoffs": [
+      "Fits existing tools",
+      "Requires strict approvals for production"
+    ]
+  },
+  {
+    "id": "agent-product",
+    "kind": [
+      "ai",
+      "web",
+      "automation"
+    ],
+    "tags": [
+      "python",
+      "typescript",
+      "ml",
+      "agents"
+    ],
+    "summary": "One agent with tools first; add durable orchestration or multiple agents only for demonstrated needs.",
+    "tradeoffs": [
+      "Fastest initial value",
+      "Beware cost, complex state and prompt injection"
+    ]
+  },
+  {
+    "id": "mobile",
+    "kind": [
+      "mobile"
+    ],
+    "tags": [
+      "ui",
+      "offline"
+    ],
+    "summary": "Compare React Native, Flutter, native SDKs against offline/UX/device requirements.",
+    "tradeoffs": [
+      "Share code vs native performance",
+      "Store review and release complexity"
+    ]
+  },
+  {
+    "id": "cli",
+    "kind": [
+      "cli",
+      "automation"
+    ],
+    "tags": [
+      "python",
+      "typescript"
+    ],
+    "summary": "Single executable or small CLI with tests, clear commands, safe config and no server by default.",
+    "tradeoffs": [
+      "Minimal maintenance",
+      "No UI or server if not needed"
+    ]
+  },
+  {
+    "id": "existing-stack",
+    "kind": [
+      "existing",
+      "api",
+      "web",
+      "data-science",
+      "sre"
+    ],
+    "tags": [
+      "existing"
+    ],
+    "summary": "Prefer existing repository language, framework and operational conventions unless change is justified.",
+    "tradeoffs": [
+      "Reduces migration risk",
+      "Check if legacy security or support status requires change"
+    ]
+  }
+]

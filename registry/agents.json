@@ -1,0 +1,86 @@
+[
+  {
+    "name": "supervisor",
+    "claude_path": ".claude/agents/supervisor.md",
+    "profile_path": "agents/supervisor.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "requirements-analyst",
+    "claude_path": ".claude/agents/requirements-analyst.md",
+    "profile_path": "agents/requirements-analyst.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "solution-architect",
+    "claude_path": ".claude/agents/solution-architect.md",
+    "profile_path": "agents/solution-architect.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "researcher",
+    "claude_path": ".claude/agents/researcher.md",
+    "profile_path": "agents/researcher.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "backend-engineer",
+    "claude_path": ".claude/agents/backend-engineer.md",
+    "profile_path": "agents/backend-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "frontend-engineer",
+    "claude_path": ".claude/agents/frontend-engineer.md",
+    "profile_path": "agents/frontend-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "data-scientist",
+    "claude_path": ".claude/agents/data-scientist.md",
+    "profile_path": "agents/data-scientist.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "data-engineer",
+    "claude_path": ".claude/agents/data-engineer.md",
+    "profile_path": "agents/data-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "sre-engineer",
+    "claude_path": ".claude/agents/sre-engineer.md",
+    "profile_path": "agents/sre-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "security-reviewer",
+    "claude_path": ".claude/agents/security-reviewer.md",
+    "profile_path": "agents/security-reviewer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "qa-engineer",
+    "claude_path": ".claude/agents/qa-engineer.md",
+    "profile_path": "agents/qa-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "code-reviewer",
+    "claude_path": ".claude/agents/code-reviewer.md",
+    "profile_path": "agents/code-reviewer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "documentation-keeper",
+    "claude_path": ".claude/agents/documentation-keeper.md",
+    "profile_path": "agents/documentation-keeper.md",
+    "mandatory_role": true
+  },
+  {
+    "name": "integration-engineer",
+    "claude_path": ".claude/agents/integration-engineer.md",
+    "profile_path": "agents/integration-engineer.md",
+    "mandatory_role": false
+  }
+]

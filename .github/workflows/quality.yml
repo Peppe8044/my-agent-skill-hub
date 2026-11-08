@@ -1,0 +1,27 @@
+name: Validate agent hub
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout (pinned)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate agent and skill registry
+        run: python3 scripts/hub.py validate
+      - name: Run automated tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Enforce documentation ledger on pull requests
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python3 scripts/hub.py check-docs --base "$BASE_SHA"
