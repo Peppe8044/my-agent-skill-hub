@@ -1,0 +1,11 @@
+# QUALITY_REPORT — <proyecto>
+- Versión/commit revisado:
+- Formato y lint (comandos y resultados):
+- Tipado/análisis estático:
+- Pruebas unitarias e integración (resultados):
+- Criterios de aceptación verificados:
+- Security review (secrets, permisos, inputs, deps, logs):
+- Documentación (brief, stack, work log, ADR, changelog):
+- Pruebas NO ejecutadas, motivo y riesgo:
+- Estado: APROBADO / BLOQUEADO / PARCIAL
+- Revisor / fecha:

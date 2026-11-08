@@ -1,0 +1,12 @@
+# STACK_DECISION — <proyecto>
+- Estado: Propuesto / Aprobado
+- Requisitos determinantes:
+- Baseline más simple:
+- Opción A — stack, pros, contras, operación, costo, riesgo:
+- Opción B — stack, pros, contras, operación, costo, riesgo:
+- Opción C (si aplica):
+- Tabla comparativa: criterios/pesos/evidencia:
+- Stack recomendado: frontend, backend, datos, auth, despliegue, pruebas y por qué:
+- Por qué descartamos alternativas:
+- Riesgos, rollback, supuestos y PoC necesaria:
+- Aprobación de la persona responsable / fecha:

@@ -1,0 +1,13 @@
+# PROJECT_BRIEF — <nombre>
+- Fecha / owner:
+- Problema concreto / evidencia de que existe:
+- Usuarios afectados y flujo actual:
+- Resultado deseado y medida de éxito:
+- Alcance MVP / fuera de alcance:
+- Integraciones y origen de datos:
+- Datos sensibles / retención / permisos:
+- Disponibilidad, latencia, escala, costos, operaciones:
+- Restricciones de lenguaje, hosting y equipo:
+- Criterios de aceptación verificables:
+- Preguntas abiertas / riesgos:
+- Aprobación explícita de alcance:

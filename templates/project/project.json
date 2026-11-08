@@ -1,0 +1,17 @@
+{
+  "name": "mi-proyecto",
+  "kind": "web",
+  "requirements": {
+    "has_ui": true,
+    "needs_api": true,
+    "needs_persistence": false,
+    "has_ml": false,
+    "needs_automation": false,
+    "needs_integrations": false,
+    "requires_offline": false,
+    "team_prefers_python": false,
+    "team_prefers_typescript": false
+  },
+  "constraints": ["no incluir datos sensibles", "mantener bajo costo"],
+  "status": "draft"
+}
