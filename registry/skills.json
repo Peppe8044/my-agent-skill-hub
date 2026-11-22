@@ -88,5 +88,25 @@
     "name": "web-ui",
     "description": "Use when building frontend experiences, forms, data fetching and accessible component systems.",
     "mandatory": false
+  },
+  {
+    "name": "ecc-postgres-patterns",
+    "description": "Use when reviewing PostgreSQL schema, SQL performance or indexes with ECC reference; read only and load reference on demand.",
+    "mandatory": false
+  },
+  {
+    "name": "ecc-docker-patterns",
+    "description": "Use for Docker and Compose diagnosis or review with selected ECC reference sections; no automatic execution.",
+    "mandatory": false
+  },
+  {
+    "name": "ecc-search-first",
+    "description": "Use for a bounded research-first comparison of existing packages and solutions; do not launch subagents automatically.",
+    "mandatory": false
+  },
+  {
+    "name": "ecc-strategic-compact",
+    "description": "Use for optional manual context compaction at phase boundaries; no automatic hooks or savings claims.",
+    "mandatory": false
   }
 ]

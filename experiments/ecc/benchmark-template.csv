@@ -1,0 +1,9 @@
+scenario,variant,run,model,claude_version,input_tokens,output_tokens,total_tokens,tool_calls,seconds,quality_score_0_to_5,tests_passed,security_issues,notes
+postgres_synthetic,baseline,1,,,,,,,,,,
+postgres_synthetic,ecc,1,,,,,,,,,,
+docker_synthetic,baseline,1,,,,,,,,,,
+docker_synthetic,ecc,1,,,,,,,,,,
+research_synthetic,baseline,1,,,,,,,,,,
+research_synthetic,ecc,1,,,,,,,,,,
+compaction_synthetic,baseline,1,,,,,,,,,,
+compaction_synthetic,ecc,1,,,,,,,,,,
