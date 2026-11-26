@@ -16,6 +16,25 @@ class HubTests(unittest.TestCase):
             {p.parent.name for p in (hub.ROOT/"skills").glob("*/SKILL.md")}
         ))
 
+    def test_agents_preload_skills_and_require_run_report(self):
+        known = {p.parent.name for p in (hub.ROOT/"skills").glob("*/SKILL.md")}
+        for path in sorted((hub.ROOT/".claude/agents").glob("*.md")):
+            with self.subTest(agent=path.stem):
+                self.assertEqual([], hub.check_agent_skills(path, known))
+
+    def test_agent_skill_check_rejects_missing_and_unknown(self):
+        known = {"token-budget", "documentation-ledger", "web-ui"}
+        with tempfile.TemporaryDirectory() as tmp:
+            bad = Path(tmp)/"a.md"
+            bad.write_text("---\nname: a\ndescription: x\n---\nbody\n", encoding="utf-8")
+            self.assertTrue(any("missing `skills`" in e for e in hub.check_agent_skills(bad, known)))
+            bad.write_text("---\nname: a\ndescription: x\nskills:\n  - web-ui\n  - nope\n---\nbody\n",
+                           encoding="utf-8")
+            errors = hub.check_agent_skills(bad, known)
+            self.assertTrue(any("unknown skill `nope`" in e for e in errors))
+            self.assertTrue(any("missing mandatory skills" in e for e in errors))
+            self.assertTrue(any("Run report" in e for e in errors))
+
     def test_name_validation(self):
         self.assertEqual("valid-name", hub.slug("valid-name"))
         for invalid in ("../bad", "bad name", ".hidden", "", "a/" + "b" * 80):

@@ -9,5 +9,17 @@ Read brief and approved stack decision, divide into verifiable tasks with depend
 ## Deliverables
 TASK_PLAN.md, quality gate summary and a truthful HANDOFF.md.
 
-## Shared obligations
-Follow AGENTS.md; consult relevant skills. Documentation and QA are mandatory by default; exceptions require explicit recorded authorization. Never store secrets or personal health data.
+## Required skills and run report
+Required skills: `token-budget`, `documentation-ledger`, `pr-handoff`. In Claude Code they are preloaded through the `skills` frontmatter field; in other runtimes load each one before starting. Apply their procedures and final gates; if one does not apply to the task, say why.
+
+Start the final report with this block (fill every line; never guess):
+```
+### Run report
+- agent: <name>
+- model: <exact model name/ID from your own system prompt>
+- skills_applied: <list; "none" plus reason>
+- started_at / finished_at: <ISO timestamps taken with `date` at start and end>
+- status: done | blocked
+- commands_run: <exact commands and their final result lines>
+```
+Follow AGENTS.md. Documentation and QA are mandatory by default; exceptions require explicit recorded authorization. Never store secrets or personal health data.

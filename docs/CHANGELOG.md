@@ -1,5 +1,11 @@
 # Changelog del hub
 
+## 0.3.0 — 2026-11-26
+- Cada agente de `.claude/agents/` precarga sus skills obligatorias con el campo `skills` del encabezado (Claude Code las inyecta al iniciar el subagente): `token-budget` y `documentation-ledger` en todos, más las de su rol (por ejemplo `web-ui`, `test-and-verify` y `secure-development` en frontend-engineer).
+- Contrato `### Run report` obligatorio al final de cada entrega: agente, modelo exacto, skills aplicadas, inicio/fin, estado y comandos ejecutados.
+- `orchestrator`: reglas de delegación obligatorias (modelo explícito, skills por encargo, rechazo de entregas sin Run report, revisión de security-reviewer y qa-engineer antes de aceptar cambios materiales) y registro de ejecuciones con duración/tokens del runtime.
+- Nueva plantilla `templates/project/AGENT_RUNS.md`; `hub.py validate` falla si un agente no precarga skills existentes, omite las obligatorias o no exige el Run report.
+
 ## 0.2.0 — 2026-11-26
 - Nuevo agente `orchestrator`: sesión principal (`claude --agent orchestrator`) en el modelo más capaz, que toma decisiones y delega ejecución con ruteo explícito de modelos.
 - Modelo por rol en `.claude/agents/`: `opus` para roles de decisión (supervisor, solution-architect, security-reviewer), `sonnet` para ejecutores y revisores.

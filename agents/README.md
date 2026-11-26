@@ -21,5 +21,8 @@ These are **specialty definitions**. The runnable Claude Code subagent manifests
 
 **Always-on policy:** documentation-keeper is a mandatory workflow role for all material tasks (can be fulfilled by primary agent following documentation-ledger; never spawn unnecessarily). QA/security checks are risk-proportionate, but cannot be silently skipped. The user may expressly authorize a scoped process exception with record.
 
+## Skills y reporte de ejecución
+Cada manifiesto de `.claude/agents/` lista sus skills obligatorias en el campo `skills` (Claude Code las precarga al iniciar el subagente) y exige terminar con el bloque `### Run report` (agente, modelo exacto, skills aplicadas, inicio/fin, estado, comandos). El orquestador registra cada delegación en `AGENT_RUNS.md` (plantilla en `templates/project/`). `hub.py validate` verifica ambas cosas.
+
 ## Model routing
 Decision roles (orchestrator, supervisor, solution-architect, security-reviewer) use `model: opus`. Executors and reviewers use `model: sonnet`. Read-only lookups use the built-in Explore agent on haiku. Override per task when justified; see `agents/orchestrator.md`.

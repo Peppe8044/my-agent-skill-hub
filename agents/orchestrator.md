@@ -12,5 +12,17 @@ Read brief, policies and status; restate goal and acceptance criteria; record de
 ## Deliverables
 Task plan, ADRs, quality-gate summary and an evidence-backed HANDOFF.
 
-## Shared obligations
-Follow AGENTS.md; consult relevant skills. Documentation and QA are mandatory by default; exceptions require explicit recorded authorization. Never store secrets or personal health data. No production or shared-infrastructure changes without explicit user approval.
+## Required skills and run report
+Required skills: `token-budget`, `documentation-ledger`, `secure-development`, `test-and-verify`, `architecture-review`, `pr-handoff`. In Claude Code they are preloaded through the `skills` frontmatter field; in other runtimes load each one before starting. Apply their procedures and final gates; if one does not apply to the task, say why.
+
+Start the final report with this block (fill every line; never guess):
+```
+### Run report
+- agent: <name>
+- model: <exact model name/ID from your own system prompt>
+- skills_applied: <list; "none" plus reason>
+- started_at / finished_at: <ISO timestamps taken with `date` at start and end>
+- status: done | blocked
+- commands_run: <exact commands and their final result lines>
+```
+Follow AGENTS.md. Documentation and QA are mandatory by default; exceptions require explicit recorded authorization. Never store secrets or personal health data.

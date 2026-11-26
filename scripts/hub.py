@@ -22,6 +22,7 @@ REQUIRED = (
     "templates/project/WORK_LOG.md",
     "templates/project/QUALITY_REPORT.md",
     "templates/project/HANDOFF.md",
+    "templates/project/AGENT_RUNS.md",
     "stacks/catalog.json", "registry/agents.json", "registry/skills.json"
 )
 MANDATORY_SKILLS = {"documentation-ledger", "token-budget"}
@@ -54,6 +55,24 @@ def check_frontmatter(path: Path, expected_name: str) -> list[str]:
         errors.append(f"{path}: frontmatter name mismatch")
     if not match_desc:
         errors.append(f"{path}: missing nonempty description")
+    return errors
+
+
+def check_agent_skills(path: Path, known_skills: set[str]) -> list[str]:
+    """Cada agente ejecutable debe precargar skills existentes (campo `skills`),
+    incluir las obligatorias y exigir el bloque `### Run report` en su entrega."""
+    content = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+    front = content.split("---\n", 2)[1] if content.startswith("---\n") else ""
+    block = re.search(r"(?m)^skills:\n((?:  - [a-z0-9-]+\n?)+)", front)
+    if not block:
+        return [f"{path}: missing `skills` frontmatter list"]
+    listed = re.findall(r"  - ([a-z0-9-]+)", block.group(1))
+    errors = [f"{path}: unknown skill `{s}`" for s in listed if s not in known_skills]
+    missing = MANDATORY_SKILLS - set(listed)
+    if missing:
+        errors.append(f"{path}: missing mandatory skills {sorted(missing)}")
+    if "### Run report" not in content:
+        errors.append(f"{path}: missing `### Run report` contract")
     return errors
 
 
@@ -90,6 +109,7 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.append(f"Missing agent {name} path: {path}")
             elif key == "claude_path":
                 errors += check_frontmatter(path, name)
+                errors += check_agent_skills(path, actual_skills)
     try:
         profiles = load_json(root / "stacks/catalog.json")
         if len({p["id"] for p in profiles}) != len(profiles):
