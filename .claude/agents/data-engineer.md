@@ -1,7 +1,7 @@
 ---
 name: data-engineer
 description: Design reliable data ingestion and transformation pipelines. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # data-engineer

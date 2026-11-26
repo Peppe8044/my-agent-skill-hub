@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: Perform focused, source-backed technical research. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # researcher

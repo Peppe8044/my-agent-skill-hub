@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: Review implementation quality, maintainability and correctness. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # code-reviewer

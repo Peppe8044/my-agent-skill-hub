@@ -1,7 +1,7 @@
 ---
 name: supervisor
 description: Coordinate complex work, route to specialists and enforce delivery gates. Use when tasks require this specialty.
-model: inherit
+model: opus
 ---
 
 # supervisor

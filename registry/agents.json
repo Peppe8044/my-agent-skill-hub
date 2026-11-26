@@ -1,5 +1,11 @@
 [
   {
+    "name": "orchestrator",
+    "claude_path": ".claude/agents/orchestrator.md",
+    "profile_path": "agents/orchestrator.md",
+    "mandatory_role": false
+  },
+  {
     "name": "supervisor",
     "claude_path": ".claude/agents/supervisor.md",
     "profile_path": "agents/supervisor.md",

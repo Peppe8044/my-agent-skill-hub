@@ -1,7 +1,7 @@
 ---
 name: qa-engineer
 description: Verify behavior, regressions and acceptance criteria. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # qa-engineer

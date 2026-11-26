@@ -1,7 +1,7 @@
 ---
 name: frontend-engineer
 description: Build accessible, testable user interfaces. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # frontend-engineer

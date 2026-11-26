@@ -1,7 +1,7 @@
 ---
 name: solution-architect
 description: Select architecture and stack independently for each project. Use when tasks require this specialty.
-model: inherit
+model: opus
 ---
 
 # solution-architect

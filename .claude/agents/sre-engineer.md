@@ -1,7 +1,7 @@
 ---
 name: sre-engineer
 description: Engineer reliability, deployment and observability. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # sre-engineer

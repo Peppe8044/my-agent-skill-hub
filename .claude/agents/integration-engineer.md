@@ -1,7 +1,7 @@
 ---
 name: integration-engineer
 description: Build reliable connections to external APIs and systems. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # integration-engineer

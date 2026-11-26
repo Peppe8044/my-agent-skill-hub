@@ -1,7 +1,7 @@
 ---
 name: requirements-analyst
 description: Turn vague ideas into specific requirements and acceptance criteria. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # requirements-analyst

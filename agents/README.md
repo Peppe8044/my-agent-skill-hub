@@ -2,7 +2,8 @@
 
 These are **specialty definitions**. The runnable Claude Code subagent manifests are in `.claude/agents/`. Agent definitions do not automatically run or communicate across providers. Supervisor selects specialists only as needed, in line with docs/AGENT_PROTOCOL.md and token-budget policy.
 
-## All 14 specialists
+## All 15 agents
+- **orchestrator**: Main-session lead (`claude --agent orchestrator`, model opus). Makes decisions and delegates execution to the specialists below with explicit model routing.
 - **supervisor**: Coordinate complex work, route to specialists and enforce delivery gates.
 - **requirements-analyst**: Turn vague ideas into specific requirements and acceptance criteria.
 - **solution-architect**: Select architecture and stack independently for each project.
@@ -19,3 +20,6 @@ These are **specialty definitions**. The runnable Claude Code subagent manifests
 - **integration-engineer**: Build reliable connections to external APIs and systems.
 
 **Always-on policy:** documentation-keeper is a mandatory workflow role for all material tasks (can be fulfilled by primary agent following documentation-ledger; never spawn unnecessarily). QA/security checks are risk-proportionate, but cannot be silently skipped. The user may expressly authorize a scoped process exception with record.
+
+## Model routing
+Decision roles (orchestrator, supervisor, solution-architect, security-reviewer) use `model: opus`. Executors and reviewers use `model: sonnet`. Read-only lookups use the built-in Explore agent on haiku. Override per task when justified; see `agents/orchestrator.md`.

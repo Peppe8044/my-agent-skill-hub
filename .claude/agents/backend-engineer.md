@@ -1,7 +1,7 @@
 ---
 name: backend-engineer
 description: Implement tested APIs, services, integrations and persistence. Use when tasks require this specialty.
-model: inherit
+model: sonnet
 ---
 
 # backend-engineer
