@@ -19,3 +19,4 @@
 - Bloqueos, riesgos y próximas acciones:
 - Responsable/aprobación:
 ```
+| 2026-11-27 | HUB-004 | Ruteo de modelos: solo orchestrator en opus, resto en sonnet; skills deben invocarse con Skill; qa-engineer no reemplazable por otro revisor. Pedido del usuario tras detectar solution-architect en opus en Support Hub/Arcana | `python scripts/hub.py validate` PASS; `python -m unittest` OK | Sincronizar agentes en Support Hub y en `~/.claude/agents` |

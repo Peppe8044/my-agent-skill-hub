@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
 description: Analyze threats, access controls, dependency and secret risks. Use when tasks require this specialty.
-model: opus
+model: sonnet
 skills:
   - token-budget
   - documentation-ledger

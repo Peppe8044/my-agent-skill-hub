@@ -1,5 +1,10 @@
 # Changelog del hub
 
+## 0.3.1 - 2026-11-27
+- Solo el orquestador usa `opus`; supervisor, solution-architect y security-reviewer pasan a `sonnet`. Escalar a opus requiere aprobación explícita del usuario.
+- Las skills requeridas deben invocarse con la herramienta Skill; leerlas desde archivo no cuenta como aplicada.
+- Un revisor distinto (por ejemplo ECC) no reemplaza a qa-engineer antes de aceptar un cambio.
+
 ## 0.3.0 — 2026-11-26
 - Cada agente de `.claude/agents/` precarga sus skills obligatorias con el campo `skills` del encabezado (Claude Code las inyecta al iniciar el subagente): `token-budget` y `documentation-ledger` en todos, más las de su rol (por ejemplo `web-ui`, `test-and-verify` y `secure-development` en frontend-engineer).
 - Contrato `### Run report` obligatorio al final de cada entrega: agente, modelo exacto, skills aplicadas, inicio/fin, estado y comandos ejecutados.
