@@ -21,3 +21,4 @@
 - Registro obligatorio de trabajo y criterios de aceptación.
 
 No se ha habilitado un runtime autónomo que ejecute agentes sin intervención.
+- HUB-005: eight upstream Git submodules, pinned to explicit commits; no automatic activation.

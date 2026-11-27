@@ -22,3 +22,6 @@
 
 ## 2026-11-27 — HUB-004
 Added 15 game specialists and 24 original portable skills. Runtime tests pending; external packages not installed. Review CI before merge.
+
+## 2026-11-27 — HUB-005
+Added eight upstream repositories as pinned Git submodules under external/. No upstream hooks, packages or MCP servers activated. Git checkout and runtime verification pending.

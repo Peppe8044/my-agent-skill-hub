@@ -1,0 +1,24 @@
+[submodule "external/agentmemory"]
+	path = external/agentmemory
+	url = https://github.com/rohitg00/agentmemory.git
+[submodule "external/scientific-agent-skills"]
+	path = external/scientific-agent-skills
+	url = https://github.com/K-Dense-AI/scientific-agent-skills.git
+[submodule "external/Anthropic-Cybersecurity-Skills"]
+	path = external/Anthropic-Cybersecurity-Skills
+	url = https://github.com/mukul975/Anthropic-Cybersecurity-Skills.git
+[submodule "external/OpenViking"]
+	path = external/OpenViking
+	url = https://github.com/volcengine/OpenViking.git
+[submodule "external/awesome-harness-engineering"]
+	path = external/awesome-harness-engineering
+	url = https://github.com/harness-engineer/awesome-harness-engineering.git
+[submodule "external/diagram-design"]
+	path = external/diagram-design
+	url = https://github.com/cathrynlavery/diagram-design.git
+[submodule "external/ECC"]
+	path = external/ECC
+	url = https://github.com/affaan-m/ECC.git
+[submodule "external/rea"]
+	path = external/rea
+	url = https://github.com/morluto/rea.git
