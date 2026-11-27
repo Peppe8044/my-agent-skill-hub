@@ -1,0 +1,39 @@
+{
+  "repositories": [
+    "agentmemory",
+    "scientific-agent-skills",
+    "Anthropic-Cybersecurity-Skills",
+    "OpenViking",
+    "awesome-harness-engineering",
+    "diagram-design",
+    "ECC",
+    "rea"
+  ],
+  "approved_skills": [],
+  "project_mcp": {
+    "clickup": {
+      "type": "http",
+      "url": "https://mcp.clickup.com/mcp"
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  },
+  "services": {
+    "agentmemory": {
+      "state": "requires-local-setup",
+      "docs": "https://github.com/rohitg00/agentmemory",
+      "health": "http://localhost:3111/agentmemory/health"
+    },
+    "OpenViking": {
+      "state": "requires-provider-and-isolated-server",
+      "docs": "https://docs.openviking.ai/en/getting-started/04-setup-for-agent"
+    },
+    "ECC": {
+      "state": "requires-local-plugin-review",
+      "docs": "https://github.com/affaan-m/ECC",
+      "package": "ecc-universal@2.2.3"
+    }
+  }
+}

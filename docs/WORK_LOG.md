@@ -28,3 +28,6 @@ Added eight upstream repositories as pinned Git submodules under external/. No u
 
 ## 2026-11-27 — HUB-006
 Project installer and automatic new-project bootstrap; external discovery only, no automatic activation. Tests added; runtime/CI results pending.
+
+## 2026-11-27 — HUB-007
+Added central external skill approval/copy mechanism, default remote MCP definitions, integration status command and local service setup guidance. No upstream skills approved or services executed yet. Tests added; execution pending.

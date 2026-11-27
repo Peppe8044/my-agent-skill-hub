@@ -5,6 +5,11 @@ import re
 import subprocess
 from pathlib import Path
 
+try:
+    from .integrations import approved_files, mcp_config
+except ImportError:
+    from integrations import approved_files, mcp_config
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -29,6 +34,12 @@ def install(root, target, profile="full", fetch_external=True):
         for src in sorted((root / folder).glob("*/SKILL.md")):
             for runtime in (".claude/skills", ".agents/skills"):
                 add(f"{runtime}/{src.parent.name}/SKILL.md", src.read_bytes())
+    if profile == "full":
+        for rel, data in approved_files(root).items():
+            if rel in files:
+                raise ValueError("External skill conflicts with hub skill: " + rel)
+            add(rel, data)
+        add(".mcp.json", (json.dumps(mcp_config(root), indent=2)+"\n").encode())
     catalog = []
     if profile == "full":
         for repo in sorted((root / "external").iterdir()) if (root / "external").exists() else []:

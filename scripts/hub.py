@@ -11,8 +11,10 @@ import sys
 
 try:
     from .project_install import install
+    from .integrations import status as integration_status
 except ImportError:
     from project_install import install
+    from integrations import status as integration_status
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -233,6 +235,8 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("doctor")
     sub.add_parser("validate")
     sub.add_parser("sync")
+    integration = sub.add_parser("integrations")
+    integration.add_argument("--target", required=True, type=Path)
     setup = sub.add_parser("install")
     setup.add_argument("--target", required=True, type=Path)
     setup.add_argument("--profile", choices=("full", "core"), default="full")
@@ -261,6 +265,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.cmd == "sync":
             print(f"Updated {sync()} skill runtime copies")
+            return 0
+        if args.cmd == "integrations":
+            print(json.dumps(integration_status(ROOT, args.target), indent=2))
             return 0
         if args.cmd == "install":
             print(json.dumps(install(ROOT, args.target, args.profile, not args.no_fetch), indent=2))
