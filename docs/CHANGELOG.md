@@ -26,3 +26,5 @@ No se ha habilitado un runtime autónomo que ejecute agentes sin intervención.
 - HUB-006: default project installer, automatic bootstrap for new, external skill catalog and conflict checks.
 
 - HUB-007: project MCP defaults, approved external skill installation and diagnostics.
+
+- HUB-008: one-command bootstrap, local diagnostics and verified launcher.

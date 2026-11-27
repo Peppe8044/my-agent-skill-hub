@@ -12,9 +12,11 @@ import sys
 try:
     from .project_install import install
     from .integrations import status as integration_status
+    from .bootstrap import bootstrap, launch
 except ImportError:
     from project_install import install
     from integrations import status as integration_status
+    from bootstrap import bootstrap, launch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -235,6 +237,11 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("doctor")
     sub.add_parser("validate")
     sub.add_parser("sync")
+    boot = sub.add_parser("bootstrap")
+    boot.add_argument("--target", required=True, type=Path)
+    boot.add_argument("--no-fetch", action="store_true")
+    start = sub.add_parser("launch")
+    start.add_argument("--target", required=True, type=Path)
     integration = sub.add_parser("integrations")
     integration.add_argument("--target", required=True, type=Path)
     setup = sub.add_parser("install")
@@ -266,6 +273,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "sync":
             print(f"Updated {sync()} skill runtime copies")
             return 0
+        if args.cmd == "bootstrap":
+            report = bootstrap(ROOT, args.target, not args.no_fetch)
+            print(json.dumps(report, indent=2))
+            return 1 if report["static_errors"] else 0
+        if args.cmd == "launch":
+            return launch(args.target)
         if args.cmd == "integrations":
             print(json.dumps(integration_status(ROOT, args.target), indent=2))
             return 0

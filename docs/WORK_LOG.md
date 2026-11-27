@@ -31,3 +31,6 @@ Project installer and automatic new-project bootstrap; external discovery only, 
 
 ## 2026-11-27 — HUB-007
 Added central external skill approval/copy mechanism, default remote MCP definitions, integration status command and local service setup guidance. No upstream skills approved or services executed yet. Tests added; execution pending.
+
+## 2026-11-27 — HUB-008
+Added bootstrap, local report, managed-file verification, explicit Opus launcher and tests. Previous CI run 46030114336 completed successfully. New CI and actual runtime checks pending.

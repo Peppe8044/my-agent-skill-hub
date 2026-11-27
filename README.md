@@ -46,3 +46,6 @@ Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GOVERNANCE.md](docs/GOVE
 
 ### External integrations
 Default full installation writes GitHub and ClickUp project MCP configuration and copies reviewed external skills from the central approval registry. Run `python scripts/hub.py integrations --target PATH` to inspect prerequisites. See docs/INTEGRATION_BOOTSTRAP.md for services requiring local setup and real verification.
+
+### One-command bootstrap
+`python scripts/hub.py bootstrap --target PATH` installs project-local files, verifies their hashes and model declarations, checks prerequisites and probes the local Agent Memory health endpoint. It writes `.agent-hub/bootstrap-report.json`. `python scripts/hub.py launch --target PATH` verifies managed files and starts Claude Code with Opus. External runtime setup and credentials remain local prerequisites; see docs/LOCAL_COMPLETION.md.
