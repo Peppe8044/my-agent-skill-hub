@@ -39,3 +39,7 @@ La biblioteca no ejecuta despliegues ni operaciones sobre producción automátic
 - [GitHub Actions: seguridad](https://docs.github.com/en/actions/reference/security/secure-use)
 
 Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GOVERNANCE.md](docs/GOVERNANCE.md) y [docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md).
+
+## Instalación por proyecto
+
+`python scripts/hub.py install --target /ruta/proyecto` instala agentes, skills y política local; por defecto descarga los ocho submódulos y cataloga skills externas sin activarlas. `--no-fetch` usa el checkout actual. `new` instala automáticamente el contenido propio y cataloga los submódulos ya descargados, sin red. Los archivos existentes distintos se preservan y la instalación se detiene para reconciliarlos. No activa MCP, hooks ni ejecuta código externo. Iniciar con `claude --agent orchestrator --model opus`.

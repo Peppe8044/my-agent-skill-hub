@@ -8,6 +8,11 @@ import re
 import shutil
 import subprocess
 import sys
+
+try:
+    from .project_install import install
+except ImportError:
+    from project_install import install
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -163,6 +168,7 @@ def new_project(name: str, kind: str, directory: Path | None = None) -> Path:
     (destination / "project.json").write_text(
         json.dumps(conf, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
+    install(ROOT, destination, fetch_external=False)
     return destination
 
 
@@ -227,6 +233,10 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("doctor")
     sub.add_parser("validate")
     sub.add_parser("sync")
+    setup = sub.add_parser("install")
+    setup.add_argument("--target", required=True, type=Path)
+    setup.add_argument("--profile", choices=("full", "core"), default="full")
+    setup.add_argument("--no-fetch", action="store_true")
     make = sub.add_parser("new")
     make.add_argument("--name", required=True)
     make.add_argument("--kind", required=True, choices=PROJECT_KINDS)
@@ -251,6 +261,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.cmd == "sync":
             print(f"Updated {sync()} skill runtime copies")
+            return 0
+        if args.cmd == "install":
+            print(json.dumps(install(ROOT, args.target, args.profile, not args.no_fetch), indent=2))
             return 0
         if args.cmd == "new":
             print(new_project(args.name, args.kind, args.directory))
@@ -277,7 +290,7 @@ def main(argv: list[str] | None = None) -> int:
                 return 1
             print("PASS: PR documentation ledger")
             return 0
-    except (ValueError, FileExistsError, OSError, json.JSONDecodeError) as exc:
+    except (ValueError, FileExistsError, OSError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
         print("ERROR:", exc, file=sys.stderr)
         return 2
     return 2

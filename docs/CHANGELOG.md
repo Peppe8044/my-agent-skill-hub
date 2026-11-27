@@ -22,3 +22,5 @@
 
 No se ha habilitado un runtime autónomo que ejecute agentes sin intervención.
 - HUB-005: eight upstream Git submodules, pinned to explicit commits; no automatic activation.
+
+- HUB-006: default project installer, automatic bootstrap for new, external skill catalog and conflict checks.
