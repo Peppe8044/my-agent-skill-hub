@@ -19,3 +19,6 @@
 - Bloqueos, riesgos y próximas acciones:
 - Responsable/aprobación:
 ```
+
+## 2026-11-27 — HUB-004
+Added 15 game specialists and 24 original portable skills. Runtime tests pending; external packages not installed. Review CI before merge.

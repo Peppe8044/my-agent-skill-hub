@@ -1,5 +1,9 @@
 # Changelog del hub
 
+## Unreleased — 2026-11-27
+- Add 15 game specialists and 24 portable skills; external integration registry.
+
+
 ## 0.3.0 — 2026-11-26
 - Cada agente de `.claude/agents/` precarga sus skills obligatorias con el campo `skills` del encabezado (Claude Code las inyecta al iniciar el subagente): `token-budget` y `documentation-ledger` en todos, más las de su rol (por ejemplo `web-ui`, `test-and-verify` y `secure-development` en frontend-engineer).
 - Contrato `### Run report` obligatorio al final de cada entrega: agente, modelo exacto, skills aplicadas, inicio/fin, estado y comandos ejecutados.
