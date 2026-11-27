@@ -1,7 +1,7 @@
 ---
 name: documentation-keeper
 description: Maintain complete, verifiable project documentation and traceability. Use when tasks require this specialty.
-model: sonnet
+model: haiku
 skills:
   - token-budget
   - documentation-ledger

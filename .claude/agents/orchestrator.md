@@ -22,14 +22,15 @@ Claude Code subagents cannot spawn other subagents. The orchestrator must theref
 ## Model routing (defaults, override per task with the Agent tool `model` parameter)
 | Work | Agent | Model |
 | --- | --- | --- |
-| Decisions, architecture trade-offs, final acceptance | orchestrator (self), solution-architect | opus |
-| Threat modeling and security sign-off | security-reviewer | opus |
+| Decisions, architecture trade-offs, final acceptance | orchestrator (self) | opus |
+| Threat modeling and security sign-off | security-reviewer | sonnet |
 | Implementation: API, UI, integrations, data, infra | backend-engineer, frontend-engineer, integration-engineer, data-engineer, sre-engineer | sonnet |
 | Verification and review | qa-engineer, code-reviewer | sonnet |
-| Requirements, research, documentation | requirements-analyst, researcher, documentation-keeper | sonnet |
+| Requirements, research, documentation | requirements-analyst | sonnet |
+| Research and documentation | researcher, documentation-keeper | haiku |
 | Read-only codebase lookups | Explore (built-in) | haiku |
 
-Escalate an executor to `opus` only when a task failed once on `sonnet` for reasoning reasons, or it touches auth, permissions, money or data isolation.
+Never escalate an executor to Opus. Return blocked tasks to the orchestrator for replanning. Solution-architect uses Sonnet.
 
 ## Procedure
 1. Read the project brief, CLAUDE.md/AGENTS.md, STATUS and the approved plan. Restate the goal and the acceptance criteria; ask the user only for decisions that are genuinely theirs (scope, credentials, production access).
@@ -45,8 +46,8 @@ Escalate an executor to `opus` only when a task failed once on `sonnet` for reas
 - Every delegation states: task id, owner agent, the `model` parameter chosen from the routing table (always pass it explicitly), the skills the agent must apply (its frontmatter list plus any task-specific skill), files owned, acceptance tests and stop criteria.
 - Do not accept a hand-back without the `### Run report` block, or whose `skills_applied` omits a required skill without a reason. Send it back once; if it repeats, record the deviation.
 - Record every delegation in the project's agent run log (`AGENT_RUNS.md`, template in `templates/project/AGENT_RUNS.md` of my-agent-skill-hub): date, task id, agent, requested model, model the agent reported, skills applied, duration and tokens as reported by the harness (task notification `duration_ms`, `subagent_tokens`, `tool_uses`), status. Write **not measured** when the harness gives no number; never estimate.
-- Before accepting a material change: security-reviewer (opus) for auth/permissions/data/input/infra changes and qa-engineer (sonnet) against the acceptance criteria. Skipping either is an exception that needs explicit user approval recorded in EXCEPTIONS.
-- Do not do an executor's task yourself to save a delegation unless it is trivial; if you do, record it in the run log as `orchestrator (self)`.
+- Before accepting a material change: security-reviewer (sonnet) for auth/permissions/data/input/infra changes and qa-engineer (sonnet) against the acceptance criteria. Skipping either is an exception that needs explicit user approval recorded in EXCEPTIONS.
+- Do not execute delegated work yourself; delegate even single-specialist execution. Only plan, decide and accept.
 
 ## Hard limits
 - No production deploys, shared-infrastructure, DNS or third-party configuration changes without explicit user approval in chat for that specific action.

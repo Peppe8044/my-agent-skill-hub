@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL_ROOT = ROOT / "skills"
 RUNTIMES = [ROOT / ".claude" / "skills", ROOT / ".agents" / "skills"]
 REQUIRED = (
-    "AGENTS.md", "CLAUDE.md", "README.md",
+    "AGENTS.md", "CLAUDE.md", "README.md", "MODEL_POLICY.json", ".claude/settings.json",
     "docs/GOVERNANCE.md", "docs/WORK_LOG.md", "docs/CHANGELOG.md",
     "docs/EXCEPTIONS.md", "docs/ARCHITECTURE.md",
     "templates/project/PROJECT_BRIEF.md",
@@ -120,6 +120,18 @@ def validate(root: Path = ROOT) -> list[str]:
     for name in MANDATORY_SKILLS:
         if name not in policy:
             errors.append(f"AGENTS.md missing mandatory skill route: {name}")
+    policy = load_json(root / "MODEL_POLICY.json")
+    settings = load_json(root / ".claude/settings.json")
+    if policy.get("orchestrator") != "opus" or set(policy.get("executors", [])) != {"sonnet", "haiku"} or policy.get("allow_inherit") is not False or policy.get("allow_executor_opus") is not False:
+        errors.append("Invalid model policy")
+    if settings.get("model") != "opus" or settings.get("env", {}).get("CLAUDE_CODE_SUBAGENT_MODEL") not in {"sonnet", "haiku"}:
+        errors.append("Invalid Claude model defaults")
+    for path in (root / ".claude/agents").glob("*.md"):
+        front = path.read_text(encoding="utf-8").split("---", 2)
+        match = re.search(r"(?m)^model: ([a-z]+)\s*$", front[1]) if len(front) == 3 else None
+        allowed = {"opus"} if path.stem == "orchestrator" else {"sonnet", "haiku"}
+        if not match or match.group(1) not in allowed:
+            errors.append(f"{path}: forbidden or missing model")
     return errors
 
 

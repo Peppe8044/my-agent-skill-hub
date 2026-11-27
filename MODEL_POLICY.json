@@ -1,0 +1,11 @@
+{
+  "orchestrator": "opus",
+  "executors": [
+    "sonnet",
+    "haiku"
+  ],
+  "allow_inherit": false,
+  "allow_executor_opus": false,
+  "max_parallel_agents": 3,
+  "max_retries": 2
+}

@@ -8,7 +8,7 @@ description: Use for all agent work to minimize needless context, model calls, r
 ## Procedure
 1. Identify the exact question and minimal relevant paths; list top sources before reading full files.
 2. Prefer filtered searches, line ranges, concise tool outputs and deterministic scripts over copying massive logs into prompts.
-3. Default to one agent. Delegate only if subtasks can work independently or need context isolation; record cost/coordination reasons.
+3. Default to one executor under Opus orchestration. Delegate execution to Sonnet or Haiku; parallelize only when justified.
 4. When delegating pass objective, limited context paths, acceptance criteria, output format and stop conditions. Handoff only summary + artifact references.
 5. After 2 ineffective attempts, change strategy or report a blocker rather than blindly retrying.
 6. If the runtime exposes prompt/completion tokens and costs, log them in the project report. If unavailable write **not measured**; never invent savings.
