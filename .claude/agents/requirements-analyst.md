@@ -2,6 +2,7 @@
 name: requirements-analyst
 description: Turn vague ideas into specific requirements and acceptance criteria. Use when tasks require this specialty.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

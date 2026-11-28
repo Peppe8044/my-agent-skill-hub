@@ -2,6 +2,7 @@
 name: code-reviewer
 description: Review implementation quality, maintainability and correctness. Use when tasks require this specialty.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

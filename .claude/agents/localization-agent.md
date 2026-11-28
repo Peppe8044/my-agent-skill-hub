@@ -2,6 +2,7 @@
 name: localization-agent
 description: Specialist for localization agent tasks.
 model: haiku
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

@@ -2,6 +2,7 @@
 name: godot-developer
 description: Specialist for godot developer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

@@ -2,6 +2,8 @@
 
 These are **specialty definitions**. The runnable Claude Code subagent manifests are in `.claude/agents/`. Agent definitions do not automatically run or communicate across providers. Supervisor selects specialists only as needed, in line with docs/AGENT_PROTOCOL.md and token-budget policy.
 
+**Effort:** executors declare `effort: medium` in their frontmatter and the orchestrator `effort: high`; the orchestrator preloads only the two mandatory skills (`token-budget`, `documentation-ledger`) and invokes the rest on demand.
+
 ## All 15 agents
 - **orchestrator**: Main-session lead (`claude --agent orchestrator`, model opus). Makes decisions and delegates execution to the specialists below with explicit model routing.
 - **supervisor**: Coordinate complex work, route to specialists and enforce delivery gates.

@@ -5,5 +5,7 @@
   "allow_executor_opus": false,
   "default_parallel_agents": 1,
   "max_parallel_agents": 3,
-  "max_retries": 2
+  "max_retries": 2,
+  "executor_efforts": ["low", "medium", "high"],
+  "default_executor_effort": "medium"
 }

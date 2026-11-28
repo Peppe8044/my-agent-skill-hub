@@ -2,6 +2,7 @@
 name: animation-engineer
 description: Specialist for animation engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

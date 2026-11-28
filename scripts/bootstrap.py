@@ -7,11 +7,11 @@ import urllib.request
 from pathlib import Path
 
 try:
-    from .project_install import install, digest
+    from .project_install import install, digest, lp
     from .integrations import status
     from . import model_policy as mp
 except ImportError:
-    from project_install import install, digest
+    from project_install import install, digest, lp
     from integrations import status
     import model_policy as mp
 
@@ -42,7 +42,7 @@ def verify_project(target):
         if rel in merged:
             continue
         p=target/rel
-        if not p.resolve().is_relative_to(target) or not p.is_file() or digest(p.read_bytes())!=expected:
+        if not p.resolve().is_relative_to(target) or not lp(p).is_file() or digest(lp(p).read_bytes())!=expected:
             errors.append("Missing or changed managed file: "+rel)
     policy=target/"MODEL_POLICY.json"
     if policy.is_file():
@@ -103,4 +103,9 @@ def launch(target,environ=None):
     executable=shutil.which("claude")
     if not executable:
         raise ValueError("Claude Code not on PATH")
-    return subprocess.call([executable,"--agent","orchestrator","--model","opus"],cwd=target)
+    # Pass the orchestrator's declared effort explicitly: a user-level modelSettings effort
+    # (observed: xhigh) otherwise wins over the agent frontmatter for the main session.
+    orchestrator=target/".claude/agents/orchestrator.md"
+    effort=mp.parse_effort(orchestrator.read_text(encoding="utf-8")) if orchestrator.is_file() else None
+    effort=effort if effort in mp.ORCHESTRATOR_EFFORTS else "high"
+    return subprocess.call([executable,"--agent","orchestrator","--model","opus","--effort",effort],cwd=target)

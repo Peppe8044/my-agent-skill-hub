@@ -2,6 +2,7 @@
 name: game-balance-engineer
 description: Specialist for game balance engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

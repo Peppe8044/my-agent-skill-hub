@@ -2,6 +2,7 @@
 name: researcher
 description: Perform focused, source-backed technical research. Use when tasks require this specialty.
 model: haiku
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

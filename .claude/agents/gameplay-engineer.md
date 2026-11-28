@@ -2,6 +2,7 @@
 name: gameplay-engineer
 description: Specialist for gameplay engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

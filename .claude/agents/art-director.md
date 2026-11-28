@@ -2,6 +2,7 @@
 name: art-director
 description: Specialist for art director tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

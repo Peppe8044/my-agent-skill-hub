@@ -2,6 +2,7 @@
 name: game-qa-engineer
 description: Specialist for game qa engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

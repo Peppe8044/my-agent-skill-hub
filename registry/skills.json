@@ -208,5 +208,10 @@
     "name": "authorized-binary-analysis",
     "description": "Use for authorized binary analysis tasks.",
     "mandatory": false
+  },
+  {
+    "name": "skill-catalog",
+    "description": "Use to find and load one approved external skill or catalog agent on demand without loading the whole catalog.",
+    "mandatory": false
   }
 ]

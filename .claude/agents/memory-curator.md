@@ -2,6 +2,7 @@
 name: memory-curator
 description: Specialist for memory curator tasks.
 model: haiku
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

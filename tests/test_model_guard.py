@@ -66,6 +66,13 @@ class GuardTests(unittest.TestCase):
             json.dumps({"executors": ["opus"]}), encoding="utf-8")
         self.assertDenied(self.run_hook(agent_call(subagent_type="scout", model="haiku")))
 
+    def test_effort_denied_for_xhigh_and_max(self):
+        for effort in ("xhigh", "max"):
+            with self.subTest(effort=effort):
+                self.assertDenied(self.run_hook(agent_call(subagent_type="scout", model="haiku", effort=effort)))
+        for effort in ("low", "medium", "high"):
+            self.assertAllowed(self.run_hook(agent_call(subagent_type="scout", model="haiku", effort=effort)))
+
     def test_allowed_models(self):
         for model in ("sonnet", "haiku"):
             self.assertAllowed(self.run_hook(agent_call(subagent_type="general-purpose", model=model)))

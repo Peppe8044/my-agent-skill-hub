@@ -2,6 +2,7 @@
 name: sre-engineer
 description: Engineer reliability, deployment and observability. Use when tasks require this specialty.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger
