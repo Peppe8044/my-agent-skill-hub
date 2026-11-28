@@ -213,6 +213,10 @@ def find_reports(directory):
     return found
 
 
+def lf(text):
+    return text.replace("\r\n", "\n")
+
+
 def latest_text(path):
     return f"Copia de {path.name}\n\n" + path.read_bytes().decode("utf-8")
 
@@ -256,12 +260,12 @@ def cmd_check(args):
         report = directory / f"PHASE_{phase_label(data['phase'])}_REPORT.md"
         if not report.exists():
             problems.append(f"falta {report.name}")
-        elif report.read_bytes().decode("utf-8") != text:
+        elif lf(report.read_bytes().decode("utf-8")) != text:  # autocrlf checkouts use CRLF
             problems.append(f"deriva: {report.name} no coincide con {data_path.name}")
     if reports:
         newest = reports[max(reports)]
         latest = directory / "LATEST_REPORT.md"
-        if not latest.exists() or latest.read_bytes().decode("utf-8") != latest_text(newest):
+        if not latest.exists() or lf(latest.read_bytes().decode("utf-8")) != lf(latest_text(newest)):
             problems.append("LATEST_REPORT.md no coincide con el reporte más reciente")
         for path in reports.values():
             problems += [f"{path.name}: {f}" for f in privacy_findings(path.read_bytes().decode("utf-8"))]
