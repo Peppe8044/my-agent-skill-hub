@@ -1,5 +1,15 @@
 # Changelog del hub
 
+## Unreleased — fase 4 (2026-11-28)
+- Gestor de hooks (`hub.py hooks registry|list|enable|disable|verify`):
+  - `registry/HOOK_REGISTRY.json` contiene 110 hooks con procedencia, sha256, riesgo y estado.
+  - `bootstrap` instala los aprobados: `model_guard`, `command_guard`, `file_guard`, `usage_tracker` y `config-protection` de ECC.
+  - Activar o desactivar un hook crea una copia de seguridad que se deshace con `rollback`.
+- Presupuesto real de tokens de ejecutores por sesión (`max_executor_tokens_per_session`), aplicado por `model_guard`.
+- Informes consolidados por fase (`hub.py report render|latest|check`, 19 secciones, filtro de privacidad), heredados por los proyectos.
+- Hashes de contenido independientes del salto de línea.
+- OpenViking pasa a `excluded-by-policy`: AGPL permite redistribuir bajo condiciones.
+
 ## Unreleased — fase 3 (2026-11-28)
 - Capacidades externas:
   - `hub.py external-scan` genera de forma determinista el inventario de los 8 submódulos, el registro central `registry/external_capabilities.json` y los informes de compatibilidad y licencias.

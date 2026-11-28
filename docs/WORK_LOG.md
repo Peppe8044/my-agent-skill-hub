@@ -116,3 +116,38 @@ El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fil
   - Ejecutores: S1 Sonnet, S2 Sonnet y S3 Haiku, todos con `effort: medium`.
   - La fusión del nuevo PR está pendiente.
 
+### 2026-11-28 — HUB-011 — Fase 4: ECC selectivo, gestor de hooks, presupuesto de tokens e informes por fase
+- **Objetivo:**
+  - Cerrar la fase 3.
+  - Integrar los hooks de ECC de forma selectiva con un gestor reutilizable.
+  - Aplicar un control efectivo de tokens.
+  - Implantar informes consolidados heredables.
+- **Decisión y por qué:**
+  - Se aprueba solo `pre:config-protection` de ECC, tras revisar su código.
+  - Se usan guardas propias deterministas (`command_guard`, `file_guard`, `usage_tracker`) en lugar de hooks complejos o globales de ECC.
+  - Los hooks de memoria, sesión y telemetría quedan solo en el inventario.
+  - Presupuesto de tokens en `model_guard`, autorizado por el owner.
+  - Hashes de contenido con LF normalizado.
+  - Ver `docs/reports/PHASE_04_REPORT.md`.
+- **Archivos afectados:**
+  - Scripts: `hooks_manager.py` y `phase_report.py`.
+  - Hooks propios en `.claude/hooks`.
+  - Registros: `HOOK_REGISTRY.json` y `hook_decisions.json`.
+  - Instalador, hub, doctor y `model_policy`.
+  - Documentación: `docs/reports`, ECC_INTEGRATION_REPORT y HOOK_SECURITY_REPORT.
+  - Reglas: AGENTS, CLAUDE, `documentation-ledger` y `documentation-keeper`.
+- **Comandos/pruebas realmente ejecutados y resultado:**
+  - Suite completa sin submódulos: 137 OK.
+  - Prueba de humo end-to-end y comprobaciones de hooks en un proyecto temporal: todo correcto, rollback incluido.
+  - Prueba real `claude -p`: 4 bloqueos de hooks y 1 delegación Haiku.
+  - Proyecto temporal eliminado.
+- **Revisión de seguridad y documentación:**
+  - Ver HOOK_SECURITY_REPORT.
+  - Sin cambios globales: el hash de la configuración de usuario no varió.
+- **Bloqueos, riesgos y próximas acciones:**
+  - CI final del PR #4.
+  - La próxima fase debe iniciarse con `hub.py launch` en una sesión nueva.
+  - Consumo de la fase: 239 699 tokens de ejecutores, por encima del objetivo.
+- **Responsable/aprobación:**
+  - El owner autorizó la fase 4 y el presupuesto de tokens.
+  - Ejecutores: E1 Sonnet y E2 Haiku, con `effort: medium`.

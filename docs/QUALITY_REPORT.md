@@ -1,5 +1,34 @@
 # QUALITY_REPORT — my-agent-skill-hub
 
+## Fase 4 — ECC selectivo, hooks, presupuesto de tokens e informes (rama `feat/ecc-hooks-integration`)
+
+- **Pruebas:**
+  - Suite completa en condiciones de CI (worktree limpio sin submódulos): **137 OK**. Con submódulos, antes de los ajustes finales: 135 OK.
+  - Pruebas focalizadas de hooks, política e instalación: OK.
+  - `validate`, `hooks registry --check` y `report check`: OK.
+- **End-to-end en un proyecto temporal:**
+  - Bootstrap con la segunda ejecución idempotente.
+  - 5 hooks registrados una sola vez y `verify` 5/5.
+  - `disable`, intento de desactivar `model_guard` (rechazado) y `rollback`: correctos.
+  - Configuración global sin cambios.
+  - 57 skills y 30 agentes disponibles.
+  - Informe de 19 secciones generado dentro del proyecto.
+- **Claude Code real:**
+  - Bloquearon sus casos `command_guard`, `file_guard`, `config-protection` (node) y `model_guard` (Opus).
+  - La delegación con Haiku se permitió.
+  - `usage_tracker` registró el consumo.
+- **Seguridad:**
+  - Se revisó el código del único hook externo aprobado.
+  - Hooks de memoria, captura y telemetría: solo inventario.
+  - Las guardas fallan de forma cerrada.
+  - `model_guard` no se puede desactivar.
+  - Ver `docs/HOOK_SECURITY_REPORT.md`.
+- **No ejecutado o pendiente:**
+  - CI final del PR #4.
+  - Bloqueo por presupuesto en una sesión viva (probado con transcripciones sintéticas).
+  - La clasificación de los hooks inventariados no es una auditoría completa.
+- **Estado:** APROBADO para revisión; la fusión requiere autorización del owner.
+
 ## Fase 3 — integración de capacidades externas (rama `feat/external-skills-integration`)
 
 - **Versión/commit revisado:** commits de la rama `feat/external-skills-integration` creada sobre `main` en `97aedfa`, que es el merge del PR #2.
