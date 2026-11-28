@@ -40,6 +40,18 @@ La biblioteca no ejecuta despliegues ni operaciones sobre producción automátic
 
 Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GOVERNANCE.md](docs/GOVERNANCE.md) y [docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md).
 
+## Capacidades externas
+
+- `python scripts/hub.py external-scan` regenera el inventario determinista y el registro central (`registry/EXTERNAL_SKILLS_INVENTORY.json`, `registry/external_capabilities.json`) y los informes `docs/EXTERNAL_SKILLS_REPORT.md`, `docs/SKILL_COMPATIBILITY_REPORT.md` y `LICENSE_REGISTRY.md`.
+- La clasificación es automatizada por reglas deterministas; no es una auditoría de seguridad completa y el contenido aprobado no ha sido revisado manualmente línea por línea.
+- La aprobación es por reglas: allow-list de licencias, solo copias canónicas, las skills propias ganan los duplicados, los archivos de código nunca se importan y las skills que dependen de código requieren revisión humana, solo seguridad defensiva, patrones inseguros rechazados, agentes externos solo `sonnet` o `haiku`.
+- `install`, `new` y `bootstrap` (perfil `full`) instalan automáticamente las capacidades aprobadas en dos niveles:
+  - **activas:** unas pocas skills que Claude Code detecta de forma nativa;
+  - **catálogo** bajo demanda en `.agent-hub/catalog/`, usado mediante la skill `skill-catalog` y `.agent-hub/bin/catalog.py` (`search`, `show`, `enable`, `disable`).
+- La procedencia (repositorio, commit fijado, sha256, licencia) queda en el manifiesto.
+- Las copias de seguridad van a `.agent-hub/backups/`; para restaurar: `python scripts/hub.py rollback --target PATH`.
+- Hooks, servidores MCP, plugins y servicios externos (Agent Memory, OpenViking) nunca se activan.
+
 ## Instalación por proyecto
 
 `python scripts/hub.py install --target /ruta/proyecto` (perfil `full` por defecto) copia agentes, skills, `MODEL_POLICY.json` y el hook `model_guard`; fusiona `.claude/settings.json` conservando las claves y hooks del proyecto (añade `env.CLAUDE_CODE_SUBAGENT_MODEL: sonnet` si falta; un valor del proyecto fuera de sonnet/haiku es un conflicto de política); por defecto descarga los ocho submódulos y cataloga skills externas sin activarlas. `--no-fetch` usa el checkout actual. `new` instala automáticamente el contenido propio y cataloga los submódulos ya descargados, sin red.
@@ -54,4 +66,4 @@ Iniciar con `claude --agent orchestrator --model opus` (o `python scripts/hub.py
 Default full installation declares GitHub and ClickUp project MCP servers (only when no equivalent exists in project, user/local or runtime scope) and copies reviewed external skills from the central approval registry. Run `python scripts/hub.py integrations --target PATH` to inspect prerequisites. See docs/INTEGRATION_BOOTSTRAP.md for services requiring local setup and real verification.
 
 ### One-command bootstrap
-`python scripts/hub.py bootstrap --target PATH` installs project-local files, verifies their hashes and model declarations, checks prerequisites and probes the local Agent Memory health endpoint. It writes `.agent-hub/bootstrap-report.json`. `python scripts/hub.py launch --target PATH` verifies managed files, refuses to start if forbidden model environment variables are set (`CLAUDE_CODE_SUBAGENT_MODEL` other than sonnet/haiku, `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_*_MODEL`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) and starts Claude Code with Opus. External runtime setup and credentials remain local prerequisites; see docs/LOCAL_COMPLETION.md.
+`python scripts/hub.py bootstrap --target PATH` installs project-local files, verifies their hashes and model declarations, checks prerequisites and probes the local Agent Memory health endpoint. It writes `.agent-hub/bootstrap-report.json`. `python scripts/hub.py launch --target PATH` verifies managed files, refuses to start if forbidden model environment variables are set (`CLAUDE_CODE_SUBAGENT_MODEL` other than sonnet/haiku, `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_*_MODEL`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) and starts Claude Code with Opus and `--effort` from the orchestrator definition (`high`), because a user-level `effortLevel` would otherwise win. External runtime setup and credentials remain local prerequisites; see docs/LOCAL_COMPLETION.md.

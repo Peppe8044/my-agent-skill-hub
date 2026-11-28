@@ -20,4 +20,13 @@ This file is intentionally short to conserve context. Detailed procedures live i
 
 Agents are optional specialists, not a permanent swarm. Model policy (MODEL_POLICY.json, mandatory): Opus only for the main-session orchestrator; Sonnet for specialized execution; Haiku for simple bounded tasks. Every delegation passes `model` explicitly (`sonnet`/`haiku`, built-ins and `general-purpose`/`Plan` included; no `fork`, no `inherit`), and no executor is ever escalated to Opus. Default 1 executor, max 3 in parallel (independent tasks, non-overlapping files), max 2 retries, then report blocked. Enforced by `hub.py validate` (static), the `.claude/hooks/model_guard.py` PreToolUse hook (runtime, matcher `Agent|Task`) and `hub.py launch` (refuses forbidden model env vars). `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` in project settings is only the fallback for model-less subagents. Take the effective model from runtime evidence, never from names. In Claude Code use .claude/agents; skills load from .claude/skills. Codex uses .agents/skills. Master skill source: skills/. Run `python scripts/hub.py sync` if changing master skills; `python scripts/hub.py validate` before commit.
 
+## Token rules (reusable config)
+- Opus only coordinates and decides; executors use `effort: medium` by default, `low`/`high` per task, never `xhigh` or `max`.
+- One executor by default; at most 3 in parallel only with a stated justification.
+- Never repeat an audit already done; reuse its report.
+- Never read whole repositories into context; use Python or deterministic tools to inventory files and print counts.
+- Haiku for simple tasks; Sonnet only when complexity justifies it.
+- Skills load on demand: do not preload or read many skills at once; external skills are reached through `skill-catalog`.
+- Record real consumption (task-notification `subagent_tokens`/`duration_ms`, stream-json `modelUsage`) or write "not measured".
+
 Read `docs/GOVERNANCE.md` only for exceptions/gates, `docs/ARCHITECTURE.md` for system changes, and relevant project files for project work.

@@ -2,6 +2,7 @@
 name: audio-designer
 description: Specialist for audio designer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

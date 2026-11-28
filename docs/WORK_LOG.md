@@ -73,3 +73,46 @@ El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fil
   - Repetir MODEL_ROUTING_REPORT al actualizar Claude Code.
 - Responsable/aprobación: owner (Peppe8044) aprobó la fase 2 y la política; ejecución delegada por el orquestador Opus a ejecutores Sonnet/Haiku; merge del PR pendiente de autorización.
 
+### 2026-11-28 — HUB-010 — Fase 3: integración de capacidades externas y control de tokens
+- **Objetivo:**
+  - Inventariar y clasificar de forma determinista los 8 submódulos.
+  - Incorporar de forma automática las capacidades aprobadas, con carga bajo demanda, procedencia y rollback.
+  - Incorporar las reglas de control de tokens a la configuración reutilizable.
+- **Decisión y por qué (ADR 0005):**
+  - Aprobación por reglas: licencia permitida; solo la copia canónica; las capacidades propias ganan en los duplicados; sin código y con revisión si la skill depende de scripts; solo seguridad defensiva; sin patrones inseguros; agentes solo Sonnet o Haiku.
+  - Dos niveles:
+    - 14 skills activas detectadas de forma nativa.
+    - Catálogo bajo demanda con 981 skills y 45 agentes, accesible mediante `skill-catalog` y `.agent-hub/bin/catalog.py`.
+    - Motivo: instalar cientos de skills activas añadiría sus descripciones al contexto de cada sesión.
+  - Ajustes del orquestador sobre el escáner:
+    - R6b: un nombre con intención defensiva anula los falsos positivos (10 recuperadas).
+    - R9b: dominio por defecto según el repositorio.
+    - Exclusión del nivel activo de las herramientas de ECC y de otros harnesses de orquestación.
+  - `launch` pasa `--effort` porque la configuración global `xhigh` prevalecía sobre el frontmatter (evidencia en TOKEN_USAGE_REPORT).
+- **Archivos afectados:**
+  - Código y pruebas: `scripts/external_scan.py` (nuevo), `scripts/smoke_bootstrap.py` (nuevo), `templates/agent-hub/catalog.py` (nuevo), project_install, integrations, hub, bootstrap, doctor, model_policy, `model_guard`, `MODEL_POLICY.json` y tests (3 archivos nuevos).
+  - Agentes y skills: `.claude/agents/*` (effort), skill `skill-catalog` y `token-budget`.
+  - Registros: `registry/` (inventario, capacidades aprobadas y skills).
+  - Documentación: `docs/` (3 informes generados, ADR 0005, TOKEN_USAGE_REPORT, QUALITY_REPORT), README, AGENTS.md y CLAUDE.md.
+- **Comandos/pruebas realmente ejecutados y resultado:**
+  - `python -m unittest discover -s tests`: 93 OK.
+  - `python scripts/external_scan.py --check`: OK.
+  - `python scripts/smoke_bootstrap.py <temp>`: `ok: true`.
+  - Prueba real `claude -p` en el proyecto temporal: detección de 57 skills, carga bajo demanda, Opus y `xhigh` bloqueados.
+  - `--effort high` verificado en la transcripción.
+  - Proyecto temporal eliminado al terminar.
+- **Revisión de seguridad y documentación:**
+  - Sin ejecución de código externo; hooks, MCP y servicios solo en el inventario.
+  - Validación de rutas en el instalador y en `catalog.py`.
+  - Licencias copiadas; AGPL y repositorios sin licencia no se redistribuyen.
+  - Ver QUALITY_REPORT.
+- **Bloqueos, riesgos y próximas acciones:**
+  - Revisión humana pendiente de 181 skills con scripts y de los 45 agentes del catálogo.
+  - Sigue la configuración global `effortLevel=xhigh` (decisión del owner).
+  - Agent Memory, OpenViking y los hooks de ECC siguen sin instalar (restricción vigente).
+  - La instalación completa tarda alrededor de 1 minuto por los hashes y el `git status` de cada repositorio.
+- **Responsable/aprobación:**
+  - El owner (Peppe8044) autorizó la fase 3 y la fusión del PR #2.
+  - Ejecutores: S1 Sonnet, S2 Sonnet y S3 Haiku, todos con `effort: medium`.
+  - La fusión del nuevo PR está pendiente.
+

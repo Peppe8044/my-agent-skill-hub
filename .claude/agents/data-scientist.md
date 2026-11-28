@@ -2,6 +2,7 @@
 name: data-scientist
 description: Build robust analytics and machine-learning evaluations. Use when tasks require this specialty.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

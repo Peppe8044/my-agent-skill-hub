@@ -2,6 +2,7 @@
 name: pixel-art-engineer
 description: Specialist for pixel art engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

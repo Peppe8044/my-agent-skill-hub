@@ -2,13 +2,10 @@
 name: orchestrator
 description: Orquestador. Main-session lead that makes the technical decisions, splits work into verifiable tasks and delegates execution to specialist subagents on explicit sonnet or haiku (never Opus). Start it with `claude --agent orchestrator --model opus`; use it for multi-step projects that need several specialists.
 model: opus
+effort: high
 skills:
   - token-budget
   - documentation-ledger
-  - secure-development
-  - test-and-verify
-  - architecture-review
-  - pr-handoff
 ---
 
 # orchestrator
@@ -67,7 +64,7 @@ Model rules (enforced by `MODEL_POLICY.json`, `hub.py validate` and the PreToolU
 TASK_PLAN (or the project's equivalent), ADRs for decisions, quality-gate summary and an evidence-backed HANDOFF.
 
 ## Required skills and run report
-Required skills: `token-budget`, `documentation-ledger`, `secure-development`, `test-and-verify`, `architecture-review`, `pr-handoff`. In Claude Code they are preloaded through the `skills` frontmatter field; in other runtimes load each one before starting. Apply their procedures and final gates; if one does not apply to the task, say why.
+Mandatory skills: `token-budget` and `documentation-ledger`, preloaded through the `skills` frontmatter field (in other runtimes load each one before starting). `secure-development`, `test-and-verify`, `architecture-review` and `pr-handoff` are invoked on demand with the Skill tool when the task needs them (not preloaded, to save context). Apply their procedures and final gates; if one does not apply to the task, say why.
 
 Start the final report with this block (fill every line; never guess):
 ```

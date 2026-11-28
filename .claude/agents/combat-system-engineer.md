@@ -2,6 +2,7 @@
 name: combat-system-engineer
 description: Specialist for combat system engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

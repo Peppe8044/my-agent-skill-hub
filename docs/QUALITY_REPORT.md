@@ -1,4 +1,55 @@
-# QUALITY_REPORT — my-agent-skill-hub (PR #2, fase 2)
+# QUALITY_REPORT — my-agent-skill-hub
+
+## Fase 3 — integración de capacidades externas (rama `feat/external-skills-integration`)
+
+- **Versión/commit revisado:** commits de la rama `feat/external-skills-integration` creada sobre `main` en `97aedfa`, que es el merge del PR #2.
+- **Formato, lint y tipado:** no configurados en el repositorio (solo stdlib). No ejecutados.
+- **Pruebas unitarias:**
+  - `python -m unittest discover -s tests`: **Ran 93 tests in 122.550s — OK**. Son 36 más que en la fase 2: 17 del escáner, 16 de instalación externa y catálogo, y otras de esfuerzo y guard.
+  - Después se cambió `launch` para pasar `--effort`; `tests.test_bootstrap` dio 4 OK.
+  - `python scripts/external_scan.py --check`: salidas deterministas y sin desviaciones.
+- **Prueba end-to-end** (`scripts/smoke_bootstrap.py` en un proyecto temporal aislado): `ok: true`.
+  - Agentes propios 30, skills propias 43, externas activas 14, skills de catálogo 981, agentes de catálogo 45, licencias copiadas 3, omitidas 0.
+  - Nombres duplicados `[]`, errores de política `[]`.
+  - `model_guard` presente y registrado; settings con `opus` y respaldo `sonnet`.
+  - Segunda instalación: 0 cambios, 0 conflictos, 0 copias de seguridad nuevas.
+  - `catalog.py search` funciona y el ciclo enable/disable es correcto.
+- **Prueba real con Claude Code 2.1.332** en ese proyecto (`claude -p --agent orchestrator --model opus --strict-mcp-config`):
+  - El `init` detecta las 57 skills del proyecto (43 propias y 14 externas activas), sin duplicados y con 0 skills del catálogo en contexto. Detecta los 30 agentes del hub.
+  - Carga individual bajo demanda: `Skill(godot-patterns)`, y luego `catalog.py search` → `show` → lectura de las 5 primeras líneas de una sola skill del catálogo.
+  - `researcher` con `haiku` se ejecutó en claude-haiku-5-5 con `effort: medium`.
+  - `code-reviewer` con `model: opus` fue **bloqueado** por `model_guard`.
+  - `researcher` con `effort: xhigh` fue **bloqueado**.
+  - Coste 0,4532 USD.
+  - `--effort high`: `perTurnEffort` pasa de `xhigh` a `high` (ver TOKEN_USAGE_REPORT).
+- **Criterios de aceptación:**
+  - Inventario automatizado de skills, agentes, hooks, MCP, scripts, dependencias, licencias, configuraciones y duplicados: `registry/EXTERNAL_SKILLS_INVENTORY.json`.
+  - Clasificación por dominio y decisión con motivos: SKILL_COMPATIBILITY_REPORT.
+  - Registro central de aprobados con procedencia (commit fijado, sha256 y licencia): `registry/external_capabilities.json`.
+  - Las capacidades propias tienen prioridad: 3 colisiones con skills propias y 2 con agentes propios se descartaron.
+  - Ningún agente externo con Opus, `inherit` o sin modelo; `validate` y `verify_project` lo comprueban.
+  - Instalación automática en `install`, `new` y `bootstrap` (perfil `full`) con carga bajo demanda.
+  - Actualización segura: verificación de sha256, commit y checkout limpio; copias de seguridad; `rollback`.
+  - Los archivos personalizados se conservan y la versión del hub se deja en `.agent-hub/incoming/`.
+- **Security review** (orquestador):
+  - El escáner solo lee archivos; el único proceso que lanza es `git ls-tree`.
+  - Del contenido externo nunca se copia código (las skills que dependen de scripts quedan como `requires-review`).
+  - Hooks, MCP, plugins y servicios externos quedan solo en el inventario.
+  - Seguridad: solo defensiva. 36 skills ofensivas rechazadas, tras corregir 10 falsos positivos defensivos con la regla R6b.
+  - Se rechazan 22 skills y 1 agente con patrones inseguros.
+  - Las escrituras del instalador se limitan al proyecto y no atraviesan symlinks. Se añadió validación de nombre y ruta en `catalog.py enable` con su prueba.
+  - El contenido sin licencia no se redistribuye; OpenViking (AGPL-3.0, redistribuible bajo condiciones copyleft) queda separado por política del proyecto. La clasificación automatizada no equivale a una auditoría de seguridad completa. Las licencias MIT y Apache se copian junto al contenido.
+- **Documentación:** README, AGENTS/CLAUDE (reglas de tokens), token-budget, skill `skill-catalog`, ADR 0005, EXTERNAL_INTEGRATIONS, EXTERNAL_SKILLS_REPORT, SKILL_COMPATIBILITY_REPORT, LICENSE_REGISTRY, TOKEN_USAGE_REPORT, WORK_LOG (HUB-010) y CHANGELOG.
+- **No ejecutado:**
+  - Revisión humana de las 181 skills que requieren revisión de scripts y de los 45 agentes de catálogo. Quedan fuera de los activos.
+  - Servicios Agent Memory y OpenViking, y hooks de ECC (restricción vigente).
+  - Ejecución de `hub.py launch` interactivo (se probó su comando en pruebas unitarias y el flag `--effort` en runtime).
+- **Estado:** APROBADO para revisión del PR. La fusión queda pendiente de que el owner la autorice.
+- **Revisor / fecha:** orquestador Opus (claude-opus-5-5), 2026-11-28.
+
+---
+
+## Historial — fase 2 (PR #2)
 
 - **Versión/commit revisado:** rama `feat/indie-studio-agent-library`.
   - Merge de `main`: `da57564`.

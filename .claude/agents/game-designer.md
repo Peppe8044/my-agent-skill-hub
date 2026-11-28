@@ -2,6 +2,7 @@
 name: game-designer
 description: Specialist for game designer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

@@ -2,6 +2,7 @@
 name: qa-engineer
 description: Verify behavior, regressions and acceptance criteria. Use when tasks require this specialty.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

@@ -111,6 +111,18 @@ def doctor(root, validate_fn, runner=None, environ=None, which=None, http_get=No
             add("submodules", "WARN", f"{len(uninit)} not initialized (run install with fetch to init)")
         else:
             add("submodules", "OK", f"{len(lines)} initialized at pinned commits")
+    reg_path = Path(root) / "registry/external_capabilities.json"
+    if not reg_path.is_file():
+        add("external-catalog", "WARN", "registry/external_capabilities.json missing (run hub.py external-scan)")
+    else:
+        try:
+            reg = json.loads(reg_path.read_text(encoding="utf-8"))
+            skills = reg.get("skills", [])
+            active = sum(1 for i in skills if i.get("tier") == "active")
+            add("external-catalog", "OK", f"{active} active skills, {len(skills) - active} catalog skills, "
+                f"{len(reg.get('agents', []))} catalog agents approved")
+        except (OSError, ValueError, AttributeError):
+            add("external-catalog", "WARN", "registry/external_capabilities.json unreadable")
     r = run(["claude", "--version"])
     add("claude", "OK" if r and r.returncode == 0 else "WARN",
         r.stdout.strip() if r and r.returncode == 0 else "claude CLI not available")

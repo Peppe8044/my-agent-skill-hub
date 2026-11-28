@@ -1,5 +1,21 @@
 # Changelog del hub
 
+## Unreleased — fase 3 (2026-11-28)
+- Capacidades externas:
+  - `hub.py external-scan` genera de forma determinista el inventario de los 8 submódulos, el registro central `registry/external_capabilities.json` y los informes de compatibilidad y licencias.
+  - Resultado: 995 skills aprobadas (14 activas y 981 en el catálogo), 181 pendientes de revisión de scripts y 1 028 rechazadas; 45 agentes aprobados al catálogo y 267 rechazados.
+- `install`, `new` y `bootstrap` (perfil `full`) instalan automáticamente las capacidades aprobadas:
+  - Las skills activas van a `.claude/skills` y `.agents/skills`.
+  - El catálogo bajo demanda va a `.agent-hub/catalog`, con `skill-catalog` y `.agent-hub/bin/catalog.py`.
+  - Las licencias se copian junto al contenido.
+  - El manifiesto guarda la procedencia (commit fijado y sha256), y hay copias de seguridad y `hub.py rollback`.
+- Control de tokens:
+  - Esfuerzo `medium` para los ejecutores y `high` para el orquestador; `launch` pasa `--effort`.
+  - `model_guard` bloquea `xhigh`/`max`.
+  - El orquestador solo precarga las 2 skills obligatorias.
+  - Nuevas reglas de tokens en `AGENTS.md` y en `token-budget`.
+- `doctor` informa del estado del catálogo externo; `validate` comprueba el registro externo.
+
 ## Unreleased — 2026-11-27
 - Add 15 game specialists and 24 portable skills; external integration registry.
 - 2026-11-28 (HUB-009): política de modelos aplicada en runtime.

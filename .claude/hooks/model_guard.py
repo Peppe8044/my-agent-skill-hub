@@ -12,6 +12,7 @@ import sys
 # Keep this literal identical to scripts/model_policy.py (a test checks parity).
 MODEL_RE = re.compile(r"(?m)^model:[ \t]*(\S+)[ \t]*$")
 DEFAULT_EXECUTORS = {"sonnet", "haiku"}
+DENIED_EFFORTS = ("xhigh", "max")
 SAFE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]*")
 
 
@@ -40,6 +41,9 @@ def decide(event, project):
     tool_input = event.get("tool_input")
     if not isinstance(tool_input, dict):
         return deny("malformed tool_input; blocked (MODEL_POLICY.json)")
+    if tool_input.get("effort") in DENIED_EFFORTS:
+        return deny("effort %r is not allowed for subagents; MODEL_POLICY.json executor_efforts "
+                    "allow only low, medium or high" % (tool_input["effort"],))
     allowed = set(DEFAULT_EXECUTORS)
     policy_path = os.path.join(project, "MODEL_POLICY.json")
     if os.path.isfile(policy_path):

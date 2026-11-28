@@ -2,6 +2,7 @@
 name: asset-validator
 description: Specialist for asset validator tasks.
 model: haiku
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

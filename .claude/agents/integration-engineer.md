@@ -2,6 +2,7 @@
 name: integration-engineer
 description: Build reliable connections to external APIs and systems. Use when tasks require this specialty.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

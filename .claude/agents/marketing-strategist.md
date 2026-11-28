@@ -2,6 +2,7 @@
 name: marketing-strategist
 description: Specialist for marketing strategist tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

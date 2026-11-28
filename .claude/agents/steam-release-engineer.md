@@ -2,6 +2,7 @@
 name: steam-release-engineer
 description: Specialist for steam release engineer tasks.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger

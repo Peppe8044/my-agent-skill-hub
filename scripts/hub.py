@@ -10,14 +10,14 @@ import subprocess
 import sys
 
 try:
-    from .project_install import install
-    from .integrations import status as integration_status
+    from .project_install import install, rollback
+    from .integrations import status as integration_status, load_external_registry, plan_external
     from .bootstrap import bootstrap, launch
     from . import model_policy as mp
     from . import doctor as doctor_mod
 except ImportError:
-    from project_install import install
-    from integrations import status as integration_status
+    from project_install import install, rollback
+    from integrations import status as integration_status, load_external_registry, plan_external
     from bootstrap import bootstrap, launch
     import model_policy as mp
     import doctor as doctor_mod
@@ -131,6 +131,76 @@ def check_external_pins(root: Path, notes: list[str] | None = None) -> list[str]
     return errors
 
 
+def check_external_registry(root: Path, notes: list[str] | None = None) -> list[str]:
+    """Validate registry/external_capabilities.json (when present) against pins, policy and names."""
+    notes = notes if notes is not None else []
+    try:
+        reg = load_external_registry(root)
+    except ValueError as exc:
+        return [f"external registry invalid: {exc}"]
+    if reg is None:
+        return []
+    errors = []
+    for key in ("schema", "generated_by", "repositories", "skills", "agents"):
+        if key not in reg:
+            errors.append(f"external registry missing key: {key}")
+    if errors:
+        return errors
+    repos = reg["repositories"]
+    if not isinstance(repos, dict) or not isinstance(reg["skills"], list) or not isinstance(reg["agents"], list):
+        return ["external registry: repositories must be an object; skills and agents lists"]
+    pins = {}
+    try:
+        tree = subprocess.run(["git", "-C", str(root), "ls-tree", "HEAD", "external/"],
+                              capture_output=True, text=True, timeout=30)
+        for line in tree.stdout.splitlines():
+            meta, _, name = line.partition("\t")
+            parts = meta.split()
+            if len(parts) == 3 and parts[0] == "160000":
+                pins[name.removeprefix("external/")] = parts[2]
+    except (OSError, subprocess.SubprocessError):
+        pass
+    for name, info in sorted(repos.items()):
+        if not isinstance(info, dict) or not re.fullmatch(r"[0-9a-f]{40}", str(info.get("commit", ""))):
+            errors.append(f"external registry: repo {name} lacks a 40-hex commit")
+        elif pins and pins.get(name) != info["commit"]:
+            errors.append(f"external registry: repo {name} commit differs from gitlink {pins.get(name)}")
+        elif not pins:
+            notes.append("external registry gitlink comparison skipped: no gitlinks readable")
+    executors = set(mp.load_json(root / "MODEL_POLICY.json").get("executors", []))
+    own = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
+    own_agents = {p.stem for p in (root / ".claude/agents").glob("*.md")}
+    seen = set()
+    for item in reg["skills"]:
+        if item.get("repo") not in repos:
+            errors.append(f"external registry: skill {item.get('id')} references unknown repo")
+        if item.get("tier") == "active":
+            name = item.get("name")
+            if name in seen:
+                errors.append(f"external registry: duplicate active skill name {name}")
+            if name in own or name in own_agents:
+                errors.append(f"external registry: active skill {name} collides with an own skill or agent")
+            seen.add(name)
+    for item in reg["agents"]:
+        if item.get("repo") not in repos:
+            errors.append(f"external registry: agent {item.get('id')} references unknown repo")
+        if item.get("model") not in executors:
+            errors.append(f"external registry: agent {item.get('id')} model {item.get('model')!r} not in executors")
+    ids = [i.get("id") for i in reg["skills"] + reg["agents"]]
+    if len(ids) != len(set(ids)):
+        errors.append("external registry: duplicate ids")
+    if not errors:
+        initialized = [n for n in repos if (root / "external" / n / ".git").exists()]
+        if not initialized:
+            notes.append("external registry sha256 verification skipped: submodules not initialized")
+        else:
+            plan = plan_external(root, own, sorted(executors))
+            for iid, why in sorted(plan["skipped"].items()):
+                if "not initialized" not in why:
+                    errors.append(f"external registry: {iid} fails verification: {why}")
+    return errors
+
+
 def validate(root: Path = ROOT, notes: list[str] | None = None) -> list[str]:
     errors = [f"Missing required file: {p}" for p in REQUIRED if not (root / p).is_file()]
     if errors:
@@ -179,6 +249,7 @@ def validate(root: Path = ROOT, notes: list[str] | None = None) -> list[str]:
     errors += mp.validate_settings(load_json(root / ".claude/settings.json"), root)
     errors += mp.validate_agents(root / ".claude/agents")
     errors += check_external_pins(root, notes)
+    errors += check_external_registry(root, notes)
     return errors
 
 
@@ -296,6 +367,11 @@ def main(argv: list[str] | None = None) -> int:
     rank = sub.add_parser("recommend")
     rank.add_argument("--input", required=True, type=Path)
     rank.add_argument("--out", type=Path)
+    scan = sub.add_parser("external-scan", add_help=False)
+    scan.add_argument("rest", nargs=argparse.REMAINDER)
+    back = sub.add_parser("rollback")
+    back.add_argument("--target", required=True, type=Path)
+    back.add_argument("--backup")
     checks = sub.add_parser("check-docs")
     checks.add_argument("--base", required=True)
     args = parser.parse_args(argv)
@@ -337,6 +413,20 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(install(ROOT, args.target, args.profile, not args.no_fetch,
                                         runtime_scan=not args.no_runtime_mcp_scan), indent=2))
             return 0
+        if args.cmd == "external-scan":
+            try:
+                try:
+                    from . import external_scan
+                except ImportError:
+                    import external_scan
+            except ImportError:
+                print("ERROR: scripts/external_scan.py is not available", file=sys.stderr)
+                return 2
+            return external_scan.main(args.rest) or 0
+        if args.cmd == "rollback":
+            result = rollback(args.target, args.backup)
+            print(json.dumps(result, indent=2))
+            return 1 if result["conflicts"] else 0
         if args.cmd == "new":
             print(new_project(args.name, args.kind, args.directory))
             return 0

@@ -12,8 +12,9 @@ GOOD_SETTINGS = {
 }
 
 
-def agent(model):
+def agent(model, effort="medium"):
     head = "model: %s\n" % model if model else ""
+    head += "effort: %s\n" % effort if effort else ""
     return "---\nname: x\ndescription: d\n%sskills:\n  - a\n---\nbody\n" % head
 
 
@@ -23,6 +24,32 @@ class AgentTests(unittest.TestCase):
             for name, model in agents.items():
                 (Path(tmp) / (name + ".md")).write_text(agent(model), encoding="utf-8")
             return mp.validate_agents(tmp)
+
+    def check_eff(self, orch, **efforts):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "orchestrator.md").write_text(agent("opus", orch), encoding="utf-8")
+            for name, effort in efforts.items():
+                (Path(tmp) / (name + ".md")).write_text(agent("haiku", effort), encoding="utf-8")
+            return mp.validate_agents(tmp)
+
+    def test_effort_rules(self):
+        self.assertEqual([], self.check_eff("high", a="low", b="medium", c="high"))
+        self.assertEqual([], self.check_eff("medium", a="low"))
+        for bad in (None, "xhigh", "max", "ultra"):
+            with self.subTest(executor=bad):
+                self.assertTrue(self.check_eff("high", a=bad))
+        for bad in (None, "low", "xhigh", "max"):
+            with self.subTest(orchestrator=bad):
+                self.assertTrue(self.check_eff(bad, a="low"))
+
+    def test_policy_effort_keys(self):
+        policy = mp.load_json(hub.ROOT / "MODEL_POLICY.json")
+        self.assertEqual("medium", policy["default_executor_effort"])
+        for key, value in (("executor_efforts", ["low", "xhigh"]), ("executor_efforts", ["low", "low"]),
+                           ("executor_efforts", []), ("default_executor_effort", "high-ish"),
+                           ("executor_efforts", ["low"]), ("default_executor_effort", 1)):
+            with self.subTest(key=key, value=value):
+                self.assertTrue(mp.validate_policy(dict(policy, **{key: value})))
 
     def test_valid_including_haiku(self):
         self.assertEqual([], self.check({"orchestrator": "opus", "a": "sonnet", "b": "haiku"}))

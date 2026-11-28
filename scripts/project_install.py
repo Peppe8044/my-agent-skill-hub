@@ -1,26 +1,40 @@
 """Project-local installation; never execute upstream code automatically."""
 import hashlib
+import importlib.util
 import json
 import os
 import re
 import shutil
 import subprocess
+import time
 from pathlib import Path
 from urllib.parse import urlsplit
 
 try:
-    from .integrations import approved_files, mcp_config
+    from .integrations import approved_files, mcp_config, plan_external
     from . import model_policy as mp
 except ImportError:
-    from integrations import approved_files, mcp_config
+    from integrations import approved_files, mcp_config, plan_external
     import model_policy as mp
 
 MERGED = (".mcp.json", ".claude/settings.json")
 INCOMING = ".agent-hub/incoming"
+BACKUPS = ".agent-hub/backups"
+ENABLED_REL = ".agent-hub/enabled.json"
+CATALOG_TEMPLATE = "templates/agent-hub/catalog.py"
 
 
 class PolicyConflictError(ValueError):
     """Project configuration conflicts with the model policy; nothing was written."""
+
+
+def lp(path):
+    """Extended-length path on Windows so deep catalog paths do not hit MAX_PATH."""
+    path = Path(path)
+    prefix = '\\\\?\\'
+    if os.name == "nt" and path.is_absolute() and not str(path).startswith(prefix):
+        return Path(prefix + str(path))
+    return path
 
 
 def digest(data):
@@ -202,6 +216,29 @@ def merge_settings(existing_bytes, hub_bytes, previous_digest):
     return (json.dumps(settings, indent=2, ensure_ascii=False) + "\n").encode("utf-8"), "merged", []
 
 
+def load_catalog_module(root):
+    """Load the project-side helper template (shared enable transform)."""
+    path = Path(root) / CATALOG_TEMPLATE
+    if not path.is_file():
+        return None
+    spec = importlib.util.spec_from_file_location("agent_hub_catalog_template", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _read_enabled(target):
+    data = _read_json(Path(target) / ENABLED_REL)
+    return data if data is not None else {}
+
+
+def _prune_backups(base, keep=5):
+    if not base.is_dir():
+        return
+    for old in sorted((p for p in base.iterdir() if p.is_dir()), key=lambda p: p.name, reverse=True)[keep:]:
+        shutil.rmtree(old, ignore_errors=True)
+
+
 def install(root, target, profile="full", fetch_external=True, *, home=None,
             runtime_scan=True, runner=None, which=None):
     root, target = Path(root).resolve(), Path(target).resolve()
@@ -215,7 +252,10 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
     runner = runner or default_runner
     which = which or shutil.which
     if fetch_external and profile == "full":
-        subprocess.run(["git", "-C", str(root), "submodule", "update", "--init"], check=True)
+        try:
+            subprocess.run(["git", "-C", str(root), "submodule", "update", "--init"], check=True)
+        except (subprocess.CalledProcessError, OSError):
+            pass  # reported below as external: unavailable (submodules not initialized)
     files = {}
     def add(rel, data):
         files[str(rel).replace("\\", "/")] = data
@@ -223,8 +263,10 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         add(rel, (root / rel).read_bytes())
     for src in sorted((root / ".claude/agents").glob("*.md")):
         add(src.relative_to(root), src.read_bytes())
+    own_skills = set()
     for folder in ("skills",):
         for src in sorted((root / folder).glob("*/SKILL.md")):
+            own_skills.add(src.parent.name)
             for runtime in (".claude/skills", ".agents/skills"):
                 add(f"{runtime}/{src.parent.name}/SKILL.md", src.read_bytes())
     if profile == "full":
@@ -232,8 +274,11 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
             if rel in files:
                 raise ValueError("External skill conflicts with hub skill: " + rel)
             add(rel, data)
+            parts = rel.split("/")
+            own_skills.add(parts[2])
     catalog = []
-    if profile == "full":
+    legacy = profile == "full" and not (root / "registry/external_capabilities.json").is_file()
+    if legacy:  # superseded by the approved registry when present (also avoids a slow tree scan)
         for repo in sorted((root / "external").iterdir()) if (root / "external").exists() else []:
             if not repo.is_dir() or repo.is_symlink():
                 continue
@@ -241,17 +286,67 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
                 if src.is_symlink() or not src.is_file() or ".git" in src.relative_to(repo).parts:
                     continue
                 catalog.append({"source": repo.name, "path": src.relative_to(repo).as_posix(), "status": "review-required"})
-    add(".agent-hub/external-catalog.json", (json.dumps(catalog, indent=2)+"\n").encode())
-    add(".agent-hub/README.md", b"# Agent Hub\nOwn agents and skills are installed. External catalog entries require review before activation; MCP services need their own setup. Start Claude with: claude --agent orchestrator --model opus\n")
-    manifest_path = target / ".agent-hub/manifest.json"
+    if legacy or profile != "full":
+        add(".agent-hub/external-catalog.json", (json.dumps(catalog, indent=2)+"\n").encode())
+    add(".agent-hub/README.md", b"# Agent Hub\nOwn agents and skills are installed. Approved external skills are active or searchable via .agent-hub/bin/catalog.py; MCP services need their own setup. Start Claude with: claude --agent orchestrator --model opus\n")
+    ltarget = lp(target)
+    manifest_path = ltarget / ".agent-hub/manifest.json"
     def safe_path(rel):
         p = target / rel
         if not p.resolve().is_relative_to(target) or any(q.is_symlink() for q in [p, *p.parents] if q != target and target in q.parents):
             raise ValueError(f"Unsafe path: {rel}")
-        return p
+        return lp(p)
     safe_path(".agent-hub/manifest.json")
     previous = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {"files": {}}
     prev_files = previous.get("files", {})
+    prev_ext = previous.get("external", {}) if isinstance(previous.get("external"), dict) else {}
+
+    # --- external capabilities (verified against registry hashes and pinned commits)
+    ext_meta, groups, enabled_targets = {}, {}, {}
+    ext = {"active_skills": 0, "catalog_skills": 0, "catalog_agents": 0, "skipped": {},
+           "status": "skipped: profile core"}
+    plan = None
+    if profile == "full":
+        try:
+            executors = mp.load_json(root / "MODEL_POLICY.json").get("executors", ["sonnet", "haiku"])
+        except (OSError, ValueError):
+            executors = ["sonnet", "haiku"]
+        plan = plan_external(root, own_skills, executors)
+        ext.update({k: plan[k] for k in ("active_skills", "catalog_skills", "catalog_agents", "skipped", "status")})
+    carry = set()
+    if plan is not None and plan["status"] == "ok":
+        for rel, data in plan["files"].items():
+            if rel not in files:
+                add(rel, data)
+                ext_meta[rel] = plan["meta"][rel]
+        index = "".join(json.dumps(e, ensure_ascii=False, separators=(",", ":")) + "\n" for e in plan["index"])
+        add(".agent-hub/catalog/index.jsonl", index.encode("utf-8"))
+        carry = {rel for rel, m in prev_ext.items() if m.get("id") in plan["skipped"]}
+        helper = load_catalog_module(root)
+        if helper is not None:
+            add(".agent-hub/bin/catalog.py", (root / CATALOG_TEMPLATE).read_bytes())
+            _, default_effort = helper.policy(root)
+            for iid in sorted(_read_enabled(target)):
+                item = plan["catalog"].get(iid)
+                if not item:
+                    continue
+                targets = helper.enable_targets({"kind": item["kind"], "name": item["name"]},
+                                                item["files"], default_effort)
+                enabled_targets[iid] = targets
+                for rel, data in targets.items():
+                    add(rel, data)
+                    fname = "agent.md" if item["kind"] == "agent" else rel.split("/", 3)[3]
+                    ext_meta[rel] = item["meta"][fname]
+    elif profile == "full" or previous.get("external"):
+        carry = set(prev_ext) | {r for r in prev_files if r.startswith(".agent-hub/catalog/")
+                                 or r == ".agent-hub/bin/catalog.py"}
+        if (ltarget / ".agent-hub/bin/catalog.py").is_file() and (root / CATALOG_TEMPLATE).is_file():
+            carry.discard(".agent-hub/bin/catalog.py")
+            add(".agent-hub/bin/catalog.py", (root / CATALOG_TEMPLATE).read_bytes())
+    if plan is not None:
+        for rel in ext_meta:
+            if rel.startswith((".claude/skills/", ".agents/skills/")):
+                groups.setdefault("/".join(rel.split("/")[:3]), []).append(rel)
 
     # --- preflight: settings and MCP (nothing is written if this fails)
     settings_path = safe_path(".claude/settings.json")
@@ -276,8 +371,45 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
             raise ValueError(f"Unsafe path: {rel}")
         if p.exists() and p.read_bytes() != data and prev_files.get(rel) != digest(p.read_bytes()):
             conflicts.append(rel)
+    # A skill directory is staged as a whole: never mix hub files into a foreign directory.
+    for prefix, rels in groups.items():
+        folder = ltarget / prefix
+        owned = any(r.startswith(prefix + "/") for r in prev_files)
+        extra = False
+        if folder.is_dir() and not owned:
+            present = {q.relative_to(ltarget).as_posix() for q in folder.rglob("*") if q.is_file()}
+            extra = bool(present - set(rels))
+        if extra or any(r in conflicts for r in rels):
+            conflicts += [r for r in rels if r not in conflicts]
     for rel in conflicts:
         safe_path(f"{INCOMING}/{rel}")
+
+    # --- classify changes (for backup and rollback)
+    overwritten = [r for r, d in files.items() if r not in conflicts and (ltarget / r).is_file()
+                   and (ltarget / r).read_bytes() != d]
+    created = [r for r in files if r not in conflicts and not (ltarget / r).exists()]
+    stale = [r for r, want in prev_files.items()
+             if r not in files and r not in carry and r not in MERGED and (ltarget / r).is_file()
+             and digest((ltarget / r).read_bytes()) == want]
+    for rel in stale:
+        safe_path(rel)
+    backup_id = None
+    if overwritten or stale or (created and manifest_path.exists()):
+        stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+        backup_id, n = stamp, 1
+        while (ltarget / BACKUPS / backup_id).exists():
+            backup_id, n = f"{stamp}-{n}", n + 1
+        base = safe_path(f"{BACKUPS}/{backup_id}")
+        base.mkdir(parents=True, exist_ok=True)
+        for rel in sorted(set(overwritten) | set(stale)):
+            dest = base / "files" / rel
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes((ltarget / rel).read_bytes())
+        if manifest_path.exists():
+            (base / "manifest.json").write_bytes(manifest_path.read_bytes())
+        (base / "meta.json").write_text(json.dumps(
+            {"restored": sorted(set(overwritten) | set(stale)), "created": sorted(created)}, indent=2) + "\n",
+            encoding="utf-8")
 
     # --- write
     for rel, data in files.items():
@@ -290,23 +422,111 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         p.parent.mkdir(parents=True, exist_ok=True)
         if not p.exists() or p.read_bytes() != data:
             p.write_bytes(data)
+    for rel in stale:
+        p = ltarget / rel
+        p.unlink()
+        for parent in p.parents:
+            if parent == ltarget or any(parent.iterdir()):
+                break
+            parent.rmdir()
     if new_settings is not None:
         settings_path.parent.mkdir(parents=True, exist_ok=True)
         settings_path.write_bytes(new_settings)
     if new_mcp is not None:
         mcp_path.write_text(json.dumps(new_mcp, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    incoming_root = target / INCOMING
+    incoming_root = ltarget / INCOMING
     if incoming_root.is_dir():
-        for stale in sorted(incoming_root.rglob("*"), reverse=True):
-            rel = stale.relative_to(incoming_root).as_posix()
-            if stale.is_file() and not stale.is_symlink() and rel not in conflicts:
-                stale.unlink()
-            elif stale.is_dir() and not any(stale.iterdir()):
-                stale.rmdir()
-    merged = [rel for rel in MERGED if (target / rel).is_file()]
+        for stale_file in sorted(incoming_root.rglob("*"), reverse=True):
+            rel = stale_file.relative_to(incoming_root).as_posix()
+            if stale_file.is_file() and not stale_file.is_symlink() and rel not in conflicts:
+                stale_file.unlink()
+            elif stale_file.is_dir() and not any(stale_file.iterdir()):
+                stale_file.rmdir()
+    merged = [rel for rel in MERGED if (ltarget / rel).is_file()]
     manifest_files = {k: digest(v) for k, v in files.items() if k not in conflicts}
+    manifest_ext = {k: v for k, v in ext_meta.items() if k not in conflicts}
+    for rel in carry:
+        if rel in prev_files and rel not in manifest_files:
+            manifest_files[rel] = prev_files[rel]
+            if rel in prev_ext:
+                manifest_ext[rel] = prev_ext[rel]
+    if enabled_targets:
+        enabled = _read_enabled(target)
+        for iid, targets in enabled_targets.items():
+            record = enabled.get(iid)
+            if isinstance(record, dict):
+                record["files"] = {r: digest(d) for r, d in targets.items()
+                                   if r not in conflicts} | {r: h for r, h in record.get("files", {}).items()
+                                                            if r in conflicts}
+        (ltarget / ENABLED_REL).write_text(json.dumps(enabled, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(json.dumps({"profile": profile, "files": manifest_files, "merged": merged}, indent=2)+"\n", encoding="utf-8")
+    manifest_path.write_text(json.dumps({"profile": profile, "files": manifest_files, "merged": merged,
+                                         "external": manifest_ext}, indent=2)+"\n", encoding="utf-8")
+    if backup_id:
+        _prune_backups(ltarget / BACKUPS)
     return {"installed_files": len(manifest_files), "external_candidates": len(catalog),
             "external_activation": "review-required", "target": str(target),
-            "conflicts": sorted(conflicts), "settings": settings_status, "mcp": mcp_report}
+            "conflicts": sorted(conflicts), "settings": settings_status, "mcp": mcp_report,
+            "external": ext, "backup": backup_id}
+
+
+def rollback(target, backup_id=None):
+    """Restore a backup made by install; user-modified files are reported and left alone."""
+    target = Path(target).resolve()
+    ltarget = lp(target)
+    base = ltarget / BACKUPS
+    available = sorted((p.name for p in base.iterdir() if p.is_dir()), reverse=True) if base.is_dir() else []
+    if not available:
+        raise ValueError("No backups found in " + str(base))
+    if backup_id is None:
+        backup_id = available[0]
+    elif backup_id not in available:
+        raise ValueError(f"Unknown backup {backup_id}; available: {available}")
+    folder = base / backup_id
+    manifest_path = ltarget / ".agent-hub/manifest.json"
+    current = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {"files": {}}
+    cur_files = current.get("files", {})
+    meta = json.loads((folder / "meta.json").read_text(encoding="utf-8"))
+    restored, removed, conflicts = [], [], []
+
+    def unmodified(rel):
+        p = ltarget / rel
+        return not p.exists() or (p.is_file() and digest(p.read_bytes()) == cur_files.get(rel))
+
+    for rel in meta.get("restored", []):
+        if not (target / rel).resolve().is_relative_to(target):
+            raise ValueError("Unsafe path in backup: " + rel)
+        if unmodified(rel):
+            p = ltarget / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_bytes((folder / "files" / rel).read_bytes())
+            restored.append(rel)
+        else:
+            conflicts.append(rel)
+    for rel in meta.get("created", []):
+        p = ltarget / rel
+        if not (target / rel).resolve().is_relative_to(target):
+            raise ValueError("Unsafe path in backup: " + rel)
+        if not p.exists():
+            continue
+        if p.is_file() and digest(p.read_bytes()) == cur_files.get(rel):
+            p.unlink()
+            removed.append(rel)
+        else:
+            conflicts.append(rel)
+    prev_manifest_file = folder / "manifest.json"
+    if prev_manifest_file.is_file():
+        restored_manifest = json.loads(prev_manifest_file.read_text(encoding="utf-8"))
+        files = dict(restored_manifest.get("files", {}))
+        ext = dict(restored_manifest.get("external", {}))
+        for rel in conflicts:
+            if rel in cur_files:
+                files[rel] = cur_files[rel]
+            else:
+                files.pop(rel, None)
+            if rel in current.get("external", {}):
+                ext[rel] = current["external"][rel]
+        restored_manifest["files"], restored_manifest["external"] = files, ext
+        manifest_path.write_text(json.dumps(restored_manifest, indent=2) + "\n", encoding="utf-8")
+    return {"backup": backup_id, "restored": sorted(restored), "removed": sorted(removed),
+            "conflicts": sorted(conflicts)}

@@ -2,6 +2,7 @@
 name: supervisor
 description: Planning and gate-checking subagent (sonnet). Coordinates complex work, routes to specialists and enforces delivery gates by returning plans to the orchestrator. Never top-level; cannot spawn subagents.
 model: sonnet
+effort: medium
 skills:
   - token-budget
   - documentation-ledger
