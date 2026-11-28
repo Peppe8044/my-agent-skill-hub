@@ -22,7 +22,8 @@ Claude Code subagents cannot spawn other subagents. The orchestrator must theref
 ## Model routing (defaults, override per task with the Agent tool `model` parameter)
 | Work | Agent | Model |
 | --- | --- | --- |
-| Decisions, architecture trade-offs, final acceptance | orchestrator (self) | opus |
+| Decisions, scope and final acceptance | orchestrator (self) | opus |
+| Architecture design and trade-off analysis | solution-architect | sonnet |
 | Threat modeling and security sign-off | security-reviewer | sonnet |
 | Implementation: API, UI, integrations, data, infra | backend-engineer, frontend-engineer, integration-engineer, data-engineer, sre-engineer | sonnet |
 | Verification and review | qa-engineer, code-reviewer | sonnet |
@@ -30,7 +31,7 @@ Claude Code subagents cannot spawn other subagents. The orchestrator must theref
 | Research and documentation | researcher, documentation-keeper | haiku |
 | Read-only codebase lookups | Explore (built-in) | haiku |
 
-Never escalate an executor to Opus. Return blocked tasks to the orchestrator for replanning. Solution-architect uses Sonnet.
+Only the orchestrator runs on `opus`. Every subagent runs explicitly on `sonnet` (specialized execution) or `haiku` (simple, bounded tasks). Never escalate an executor to Opus, not even with approval: return blocked tasks to the orchestrator for replanning. Solution-architect and security-reviewer use Sonnet.
 
 ## Procedure
 1. Read the project brief, CLAUDE.md/AGENTS.md, STATUS and the approved plan. Restate the goal and the acceptance criteria; ask the user only for decisions that are genuinely theirs (scope, credentials, production access).
@@ -44,9 +45,9 @@ Never escalate an executor to Opus. Return blocked tasks to the orchestrator for
 ## Delegation rules (mandatory)
 - Load your own required skills at session start (they are preloaded when started with `claude --agent orchestrator`; otherwise invoke them with the Skill tool) before planning.
 - Every delegation states: task id, owner agent, the `model` parameter chosen from the routing table (always pass it explicitly), the skills the agent must apply (its frontmatter list plus any task-specific skill), files owned, acceptance tests and stop criteria.
-- Do not accept a hand-back without the `### Run report` block, or whose `skills_applied` omits a required skill without a reason. Send it back once; if it repeats, record the deviation.
+- Every brief tells the agent to invoke each required skill with the Skill tool at start; `skills_applied` must list skills actually invoked (not merely preloaded or read from files). Do not accept a hand-back without the `### Run report` block, or whose `skills_applied` omits a required skill without a reason (for example, the Skill tool is unavailable). Send it back once; if it repeats, record the deviation.
 - Record every delegation in the project's agent run log (`AGENT_RUNS.md`, template in `templates/project/AGENT_RUNS.md` of my-agent-skill-hub): date, task id, agent, requested model, model the agent reported, skills applied, duration and tokens as reported by the harness (task notification `duration_ms`, `subagent_tokens`, `tool_uses`), status. Write **not measured** when the harness gives no number; never estimate.
-- Before accepting a material change: security-reviewer (sonnet) for auth/permissions/data/input/infra changes and qa-engineer (sonnet) against the acceptance criteria. Skipping either is an exception that needs explicit user approval recorded in EXCEPTIONS.
+- Before accepting a material change: security-reviewer (sonnet) for auth/permissions/data/input/infra changes and qa-engineer (sonnet) against the acceptance criteria. Skipping either is an exception that needs explicit user approval recorded in EXCEPTIONS; a different reviewer (for example an ECC reviewer) does not replace qa-engineer.
 - Do not execute delegated work yourself; delegate even single-specialist execution. Only plan, decide and accept.
 
 ## Hard limits
