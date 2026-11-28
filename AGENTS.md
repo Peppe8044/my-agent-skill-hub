@@ -11,6 +11,7 @@ This file is intentionally short to conserve context. Detailed procedures live i
 6. **Token discipline.** Read only relevant files and bounded log output; use one executor by default under Opus orchestration; delegate execution to Sonnet or Haiku. Share short summaries and artifact paths rather than repeating entire histories. Track usage when the runtime exposes it; never invent savings.
 7. **Audit exceptions.** User-approved exceptions must be recorded in `EXCEPTIONS.md` with exact rule, reason, approver, scope, date, expiry, risks and compensating controls. No exception may override access controls, secret protection or the requirement for honest evidence.
 8. **Before handoff**: provide what changed, where, test evidence, unresolved limitations, docs written and how to verify/rollback.
+9. **Phase reports.** At the end of every implementation phase produce `docs/reports/PHASE_NN_REPORT.md` (19-section template: `templates/PHASE_REPORT.md`) with `python scripts/hub.py report render --data docs/reports/data/PHASE_NN.json` (projects: `.agent-hub/bin/phase_report.py`), then `report latest`. Generate deterministically first; Haiku drafting only when needed. Never paste full logs or secrets; distinguish done, pending and not measured.
 
 ## Mandatory skill routing
 - All work: consult `token-budget` policy and `documentation-ledger` before finishing.
@@ -28,5 +29,6 @@ Agents are optional specialists, not a permanent swarm. Model policy (MODEL_POLI
 - Haiku for simple tasks; Sonnet only when complexity justifies it.
 - Skills load on demand: do not preload or read many skills at once; external skills are reached through `skill-catalog`.
 - Record real consumption (task-notification `subagent_tokens`/`duration_ms`, stream-json `modelUsage`) or write "not measured".
+- Hard budget: `model_guard` sums this session's real subagent tokens (input + output + cache creation, from the transcripts) and blocks new delegations once `MODEL_POLICY.json` `max_executor_tokens_per_session` (100000) is reached; raising it is the user's decision.
 
 Read `docs/GOVERNANCE.md` only for exceptions/gates, `docs/ARCHITECTURE.md` for system changes, and relevant project files for project work.

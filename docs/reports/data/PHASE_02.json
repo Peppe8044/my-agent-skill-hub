@@ -1,0 +1,58 @@
+{
+  "phase": 2,
+  "title": "Política de modelos verificada, instalador seguro y doctor real",
+  "objective": "Autenticar GitHub CLI, resolver los conflictos del PR #2 sin perder mejoras, corregir los hallazgos de política de modelos con pruebas reales de delegación, hacer seguro el instalador (perfil full) y validar Docker, WSL y OneDrive.",
+  "executive_summary": [
+    "gh autenticado como Peppe8044; indie-game-studio confirmado PRIVATE y el hub PUBLIC.",
+    "Conflictos del PR #2 resueltos con merge (sin push forzado); CI en verde.",
+    "Las pruebas reales refutaron que CLAUDE_CODE_SUBAGENT_MODEL anule el modelo de cada agente: se conservó como respaldo.",
+    "Nuevo hook model_guard: bloquea ejecutores Opus, fork y built-ins sin modelo en runtime.",
+    "Instalador full con detección de MCP duplicados y preservación de archivos; doctor comprueba el entorno real."
+  ],
+  "initial_state": ["PR #2 en draft con conflictos.", "gh sin autenticar.", "Docker detenido."],
+  "final_state": ["PR #2 MERGEABLE/CLEAN con CI success.", "Docker operativo.", "Política verificada en runtime."],
+  "components": ["scripts/model_policy.py", ".claude/hooks/model_guard.py", "Detección de MCP y merge de settings en el instalador", "Conflictos preservados en .agent-hub/incoming/", "scripts/doctor.py", "ADR 0003 y 0004"],
+  "files": {"created": ["scripts/model_policy.py", "scripts/doctor.py", ".claude/hooks/model_guard.py", "docs/MODEL_ROUTING_REPORT.md", "docs/QUALITY_REPORT.md", "docs/decisions/0003-model-routing-policy.md", "docs/decisions/0004-installer-mcp-dedup-and-preservation.md"], "modified": ["scripts/hub.py", "scripts/bootstrap.py", "scripts/project_install.py", ".claude/settings.json", "MODEL_POLICY.json", "AGENTS.md", "CLAUDE.md", "README.md", "docs/*", "tests/*"]},
+  "versions": ["Claude Code 2.1.332", "Docker Desktop 4.87.0 / Engine 29.7.2 / Compose v5.4.0", "WSL 2.7.11.0"],
+  "commands": [
+    {"cmd": "python scripts/hub.py validate", "result": "PASS"},
+    {"cmd": "python scripts/hub.py doctor", "result": "exit 0 (11 OK, 2 WARN: core.longpaths, ruta OneDrive)"},
+    {"cmd": "python -m unittest discover -s tests -v", "result": "57 tests OK"},
+    {"cmd": "claude -p --agent orchestrator --model opus (antes, control y después)", "result": "modelos observados en las transcripciones"}
+  ],
+  "tests": [
+    {"name": "unittest", "status": "passed", "evidence": "57 OK; cada commit verificado en worktree limpio"},
+    {"name": "Delegación real antes del cambio", "status": "passed", "evidence": "researcher y memory-curator → claude-haiku-5-5; code-reviewer → claude-sonnet-5-5"},
+    {"name": "Control general-purpose sin modelo", "status": "passed", "evidence": "claude-sonnet-5-5 (no heredó Opus)"},
+    {"name": "model_guard en runtime", "status": "passed", "evidence": "bloqueó opus explícito, general-purpose y Explore sin modelo"},
+    {"name": "GitHub Actions", "status": "passed", "evidence": "run 46100671177 success"},
+    {"name": "Docker hello-world", "status": "passed", "evidence": "Hello from Docker!"},
+    {"name": "Sincronización de OneDrive", "status": "not-measured", "evidence": "proceso OneDrive no activo; estado desconocido"}
+  ],
+  "evidence": ["Precedencia observada: model explícito > frontmatter > CLAUDE_CODE_SUBAGENT_MODEL > heredado.", "Evidencia por subagente tomada de message.model en las transcripciones."],
+  "risks": ["Un model: opus explícito tendría prioridad sobre el respaldo: lo cubre model_guard.", "Los hooks pueden desactivarse en la configuración del usuario.", "Repositorios bajo una ruta de OneDrive."],
+  "decisions": [
+    {"decision": "Conservar CLAUDE_CODE_SUBAGENT_MODEL=sonnet", "why": "La evidencia mostró que no contradice la asignación individual; evita heredar Opus."},
+    {"decision": "Hook PreToolUse model_guard", "why": "Única defensa en runtime contra la escalada a Opus."},
+    {"decision": "Merge en lugar de rebase", "why": "Sin push forzado."},
+    {"decision": "full por defecto con detección de MCP duplicados", "why": "Decisión del owner; evita duplicar el conector claude.ai ClickUp."}
+  ],
+  "tokens": [
+    {"agent": "Docker/WSL/OneDrive (incompleto)", "model": "claude-haiku-5-5", "tokens": 52287, "tool_uses": 3, "duration_s": 382.1, "source": "task-notification"},
+    {"agent": "Documentación de política", "model": "claude-sonnet-5-5", "tokens": 94244, "tool_uses": 16, "duration_s": 277.9, "source": "task-notification"},
+    {"agent": "Docker/WSL/OneDrive (repetición)", "model": "claude-haiku-5-5", "tokens": 59628, "tool_uses": 6, "duration_s": 254.8, "source": "task-notification"},
+    {"agent": "Código de política, instalador y doctor", "model": "claude-sonnet-5-5", "tokens": 129165, "tool_uses": 31, "duration_s": 669.1, "source": "task-notification"}
+  ],
+  "costs": [{"item": "Pruebas reales claude -p (antes, control y después)", "usd": 1.0461, "source": "total_cost_usd"}],
+  "duration": "No medida con precisión; ejecutores entre 02:31 y 02:54 UTC del 2026-11-28.",
+  "problems": [
+    {"problem": "Caducó el primer código de dispositivo de GitHub", "solution": "Se generó uno nuevo."},
+    {"problem": "Docker devolvió HTTP 500 durante más de 5 min", "solution": "Arranque lento; operativo al reintentar."},
+    {"problem": "El primer ejecutor de Docker se detuvo por una instrucción ambigua", "solution": "Repetición con secciones independientes (52.287 tokens desperdiciados)."},
+    {"problem": "El hallazgo de la fase 1 sobre la variable era incorrecto", "solution": "Refutado con prueba de control y documentado."}
+  ],
+  "pending": ["Instalar la política en indie-game-studio.", "Evaluar el riesgo de OneDrive.", "Esfuerzo global xhigh de Opus."],
+  "authorizations": ["Fusionar el PR #2"],
+  "github": {"commits": ["da57564 merge de main", "f6c37f8 política, guard, MCP y doctor", "aef24f4 documentación", "1e1ea41 informes", "c0bd078 (indie-game-studio) estado del proyecto"], "prs": ["#2 actualizado (fusionado al inicio de la fase 3 como 97aedfa)"], "links": ["https://github.com/Peppe8044/my-agent-skill-hub/pull/2", "https://github.com/Peppe8044/my-agent-skill-hub/actions/runs/46100671177"]},
+  "next_phase": "Integrar las capacidades externas por reglas, con carga bajo demanda e instalación automática."
+}

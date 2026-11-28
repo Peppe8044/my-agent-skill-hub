@@ -1,0 +1,58 @@
+{
+  "phase": 3,
+  "title": "Integración de capacidades externas y control de tokens",
+  "objective": "Inventariar de forma determinista los 8 submódulos, aprobar por reglas las capacidades compatibles, instalarlas automáticamente con carga bajo demanda, procedencia y rollback, e incorporar reglas de control de tokens.",
+  "executive_summary": [
+    "PR #2 fusionado (97aedfa); rama feat/external-skills-integration.",
+    "Escáner determinista: 2.204 skills y 312 agentes clasificados sin LLM.",
+    "995 skills aprobadas (14 activas y 981 en catálogo bajo demanda), 181 requieren revisión de scripts y 1.028 rechazadas; 45 agentes en catálogo.",
+    "install/new/bootstrap instalan automáticamente lo aprobado, con procedencia, copias de seguridad y rollback.",
+    "Esfuerzo medium para ejecutores; launch fuerza --effort high porque la configuración global xhigh prevalecía."
+  ],
+  "initial_state": ["registry/integrations.json sin skills aprobadas.", "Ninguna capacidad externa instalable."],
+  "final_state": ["Registro central de aprobados con commit fijado y sha256.", "Catálogo bajo demanda y skill propia skill-catalog.", "PR #3 con CI success."],
+  "components": ["scripts/external_scan.py", "registry/external_capabilities.json", "registry/EXTERNAL_SKILLS_INVENTORY.json", "Instalación por niveles (activo/catálogo)", "templates/agent-hub/catalog.py", "hub.py rollback", "skill skill-catalog", "Reglas de esfuerzo y tokens"],
+  "files": {"created": ["scripts/external_scan.py", "scripts/smoke_bootstrap.py", "templates/agent-hub/catalog.py", "skills/skill-catalog/SKILL.md", "tests/test_external_scan.py", "tests/test_external_install.py", "docs/EXTERNAL_SKILLS_REPORT.md", "docs/SKILL_COMPATIBILITY_REPORT.md", "docs/LICENSE_REGISTRY.md", "docs/TOKEN_USAGE_REPORT.md", "docs/decisions/0005-external-capabilities.md"], "modified": ["scripts/project_install.py", "scripts/hub.py", "scripts/bootstrap.py", "scripts/doctor.py", "scripts/model_policy.py", ".claude/hooks/model_guard.py", ".claude/agents/* (effort)", "MODEL_POLICY.json", "AGENTS.md", "README.md"]},
+  "versions": ["Submódulos sin cambios de commit fijado", "Claude Code 2.1.332"],
+  "commands": [
+    {"cmd": "python scripts/hub.py external-scan / --check", "result": "salidas deterministas sin desviaciones"},
+    {"cmd": "python -m unittest discover -s tests", "result": "93 tests OK"},
+    {"cmd": "python scripts/smoke_bootstrap.py <temporal>", "result": "ok: true"},
+    {"cmd": "claude -p en el proyecto temporal", "result": "57 skills detectadas, 0 del catálogo en contexto"}
+  ],
+  "tests": [
+    {"name": "unittest", "status": "passed", "evidence": "93 OK; commits verificados por separado (74 y 93)"},
+    {"name": "Bootstrap end-to-end", "status": "passed", "evidence": "30/43 propios, 14 activas, 981+45 catálogo, 0 duplicados, segunda instalación sin cambios"},
+    {"name": "Detección en Claude Code", "status": "passed", "evidence": "init con 57 skills del proyecto y 0 del catálogo"},
+    {"name": "Carga individual bajo demanda", "status": "passed", "evidence": "Skill(godot-patterns) y catalog.py search → show → lectura de una sola skill"},
+    {"name": "model_guard (opus y effort xhigh)", "status": "passed", "evidence": "ambas llamadas bloqueadas"},
+    {"name": "Esfuerzo de subagentes", "status": "passed", "evidence": "transcripción: effort medium"},
+    {"name": "GitHub Actions", "status": "passed", "evidence": "run 46106738993 success"},
+    {"name": "Revisión humana de 181 skills con scripts y 45 agentes", "status": "pending", "evidence": "fuera del alcance automático"}
+  ],
+  "evidence": ["Las reglas R1–R9 y la R6b están documentadas en SKILL_COMPATIBILITY_REPORT.", "La clasificación automatizada no es una auditoría de seguridad completa."],
+  "risks": ["El contenido aprobado no se revisó manualmente línea por línea.", "Instalación completa de alrededor de 1 minuto por hashes y git status.", "Configuración global effortLevel xhigh."],
+  "decisions": [
+    {"decision": "Dos niveles: 14 activas + catálogo bajo demanda", "why": "Cientos de skills activas inflarían el contexto de cada sesión."},
+    {"decision": "R6b y dominio por defecto por repositorio", "why": "Corrigen 10 falsos positivos defensivos y 227 rechazos por falta de palabras clave."},
+    {"decision": "Excluir harnesses/orquestadores del nivel activo", "why": "Competirían con la política de un único orquestador Opus."},
+    {"decision": "launch pasa --effort", "why": "La configuración global xhigh prevalecía sobre el frontmatter (verificado)."}
+  ],
+  "tokens": [
+    {"agent": "S1 escáner", "model": "claude-sonnet-5-5 (effort medium)", "tokens": 104504, "tool_uses": 12, "duration_s": 447.5, "source": "task-notification"},
+    {"agent": "S2 instalador, catálogo y rollback", "model": "claude-sonnet-5-5 (effort medium)", "tokens": 171926, "tool_uses": 61, "duration_s": 2409.5, "source": "task-notification"},
+    {"agent": "S3 reglas, effort y documentación", "model": "claude-haiku-5-5 (effort medium)", "tokens": 85622, "tool_uses": 19, "duration_s": 259.5, "source": "task-notification"}
+  ],
+  "costs": [{"item": "Detección en Claude Code", "usd": 0.4532, "source": "total_cost_usd"}, {"item": "Verificación de --effort high", "usd": 0.2756, "source": "total_cost_usd"}],
+  "duration": "No medida con precisión; el ejecutor más largo (S2) tardó 40 min.",
+  "problems": [
+    {"problem": "Falsos positivos del filtro de seguridad ofensiva", "solution": "Regla R6b basada en la intención del nombre."},
+    {"problem": "catalog.py enable no validaba nombres ni rutas", "solution": "Validación añadida, con prueba."},
+    {"problem": "Un heredoc de S3 quedó bloqueado", "solution": "Proceso detenido; la edición era idempotente."},
+    {"problem": "La documentación trataba AGPL como prohibición", "solution": "Corregido al cerrar la fase: excluded-by-policy."}
+  ],
+  "pending": ["Revisión humana de las skills con scripts y de los agentes de catálogo.", "Agent Memory y OpenViking (restricción vigente).", "Hooks de ECC (fase 4)."],
+  "authorizations": ["Fusionar el PR #3", "Bajar effortLevel global a high"],
+  "github": {"commits": ["c31a46e escáner y registro", "c9fe900 instalación por niveles, catálogo, rollback y effort", "7de9fdd documentación e informes", "4824f88 aclaración AGPL y alcance de la clasificación"], "prs": ["#3 fusionado como 623b3ca"], "links": ["https://github.com/Peppe8044/my-agent-skill-hub/pull/3"]},
+  "next_phase": "Integrar los hooks de ECC de forma selectiva con un gestor de hooks propio e implantar informes consolidados por fase."
+}

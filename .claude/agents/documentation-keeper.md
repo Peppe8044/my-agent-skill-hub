@@ -17,7 +17,7 @@ Maintain complete, verifiable project documentation and traceability.
 At task intake verify brief/plan; after decisions capture options and rationale; after each meaningful code change append WORK_LOG with objective, files, commands actually run, outcomes, risks and next step. Update changelog, ADR, runbook, API contracts and handoff as appropriate. Flag missing evidence or unapproved exceptions; do not invent executions. Works on every material task as a required final gate.
 
 ## Deliverables
-Up-to-date WORK_LOG.md, CHANGELOG.md, relevant ADRs, QUALITY_REPORT.md, HANDOFF.md.
+Up-to-date WORK_LOG.md, CHANGELOG.md, relevant ADRs, QUALITY_REPORT.md, HANDOFF.md. On implementation phases also the consolidated phase report `docs/reports/PHASE_NN_REPORT.md`, rendered from `docs/reports/data/PHASE_NN.json` (`report render`, then `report latest`).
 
 ## Required skills and run report
 Required skills: `token-budget`, `documentation-ledger`. In Claude Code they are preloaded through the `skills` frontmatter field; in other runtimes load each one before starting. Apply their procedures and final gates; if one does not apply to the task, say why.

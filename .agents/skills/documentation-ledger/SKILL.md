@@ -13,6 +13,7 @@ description: Use on every meaningful project task to record decisions, code chan
 5. Update CHANGELOG for user-visible changes and runbooks/API docs for changed interfaces. Generate QUALITY_REPORT and HANDOFF for deliveries.
 6. Check every claim against actual evidence: distinguish passed, failed, skipped and not-run. If any mandatory record missing flag the task incomplete.
 7. If the user explicitly waives a process step, register exact scope/approver/date/risk/expiry and compensation in EXCEPTIONS. Never silently omit controls.
+8. Phase report: at the end of every implementation phase write the data file `docs/reports/data/PHASE_NN.json`, run `python scripts/hub.py report render --data docs/reports/data/PHASE_NN.json` (projects: `.agent-hub/bin/phase_report.py`) to produce `docs/reports/PHASE_NN_REPORT.md` from `templates/PHASE_REPORT.md`, then `report latest`. Generate deterministically first; draft text with Haiku only when needed. Never paste full logs or secrets; mark each test as passed, failed, pending or not measured.
 
 ## Final gate
 Follow `AGENTS.md`; update `WORK_LOG.md` with real evidence on all material tasks. Follow `token-budget` to minimize excess calls while preserving quality. If a process rule is waived, record user approval, scope, risk and compensation in `EXCEPTIONS.md`.
