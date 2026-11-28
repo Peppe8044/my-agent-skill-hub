@@ -1,11 +1,19 @@
 {
   "orchestrator": "opus",
-  "executors": ["sonnet", "haiku"],
+  "executors": [
+    "sonnet",
+    "haiku"
+  ],
   "allow_inherit": false,
   "allow_executor_opus": false,
   "default_parallel_agents": 1,
   "max_parallel_agents": 3,
   "max_retries": 2,
-  "executor_efforts": ["low", "medium", "high"],
-  "default_executor_effort": "medium"
+  "executor_efforts": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "default_executor_effort": "medium",
+  "max_executor_tokens_per_session": 100000
 }

@@ -114,3 +114,46 @@ class GuardTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BudgetTests(unittest.TestCase):
+    def _session(self, tmp, per_message, messages):
+        project = Path(tmp) / "p"
+        (project / ".claude/agents").mkdir(parents=True)
+        (project / "MODEL_POLICY.json").write_text(json.dumps(
+            {"executors": ["sonnet", "haiku"], "max_executor_tokens_per_session": 1000}), encoding="utf-8")
+        transcript = Path(tmp) / "s.jsonl"
+        transcript.write_text("{}\n", encoding="utf-8")
+        sub = Path(tmp) / "s" / "subagents"
+        sub.mkdir(parents=True)
+        lines = []
+        for i in range(messages):
+            line = json.dumps({"type": "assistant", "message": {"id": "m%d" % i, "usage": {
+                "input_tokens": per_message, "output_tokens": 0, "cache_creation_input_tokens": 0,
+                "cache_read_input_tokens": 99999}}})
+            lines += [line, line]  # same message id twice: counted once
+        (sub / "agent-a.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return project, str(transcript)
+
+    def run_guard(self, project, transcript):
+        payload = {"tool_name": "Agent", "transcript_path": transcript,
+                   "tool_input": {"subagent_type": "general-purpose", "model": "haiku"}}
+        return call(project, payload)
+
+    def test_budget_blocks_new_delegations_when_exhausted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project, transcript = self._session(tmp, 600, 2)  # 1200 >= 1000 (cache reads ignored)
+            proc = self.run_guard(project, transcript)
+            self.assertEqual(2, proc.returncode)
+            self.assertIn("budget", proc.stderr)
+
+    def test_budget_allows_under_limit_and_dedupes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project, transcript = self._session(tmp, 400, 2)  # 800 < 1000 although lines are duplicated
+            self.assertEqual(0, self.run_guard(project, transcript).returncode)
+
+    def test_budget_not_measurable_allows(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project, _ = self._session(tmp, 600, 2)
+            self.assertEqual(0, self.run_guard(project, str(Path(tmp) / "missing.jsonl")).returncode)
+

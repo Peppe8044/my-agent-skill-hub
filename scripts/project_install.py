@@ -13,7 +13,9 @@ from urllib.parse import urlsplit
 try:
     from .integrations import approved_files, mcp_config, plan_external
     from . import model_policy as mp
+    from . import hooks_manager as hm
 except ImportError:
+    import hooks_manager as hm
     from integrations import approved_files, mcp_config, plan_external
     import model_policy as mp
 
@@ -343,6 +345,17 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         if (ltarget / ".agent-hub/bin/catalog.py").is_file() and (root / CATALOG_TEMPLATE).is_file():
             carry.discard(".agent-hub/bin/catalog.py")
             add(".agent-hub/bin/catalog.py", (root / CATALOG_TEMPLATE).read_bytes())
+    # --- hooks (registry-driven; ECC files verified against pinned commit and sha256)
+    hplan = hm.plan_hooks(root, target, profile, prev_files, home)
+    for rel, data in hplan["files"].items():
+        add(rel, data)
+        if rel in hplan["meta"]:
+            ext_meta[rel] = hplan["meta"][rel]
+    carry = set(carry) | hplan["carry"]
+    for rel, dest in (("scripts/phase_report.py", ".agent-hub/bin/phase_report.py"),
+                      ("templates/PHASE_REPORT.md", "docs/reports/PHASE_REPORT_TEMPLATE.md")):
+        if (root / rel).is_file():
+            add(dest, (root / rel).read_bytes())
     if plan is not None:
         for rel in ext_meta:
             if rel.startswith((".claude/skills/", ".agents/skills/")):
@@ -357,6 +370,9 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         existing_settings, (root / ".claude/settings.json").read_bytes(), prev_files.get(".claude/settings.json"))
     if problems:
         raise PolicyConflictError("Install stopped, nothing written: " + "; ".join(problems))
+    new_settings = hm.finalize_settings(existing_settings, new_settings, hplan)
+    if new_settings is not None and settings_status == "unchanged":
+        settings_status = "merged"
     mcp_report = {"added": [], "skipped": {}, "preserved": [], "conflicts": [], "runtime_scan": "skipped"}
     new_mcp = None
     mcp_path = safe_path(".mcp.json")
@@ -394,7 +410,8 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
     for rel in stale:
         safe_path(rel)
     backup_id = None
-    if overwritten or stale or (created and manifest_path.exists()):
+    settings_backup = new_settings is not None and existing_settings is not None
+    if overwritten or stale or settings_backup or (created and manifest_path.exists()):
         stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
         backup_id, n = stamp, 1
         while (ltarget / BACKUPS / backup_id).exists():
@@ -407,9 +424,11 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
             dest.write_bytes((ltarget / rel).read_bytes())
         if manifest_path.exists():
             (base / "manifest.json").write_bytes(manifest_path.read_bytes())
-        (base / "meta.json").write_text(json.dumps(
-            {"restored": sorted(set(overwritten) | set(stale)), "created": sorted(created)}, indent=2) + "\n",
-            encoding="utf-8")
+        meta = {"restored": sorted(set(overwritten) | set(stale)), "created": sorted(created)}
+        if settings_backup:
+            (base / "settings.json").write_bytes(existing_settings)
+            meta["settings_after"] = digest(new_settings)
+        (base / "meta.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
 
     # --- write
     for rel, data in files.items():
@@ -467,7 +486,7 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
     return {"installed_files": len(manifest_files), "external_candidates": len(catalog),
             "external_activation": "review-required", "target": str(target),
             "conflicts": sorted(conflicts), "settings": settings_status, "mcp": mcp_report,
-            "external": ext, "backup": backup_id}
+            "external": ext, "backup": backup_id, "hooks": hplan["report"]}
 
 
 def rollback(target, backup_id=None):
@@ -514,6 +533,19 @@ def rollback(target, backup_id=None):
             removed.append(rel)
         else:
             conflicts.append(rel)
+    if meta.get("settings_after") and (folder / "settings.json").is_file():
+        sp = ltarget / ".claude/settings.json"
+        if sp.is_file() and digest(sp.read_bytes()) == meta["settings_after"]:
+            sp.write_bytes((folder / "settings.json").read_bytes())
+            restored.append(".claude/settings.json")
+            state_backup, state = folder / "hooks_state.json", ltarget / ".agent-hub/hooks.json"
+            if state_backup.is_file():
+                state.write_bytes(state_backup.read_bytes())
+            elif meta.get("reason") == "hooks toggle" and state.is_file():
+                state.unlink()
+            restored.append(".agent-hub/hooks.json") if state_backup.is_file() else None
+        else:
+            conflicts.append(".claude/settings.json")
     prev_manifest_file = folder / "manifest.json"
     if prev_manifest_file.is_file():
         restored_manifest = json.loads(prev_manifest_file.read_text(encoding="utf-8"))

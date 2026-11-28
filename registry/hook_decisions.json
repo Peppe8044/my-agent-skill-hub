@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "reviewed_by": "orchestrator (Opus), phase 4, code reviewed for approved hooks only",
+  "statuses": {
+    "approved": "code reviewed; installed by bootstrap when default_enabled",
+    "inventory-only": "not selected (no demonstrated value, out of scope or replaced by an own control); harmless, kept for reference",
+    "rejected": "incompatible with hub policy (privacy, global writes, memory conflicts, token cost)"
+  },
+  "own": [
+    {"id": "own:model-guard", "script": ".claude/hooks/model_guard.py", "runtime": "python", "events": [{"event": "PreToolUse", "matcher": "Agent|Task"}], "mandatory": true, "default_enabled": true, "risk": "low", "areas": ["model-policy", "tool-validation"], "notes": "Denies subagents outside sonnet/haiku, fork, model-less built-ins and xhigh/max effort. Cannot be disabled."},
+    {"id": "own:command-guard", "script": ".claude/hooks/command_guard.py", "runtime": "python", "events": [{"event": "PreToolUse", "matcher": "Bash|PowerShell"}], "mandatory": false, "default_enabled": true, "risk": "low", "areas": ["security-defensive", "tool-validation", "dependency-control", "error-recovery"], "notes": "Own deterministic replacement for ECC pre:bash:dispatcher and gateguard: denies destructive, remote-execution, global-config and guard-tampering commands; asks for force push, hard reset, clean -fdx and global package installs."},
+    {"id": "own:file-guard", "script": ".claude/hooks/file_guard.py", "runtime": "python", "events": [{"event": "PreToolUse", "matcher": "Edit|Write|MultiEdit|NotebookEdit"}], "mandatory": false, "default_enabled": true, "risk": "low", "areas": ["security-defensive", "model-policy", "code-review"], "notes": "Denies edits to model_guard.py, MODEL_POLICY.json and hook scripts, and content with credential patterns; asks for .claude/settings.json edits and paths outside the project."},
+    {"id": "own:usage-tracker", "script": ".claude/hooks/usage_tracker.py", "runtime": "python", "events": [{"event": "Stop", "matcher": ""}], "mandatory": false, "default_enabled": true, "risk": "low", "areas": ["token-reduction", "context-control", "documentation"], "notes": "Own replacement for ECC stop:cost-tracker: stores only token counts per model and subagent in .agent-hub/usage/ (project-local, no content). Never blocks."}
+  ],
+  "ecc": {
+    "repo": "ECC",
+    "config": "hooks/hooks.json",
+    "metadata": "hooks/hooks.metadata.json",
+    "decisions": {
+      "pre:config-protection": {"status": "approved", "default_enabled": true, "risk": "low", "runtime": "node", "files": ["scripts/hooks/config-protection.js", "scripts/lib/hooks/recovery-hints.js"], "entry": "scripts/hooks/config-protection.js", "events": [{"event": "PreToolUse", "matcher": "Write|Edit|MultiEdit"}], "areas": ["code-quality", "code-review"], "reason": "Reviewed: reads stdin (1 MB cap) and lstat of the target only; no writes, network, child processes or credentials. Blocks edits that weaken existing linter/formatter configs. Requires node; fails open if node is missing."},
+      "pre:bash:dispatcher": {"status": "inventory-only", "areas": ["tool-validation", "security-defensive"], "reason": "Broad dispatcher (quality, tmux, push, GateGuard) with many dependencies; replaced by own:command-guard."},
+      "pre:powershell:gateguard-fact-force": {"status": "inventory-only", "areas": ["security-defensive"], "reason": "2,848 lines plus 5 libraries and on-disk state; replaced by own:command-guard."},
+      "pre:write:doc-file-warning": {"status": "inventory-only", "areas": ["documentation"], "reason": "Conflicts with the hub documentation workflow (WORK_LOG, reports)."},
+      "pre:edit-write:suggest-compact": {"status": "inventory-only", "areas": ["context-control", "token-reduction"], "reason": "State kept through shared libraries outside the hook; Claude Code already auto-compacts; benefit not demonstrated."},
+      "pre:observe:continuous-learning": {"status": "rejected", "areas": ["session-management"], "reason": "Captures tool-use observations (conversation capture); conflicts with future Agent Memory/OpenViking."},
+      "pre:governance-capture": {"status": "rejected", "areas": ["security-defensive"], "reason": "Captures governance events including secrets; privacy risk."},
+      "pre:mcp-health-check": {"status": "inventory-only", "areas": ["tool-validation", "error-recovery"], "reason": "Manages MCP health state and reconnection; no new MCP in scope."},
+      "pre:edit-write:gateguard-fact-force": {"status": "rejected", "areas": ["code-review"], "reason": "Denies the first edit of every file with questions: extra turns and tokens; very high complexity."},
+      "pre:hookify-runtime": {"status": "inventory-only", "areas": ["tool-validation"], "reason": "Generic rule engine with no project rules defined; evaluate later."},
+      "prompt:hookify-runtime": {"status": "inventory-only", "areas": ["tool-validation"], "reason": "Generic rule engine with no project rules defined; evaluate later."},
+      "user-prompt:context-gate": {"status": "inventory-only", "areas": ["context-control"], "reason": "Opt-in stop-and-restart at 90% context reading the transcript; benefit not demonstrated."},
+      "pre:compact": {"status": "rejected", "areas": ["session-management"], "reason": "Persists session state (memory) outside the project; conflicts with Agent Memory."},
+      "session:start": {"status": "rejected", "areas": ["session-management"], "reason": "Loads previous session context (memory); conflicts with Agent Memory/OpenViking."},
+      "session-start:plan-canvas-sessions": {"status": "inventory-only", "areas": ["session-management"], "reason": "Depends on ECC Plan Canvas browser UI."},
+      "post:dispatcher:sync": {"status": "inventory-only", "areas": ["code-quality"], "reason": "Runs ECC-internal PostToolUse hooks (formatting, telemetry); too broad."},
+      "post:dispatcher:async": {"status": "inventory-only", "areas": ["code-quality"], "reason": "Runs ECC-internal background PostToolUse hooks; too broad."},
+      "post:mcp-health-check": {"status": "inventory-only", "areas": ["error-recovery"], "reason": "MCP reconnection logic; no new MCP in scope."},
+      "post:skill:track": {"status": "rejected", "areas": ["token-reduction"], "reason": "Skill-health telemetry stored outside the project."},
+      "stop:hookify-runtime": {"status": "inventory-only", "areas": ["tool-validation"], "reason": "Generic rule engine with no project rules defined; evaluate later."},
+      "stop:plan-canvas-pending": {"status": "inventory-only", "areas": ["session-management"], "reason": "Depends on ECC Plan Canvas browser UI."},
+      "stop:format-typecheck": {"status": "inventory-only", "areas": ["code-quality", "test-verification"], "reason": "JS/TS specific (Biome/Prettier/tsc through npx); not a default for Godot projects."},
+      "stop:check-console-log": {"status": "inventory-only", "areas": ["code-quality"], "reason": "JS/TS specific."},
+      "stop:session-end": {"status": "rejected", "areas": ["session-management"], "reason": "Persists session state (memory) after each response."},
+      "stop:evaluate-session": {"status": "rejected", "areas": ["session-management"], "reason": "Extracts patterns from sessions (continuous learning, conversation capture)."},
+      "stop:cost-tracker": {"status": "rejected", "areas": ["token-reduction"], "reason": "Writes to ~/.claude/metrics and the OS temp dir (outside the project); replaced by own:usage-tracker."},
+      "stop:desktop-notify": {"status": "inventory-only", "areas": [], "reason": "Desktop notifications; no value for the hub."},
+      "session:end:marker": {"status": "inventory-only", "areas": ["session-management"], "reason": "Lifecycle marker without useful effect."}
+    }
+  }
+}

@@ -33,6 +33,38 @@ def agent_model(path):
     return match.group(1) if match else None
 
 
+def executor_tokens(transcript_path):
+    """Real token use of this session's subagents, read from their transcripts.
+
+    Counts input + output + cache-creation tokens (cache reads excluded), each assistant
+    message once (message.id). Returns None when it cannot be measured.
+    """
+    if not isinstance(transcript_path, str) or not transcript_path.endswith(".jsonl"):
+        return None
+    folder = os.path.join(transcript_path[:-len(".jsonl")], "subagents")
+    if not os.path.isdir(folder):
+        return None if not os.path.isfile(transcript_path) else 0
+    seen, total = set(), 0
+    for name in sorted(os.listdir(folder)):
+        if not (name.startswith("agent-") and name.endswith(".jsonl")):
+            continue
+        with open(os.path.join(folder, name), encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                if '"usage"' not in line:
+                    continue
+                try:
+                    message = json.loads(line).get("message") or {}
+                except ValueError:
+                    continue
+                usage, key = message.get("usage"), (name, message.get("id"))
+                if not isinstance(usage, dict) or key in seen:
+                    continue
+                seen.add(key)
+                total += sum(int(usage.get(k) or 0) for k in
+                             ("input_tokens", "output_tokens", "cache_creation_input_tokens"))
+    return total
+
+
 def decide(event, project):
     if not isinstance(event, dict):
         return deny("malformed hook input; blocked (MODEL_POLICY.json)")
@@ -48,7 +80,15 @@ def decide(event, project):
     policy_path = os.path.join(project, "MODEL_POLICY.json")
     if os.path.isfile(policy_path):
         with open(policy_path, encoding="utf-8") as handle:
-            executors = json.load(handle).get("executors")
+            policy = json.load(handle)
+        budget = policy.get("max_executor_tokens_per_session")
+        if isinstance(budget, int) and not isinstance(budget, bool) and budget > 0:
+            used = executor_tokens(event.get("transcript_path"))
+            if used is not None and used >= budget:
+                return deny("executor token budget exhausted for this session: %d of %d tokens used "
+                            "(MODEL_POLICY.json max_executor_tokens_per_session); ask the user before "
+                            "delegating more work" % (used, budget))
+        executors = policy.get("executors")
         if isinstance(executors, list) and executors and all(isinstance(x, str) for x in executors):
             # A policy file can narrow the executors, never widen them beyond sonnet/haiku.
             allowed = set(executors) & DEFAULT_EXECUTORS

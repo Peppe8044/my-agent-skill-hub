@@ -8,6 +8,7 @@ POLICY_KEYS = {
     "allow_executor_opus": bool, "default_parallel_agents": int,
     "max_parallel_agents": int, "max_retries": int,
     "executor_efforts": list, "default_executor_effort": str,
+    "max_executor_tokens_per_session": int,
 }
 EFFORTS = ("low", "medium", "high")
 ORCHESTRATOR_EFFORTS = ("high", "medium")
@@ -93,6 +94,8 @@ def validate_policy(policy):
         errors.append("MODEL_POLICY.json default_executor_effort must be one of executor_efforts")
     if not 0 <= policy["max_retries"] <= 2:
         errors.append("MODEL_POLICY.json max_retries must be between 0 and 2")
+    if policy["max_executor_tokens_per_session"] < 1000:
+        errors.append("MODEL_POLICY.json max_executor_tokens_per_session must be at least 1000")
     return errors
 
 

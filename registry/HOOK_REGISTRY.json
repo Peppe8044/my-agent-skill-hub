@@ -1,0 +1,3027 @@
+{
+  "schema": 1,
+  "hooks": [
+    {
+      "id": "OpenViking:bot/vikingbot/hooks/__init__.py",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:bot/vikingbot/hooks/base.py",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:bot/vikingbot/hooks/builtins/__init__.py",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:bot/vikingbot/hooks/builtins/openviking_hooks.py",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:bot/vikingbot/hooks/manager.py",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/agent-hook-plugin/hosts/antigravity/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/agent-hook-plugin/hosts/codebuddy/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/agent-hook-plugin/hosts/cursor/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/agent-hook-plugin/hosts/qoder/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/agent-hook-plugin/hosts/trae/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/agent-hook-plugin/hosts/zcode/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/claude-code-memory-plugin/hooks/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/codex-memory-plugin/.codex-plugin/plugin.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-key",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:examples/codex-memory-plugin/hooks/hooks.json",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.bootstrap.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.host.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.isolation.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.surfaces.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.test.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.trusted.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-app-connection.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-connection-probe.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-connection-profiles.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-studio-capabilities.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-studio-capabilities.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-studio-mode.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-studio-service.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/connection/hooks/use-studio-service.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/oauth/hooks/use-identity-directory.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/oauth/hooks/use-identity-directory.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/resource-acl/hooks/use-acl-management.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/use-json-format.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/use-list-navigation.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/use-resource-upload.connection.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/use-resource-upload.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/use-resource-upload.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/viking-fm.test.tsx",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/resources/hooks/viking-fm.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/retrieval/hooks/use-resource-context-probe.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/features/workbench/retrieval/hooks/use-retrieval-query.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/shared/hooks/use-debounced-value.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/shared/hooks/use-mobile.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "OpenViking:web-studio/src/shared/hooks/use-transient-scrollbar.ts",
+      "source": "OpenViking",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "OpenViking",
+        "commit": "600babf130a8dcb1b2ec811e8211c582ca0ae83b",
+        "license": "AGPL-3.0"
+      }
+    },
+    {
+      "id": "agentmemory:.cursor-plugin/plugin.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-key",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/.codex-plugin/plugin.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-key",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/cursor/hooks.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks.json",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks/hooks.antigravity.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks/hooks.codex.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks/hooks.copilot.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks/hooks.devin.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks/hooks.droid.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/hooks/hooks.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:plugin/plugin.json",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-key",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/_capture-filter.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/_capture.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/_endpoint.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/_project.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/antigravity-bridge.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/cursor/cursor-db.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/cursor/delegate.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/cursor/run-detached.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/cursor/run-hook.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/cursor/workspace.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/notification.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/post-commit.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/post-tool-failure.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/post-tool-use.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/pre-compact.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/pre-tool-use.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/prompt-submit.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/sdk-guard.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/session-end.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/session-start.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/stop.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/subagent-start.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/subagent-stop.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "agentmemory:src/hooks/task-completed.ts",
+      "source": "agentmemory",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "unknown",
+      "events": [],
+      "files": [],
+      "install_paths": [],
+      "command": null,
+      "dependencies": [],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "out of phase-4 scope; service not installed",
+      "kind": "hooks-dir",
+      "provenance": {
+        "repo": "agentmemory",
+        "commit": "5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",
+        "license": "Apache-2.0"
+      }
+    },
+    {
+      "id": "own:command-guard",
+      "source": "own",
+      "status": "approved",
+      "mandatory": false,
+      "default_enabled": true,
+      "runtime": "python",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Bash|PowerShell"
+        }
+      ],
+      "files": [
+        {
+          "path": ".claude/hooks/command_guard.py",
+          "sha256": "3a41bb70804dd15e1a115052828af39bd49d84123bdb59d9684e126ff81c28d6"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/command_guard.py"
+      ],
+      "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/command_guard.py\"",
+      "dependencies": [
+        "python"
+      ],
+      "risk": "low",
+      "areas": [
+        "security-defensive",
+        "tool-validation",
+        "dependency-control",
+        "error-recovery"
+      ],
+      "reason": "Own deterministic replacement for ECC pre:bash:dispatcher and gateguard: denies destructive, remote-execution, global-config and guard-tampering commands; asks for force push, hard reset, clean -fdx and global package installs."
+    },
+    {
+      "id": "own:file-guard",
+      "source": "own",
+      "status": "approved",
+      "mandatory": false,
+      "default_enabled": true,
+      "runtime": "python",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Edit|Write|MultiEdit|NotebookEdit"
+        }
+      ],
+      "files": [
+        {
+          "path": ".claude/hooks/file_guard.py",
+          "sha256": "7ed7ec11c86f5dc71f7e79b59765fc0cdbe3f38a5760944460154dc73eb800ea"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/file_guard.py"
+      ],
+      "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/file_guard.py\"",
+      "dependencies": [
+        "python"
+      ],
+      "risk": "low",
+      "areas": [
+        "security-defensive",
+        "model-policy",
+        "code-review"
+      ],
+      "reason": "Denies edits to model_guard.py, MODEL_POLICY.json and hook scripts, and content with credential patterns; asks for .claude/settings.json edits and paths outside the project."
+    },
+    {
+      "id": "own:model-guard",
+      "source": "own",
+      "status": "approved",
+      "mandatory": true,
+      "default_enabled": true,
+      "runtime": "python",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Agent|Task"
+        }
+      ],
+      "files": [
+        {
+          "path": ".claude/hooks/model_guard.py",
+          "sha256": "54f29ed5ef5ffce81f21337a127881e8daf42941704d564defe6622dc788caad"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/model_guard.py"
+      ],
+      "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/model_guard.py\"",
+      "dependencies": [
+        "python"
+      ],
+      "risk": "low",
+      "areas": [
+        "model-policy",
+        "tool-validation"
+      ],
+      "reason": "Denies subagents outside sonnet/haiku, fork, model-less built-ins and xhigh/max effort. Cannot be disabled."
+    },
+    {
+      "id": "own:usage-tracker",
+      "source": "own",
+      "status": "approved",
+      "mandatory": false,
+      "default_enabled": true,
+      "runtime": "python",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ""
+        }
+      ],
+      "files": [
+        {
+          "path": ".claude/hooks/usage_tracker.py",
+          "sha256": "afedc8868c54de87fed2febd02a971f8797cd6548943f92e653ce7efc6970bad"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/usage_tracker.py"
+      ],
+      "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/usage_tracker.py\"",
+      "dependencies": [
+        "python"
+      ],
+      "risk": "low",
+      "areas": [
+        "token-reduction",
+        "context-control",
+        "documentation"
+      ],
+      "reason": "Own replacement for ECC stop:cost-tracker: stores only token counts per model and subagent in .agent-hub/usage/ (project-local, no content). Never blocks."
+    },
+    {
+      "id": "post:dispatcher:async",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PostToolUse",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/posttooluse-dispatcher.js",
+          "sha256": "bf37af48387af5fe1603c16e4245100ec63441e9d16ee29f698b7c4b91db77d2"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/posttooluse-dispatcher.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/bash-hook-dispatcher",
+        "scripts/hooks/design-quality-check",
+        "scripts/hooks/ecc-context-monitor",
+        "scripts/hooks/ecc-metrics-bridge",
+        "scripts/hooks/governance-capture",
+        "scripts/hooks/hook-input",
+        "scripts/hooks/hook-input-limits",
+        "scripts/hooks/hook-watchdog",
+        "scripts/hooks/hookify-runtime",
+        "scripts/hooks/observe-runner",
+        "scripts/hooks/post-edit-accumulator",
+        "scripts/hooks/post-edit-console-warn",
+        "scripts/hooks/quality-gate",
+        "scripts/hooks/session-activity-tracker",
+        "scripts/hooks/skill-run-tracker",
+        "scripts/lib/hook-flags"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "code-quality"
+      ],
+      "reason": "Runs ECC-internal background PostToolUse hooks; too broad.",
+      "description": "Run background PostToolUse hooks in one process while preserving per-hook controls",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "post:dispatcher:sync",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PostToolUse",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/posttooluse-dispatcher.js",
+          "sha256": "bf37af48387af5fe1603c16e4245100ec63441e9d16ee29f698b7c4b91db77d2"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/posttooluse-dispatcher.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/bash-hook-dispatcher",
+        "scripts/hooks/design-quality-check",
+        "scripts/hooks/ecc-context-monitor",
+        "scripts/hooks/ecc-metrics-bridge",
+        "scripts/hooks/governance-capture",
+        "scripts/hooks/hook-input",
+        "scripts/hooks/hook-input-limits",
+        "scripts/hooks/hook-watchdog",
+        "scripts/hooks/hookify-runtime",
+        "scripts/hooks/observe-runner",
+        "scripts/hooks/post-edit-accumulator",
+        "scripts/hooks/post-edit-console-warn",
+        "scripts/hooks/quality-gate",
+        "scripts/hooks/session-activity-tracker",
+        "scripts/hooks/skill-run-tracker",
+        "scripts/lib/hook-flags"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "code-quality"
+      ],
+      "reason": "Runs ECC-internal PostToolUse hooks (formatting, telemetry); too broad.",
+      "description": "Run synchronous PostToolUse hooks in one process while preserving per-hook controls",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "post:mcp-health-check",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PostToolUseFailure",
+          "matcher": "^mcp__"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/mcp-health-check.js",
+          "sha256": "8a39aba8fc4984fdccda548e2543eaea61f9d67f253fba7837db20b60b0ce510"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/mcp-health-check.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "error-recovery"
+      ],
+      "reason": "MCP reconnection logic; no new MCP in scope.",
+      "description": "Track failed MCP tool calls, mark unhealthy servers, and attempt reconnect",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "post:skill:track",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PostToolUseFailure",
+          "matcher": "Skill"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/skill-run-tracker.js",
+          "sha256": "863ae2ba593332657d237bc23bba7ec1de4bcd56353176c82954eedcacb644e5"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/skill-run-tracker.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/skill-evolution/tracker"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "token-reduction"
+      ],
+      "reason": "Skill-health telemetry stored outside the project.",
+      "description": "Record hard Skill tool failures for skill-health telemetry",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:bash:dispatcher",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Bash"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/pre-bash-dispatcher.js",
+          "sha256": "5ddf5ec18c25272b5874f5fa5a19243ceb6fdf978b3c81fa04e337c59ed25716"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/pre-bash-dispatcher.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/bash-hook-dispatcher",
+        "scripts/hooks/hook-input",
+        "scripts/lib/hook-flags"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "tool-validation",
+        "security-defensive"
+      ],
+      "reason": "Broad dispatcher (quality, tmux, push, GateGuard) with many dependencies; replaced by own:command-guard.",
+      "description": "Consolidated Bash preflight dispatcher for quality, tmux, push, and GateGuard checks",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:compact",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreCompact",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/pre-compact.js",
+          "sha256": "98eee132c60edc683066233b227e65f0a4e752683efe97384509577bbbfb8bd6"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/pre-compact.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/llm-summary",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Persists session state (memory) outside the project; conflicts with Agent Memory.",
+      "description": "Save state before context compaction",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:config-protection",
+      "source": "ECC",
+      "status": "approved",
+      "mandatory": false,
+      "default_enabled": true,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Write|Edit|MultiEdit"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/config-protection.js",
+          "sha256": "9cfbc2b1fb09eecde1fc61419299eed91fa3bbbb71648226b73efd35754f65c1"
+        },
+        {
+          "path": "scripts/lib/hooks/recovery-hints.js",
+          "sha256": "30b7c874e104f1e20d7815052df82d292b0a6048d8128a3e786cbd1859f71034"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/config-protection.js",
+        ".claude/hooks/ecc/scripts/lib/hooks/recovery-hints.js"
+      ],
+      "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/ecc/scripts/hooks/config-protection.js\"",
+      "dependencies": [
+        "node",
+        "scripts/lib/hooks/recovery-hints"
+      ],
+      "risk": "low",
+      "areas": [
+        "code-quality",
+        "code-review"
+      ],
+      "reason": "Reviewed: reads stdin (1 MB cap) and lstat of the target only; no writes, network, child processes or credentials. Blocks edits that weaken existing linter/formatter configs. Requires node; fails open if node is missing.",
+      "description": "Block modifications to linter/formatter config files. Steers agent to fix code instead of weakening configs.",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:edit-write:gateguard-fact-force",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Edit|Write|MultiEdit|NotebookEdit"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/gateguard-fact-force.js",
+          "sha256": "8c2cae4c15401943045193610e2c25df1a378ac5913234977446fecac6d99229"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/gateguard-fact-force.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/gateguard-heredoc",
+        "scripts/lib/gateguard-change-profile",
+        "scripts/lib/gateguard-metrics",
+        "scripts/lib/gateguard-readonly-shell",
+        "scripts/lib/gateguard-search-evidence",
+        "scripts/lib/gateguard-state",
+        "scripts/lib/gateguard-target-class",
+        "scripts/lib/gateguard-turn-scan",
+        "scripts/lib/hooks/recovery-hints",
+        "scripts/lib/powershell-destructive-command",
+        "scripts/lib/shell-substitution"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "code-review"
+      ],
+      "reason": "Denies the first edit of every file with questions: extra turns and tokens; very high complexity.",
+      "description": "Fact-forcing gate: deny the first Edit/Write/MultiEdit/NotebookEdit of each file with questions chosen by target class and by what the change touches; a completed search naming the file in the current turn, a comment or whitespace-only edit, or a same-turn sibling of a new file already gated passes with a note instead; sensitive targets (secrets, keys, auth/payment code, migrations, CI workflows) and hard-linked files are always gated, also in subagents",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:edit-write:suggest-compact",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Edit|Write"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/suggest-compact.js",
+          "sha256": "a51120cdc8eadf28d7e4109867991e628e76a097e33999ec9be19178a8c748b3"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/suggest-compact.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/context-gate-state",
+        "scripts/lib/transcript-context",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "context-control",
+        "token-reduction"
+      ],
+      "reason": "State kept through shared libraries outside the hook; Claude Code already auto-compacts; benefit not demonstrated.",
+      "description": "Suggest manual compaction at logical intervals",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:governance-capture",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Bash|PowerShell|Write|Edit|MultiEdit"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/governance-capture.js",
+          "sha256": "06bb0cbba205f59a58fb2a8b1fc7f88b5f86ffacb4b79bb7dbf8d26fce606527"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/governance-capture.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/gateguard-fact-force",
+        "scripts/hooks/hook-input",
+        "scripts/lib/powershell-destructive-command"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "security-defensive"
+      ],
+      "reason": "Captures governance events including secrets; privacy risk.",
+      "description": "Capture governance events (secrets, policy violations, approval requests). Enable with ECC_GOVERNANCE_CAPTURE=1",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:hookify-runtime",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/hookify-runtime.js",
+          "sha256": "ded7fc64176617ebf548af5191551ee16a4b99623ca1351624f614e5a0ddacec"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/hookify-runtime.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/hook-input",
+        "scripts/hooks/hook-input-limits",
+        "scripts/hooks/hookify-frontmatter"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "tool-validation"
+      ],
+      "reason": "Generic rule engine with no project rules defined; evaluate later.",
+      "description": "Evaluate project-local Hookify rules before Bash, PowerShell, and file tools run",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:mcp-health-check",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "^mcp__"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/mcp-health-check.js",
+          "sha256": "8a39aba8fc4984fdccda548e2543eaea61f9d67f253fba7837db20b60b0ce510"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/mcp-health-check.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "tool-validation",
+        "error-recovery"
+      ],
+      "reason": "Manages MCP health state and reconnection; no new MCP in scope.",
+      "description": "Check MCP server health before MCP tool execution and block unhealthy MCP calls",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:observe:continuous-learning",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/observe-runner.js",
+          "sha256": "12a6cc569047400fa22f664df77a0eb97d5a4b873aa743119919fb7bdfda9e16"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/observe-runner.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/windows-bash"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Captures tool-use observations (conversation capture); conflicts with future Agent Memory/OpenViking.",
+      "description": "Capture tool use observations for continuous learning",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:powershell:gateguard-fact-force",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "PowerShell"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/gateguard-fact-force.js",
+          "sha256": "8c2cae4c15401943045193610e2c25df1a378ac5913234977446fecac6d99229"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/gateguard-fact-force.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/gateguard-heredoc",
+        "scripts/lib/gateguard-change-profile",
+        "scripts/lib/gateguard-metrics",
+        "scripts/lib/gateguard-readonly-shell",
+        "scripts/lib/gateguard-search-evidence",
+        "scripts/lib/gateguard-state",
+        "scripts/lib/gateguard-target-class",
+        "scripts/lib/gateguard-turn-scan",
+        "scripts/lib/hooks/recovery-hints",
+        "scripts/lib/powershell-destructive-command",
+        "scripts/lib/shell-substitution"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "security-defensive"
+      ],
+      "reason": "2,848 lines plus 5 libraries and on-disk state; replaced by own:command-guard.",
+      "description": "PowerShell fact-forcing gate: inspect destructive commands without running unrelated Bash-only preflight hooks",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "pre:write:doc-file-warning",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "PreToolUse",
+          "matcher": "Write"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/doc-file-warning.js",
+          "sha256": "a91eea1e20c0affaf0460dd128afad46af5a0d71dc7f52d7e4b875c5607225d1"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/doc-file-warning.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/pretooluse-visible-output"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "documentation"
+      ],
+      "reason": "Conflicts with the hub documentation workflow (WORK_LOG, reports).",
+      "description": "Doc file warning: warn about non-standard documentation files (exit code 0; warns only)",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "prompt:hookify-runtime",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "UserPromptSubmit",
+          "matcher": ""
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/hookify-runtime.js",
+          "sha256": "ded7fc64176617ebf548af5191551ee16a4b99623ca1351624f614e5a0ddacec"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/hookify-runtime.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/hook-input",
+        "scripts/hooks/hook-input-limits",
+        "scripts/hooks/hookify-frontmatter"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "tool-validation"
+      ],
+      "reason": "Generic rule engine with no project rules defined; evaluate later.",
+      "description": "Evaluate project-local Hookify prompt rules before a user prompt is processed",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "session-start:plan-canvas-sessions",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "SessionStart",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/plan-canvas-sessions.js",
+          "sha256": "5a4e0864c7241044295c9f001990e3c53e8735c934e7298fef371a2eb55acc1a"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/plan-canvas-sessions.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Depends on ECC Plan Canvas browser UI.",
+      "description": "Surface open Plan Canvas review sessions so a fresh session can resume the loop",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "session:end:marker",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "SessionEnd",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/session-end-marker.js",
+          "sha256": "52ce75262c8417c7955b61ead2409d1971fee65d95ca6fb508487e3259fde236"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/session-end-marker.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/hook-session",
+        "scripts/lib/observer-sessions"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Lifecycle marker without useful effect.",
+      "description": "Session end lifecycle marker (non-blocking)",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "session:start",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "SessionStart",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/session-start-bootstrap.js",
+          "sha256": "e1f2495e0846fdb8378b0d794e39134d52c01f8242c445faf0265227dfcddd50"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/session-start-bootstrap.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/hook-input",
+        "scripts/hooks/lifecycle-hook-bootstrap",
+        "scripts/lib/resolve-ecc-root"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Loads previous session context (memory); conflicts with Agent Memory/OpenViking.",
+      "description": "Load previous context and detect package manager on new session",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:check-console-log",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/check-console-log.js",
+          "sha256": "909b2a1fb102142a445a88f67a51fa29192655438f79f0a972bcc73f1656c891"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/check-console-log.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "code-quality"
+      ],
+      "reason": "JS/TS specific.",
+      "description": "Check for console.log in modified files after each response",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:cost-tracker",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/cost-tracker.js",
+          "sha256": "327e40c8a973d64bb36cba9cdc96f3bed1d35781a14444fbc2ea7434f70021a8"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/cost-tracker.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/session-bridge",
+        "scripts/lib/session-cost-snapshot",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "token-reduction"
+      ],
+      "reason": "Writes to ~/.claude/metrics and the OS temp dir (outside the project); replaced by own:usage-tracker.",
+      "description": "Track token and cost metrics per session",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:desktop-notify",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/desktop-notify.js",
+          "sha256": "5375aab7ea5cefa29a340d1cddebd2d4c0984bf5031630f45e360c4f26f3c44c"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/desktop-notify.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [],
+      "reason": "Desktop notifications; no value for the hub.",
+      "description": "Send desktop notification (macOS/WSL) with task summary when Claude responds",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:evaluate-session",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/evaluate-session.js",
+          "sha256": "e4b0ba613cd7045d1daba06bd2b2433579689fedb24c73c2d7f0a1d71cd49e26"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/evaluate-session.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/hook-session",
+        "scripts/lib/observer-sessions",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Extracts patterns from sessions (continuous learning, conversation capture).",
+      "description": "Evaluate session for extractable patterns",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:format-typecheck",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/stop-format-typecheck.js",
+          "sha256": "db61dce8f0fee42fe0730ee10cf7c61c4e2c724bbc083fb3fca6acac4bd31ef3"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/stop-format-typecheck.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/hook-session",
+        "scripts/lib/resolve-formatter"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "code-quality",
+        "test-verification"
+      ],
+      "reason": "JS/TS specific (Biome/Prettier/tsc through npx); not a default for Godot projects.",
+      "description": "Batch format (Biome/Prettier) and typecheck (tsc) all JS/TS files edited this response — runs once at Stop instead of after every Edit",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:hookify-runtime",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/hookify-runtime.js",
+          "sha256": "ded7fc64176617ebf548af5191551ee16a4b99623ca1351624f614e5a0ddacec"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/hookify-runtime.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/hooks/hook-input",
+        "scripts/hooks/hook-input-limits",
+        "scripts/hooks/hookify-frontmatter"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "tool-validation"
+      ],
+      "reason": "Generic rule engine with no project rules defined; evaluate later.",
+      "description": "Evaluate project-local Hookify completion rules before Claude stops",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:plan-canvas-pending",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/plan-canvas-pending.js",
+          "sha256": "4d7c59d0e95a5054649a22df9415b1eb66e84550e8ca28d63c17214cd779cbbe"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/plan-canvas-pending.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Depends on ECC Plan Canvas browser UI.",
+      "description": "Deliver undelivered Plan Canvas browser feedback before the agent stops",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "stop:session-end",
+      "source": "ECC",
+      "status": "rejected",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "Stop",
+          "matcher": ".*"
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/session-end.js",
+          "sha256": "6dc5c31e3b5125a3fbf6ef8e72ab130f2dab5d557615de195c7230950d070116"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/session-end.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/llm-summary",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "session-management"
+      ],
+      "reason": "Persists session state (memory) after each response.",
+      "description": "Persist session state after each response (Stop carries transcript_path)",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    },
+    {
+      "id": "user-prompt:context-gate",
+      "source": "ECC",
+      "status": "inventory-only",
+      "mandatory": false,
+      "default_enabled": false,
+      "runtime": "node",
+      "events": [
+        {
+          "event": "UserPromptSubmit",
+          "matcher": ""
+        }
+      ],
+      "files": [
+        {
+          "path": "scripts/hooks/context-gate.js",
+          "sha256": "68bebf06920e7715197d54a7fc19e567b05ae094867c477f753ec5eb94749c28"
+        }
+      ],
+      "install_paths": [
+        ".claude/hooks/ecc/scripts/hooks/context-gate.js"
+      ],
+      "command": null,
+      "dependencies": [
+        "node",
+        "scripts/lib/context-gate-state",
+        "scripts/lib/transcript-context",
+        "scripts/lib/utils"
+      ],
+      "risk": "unreviewed",
+      "areas": [
+        "context-control"
+      ],
+      "reason": "Opt-in stop-and-restart at 90% context reading the transcript; benefit not demonstrated.",
+      "description": "Opt-in checkpoint-and-restart gate (ECC_CONTEXT_GATE_MODE=enforce): at >=90% context, order a clean stopping point, a session-scoped checkpoint under the handoff dir, and a fresh-session resume command. Default mode is advisory — inert, suppresses nothing",
+      "provenance": {
+        "repo": "ECC",
+        "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+        "license": "MIT"
+      }
+    }
+  ]
+}
