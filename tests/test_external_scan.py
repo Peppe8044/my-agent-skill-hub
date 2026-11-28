@@ -216,3 +216,11 @@ class ExternalScanTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EfficiencySkillRulesTests(unittest.TestCase):
+    def test_active_includes_and_rejected_hook_rule(self):
+        self.assertEqual({"ECC--strategic-compact", "ECC--context-budget"}, es.ACTIVE_INCLUDE)
+        self.assertTrue(es.SKILL_RULES["ECC--cost-tracking"].startswith("requires-service:"))
+        self.assertTrue(es.domain_scores("suggests manual context compaction at logical intervals"))
+

@@ -44,7 +44,7 @@ class BootstrapTests(Isolated, unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             bootstrap(hub.ROOT, Path(tmp), fetch_external=False, runtime_scan=False, home=self._home.name)
             self.assertEqual(0, launch(tmp, {"CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"}))
-        self.assertEqual(["claude", "--agent", "orchestrator", "--model", "opus", "--effort", "high"],
+        self.assertEqual(["claude", "--agent", "orchestrator", "--model", "opus", "--effort", "medium"],
                          call.call_args[0][0])
 
 

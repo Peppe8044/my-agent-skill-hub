@@ -17,14 +17,14 @@
 
 | Dominio | approved | requires-review | rejected |
 |---|---|---|---|
-| general | 259 | 51 | 346 |
+| general | 263 | 51 | 352 |
 | data-science | 142 | 124 | 84 |
 | games | 2 | 0 | 2 |
 | web | 152 | 23 | 207 |
 | sre-devops | 258 | 24 | 90 |
 | security-defensive | 767 | 76 | 165 |
 | automation | 105 | 34 | 101 |
-| (sin dominio) | 0 | 0 | 424 |
+| (sin dominio) | 0 | 0 | 415 |
 
 ## Duplicados
 

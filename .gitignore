@@ -22,3 +22,5 @@ dist/
 build/
 workspaces/
 !workspaces/.gitkeep
+.agent-hub/budget/
+.agent-hub/usage/

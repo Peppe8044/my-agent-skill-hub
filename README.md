@@ -52,6 +52,17 @@ Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GOVERNANCE.md](docs/GOVE
 - Las copias de seguridad van a `.agent-hub/backups/`; para restaurar: `python scripts/hub.py rollback --target PATH`.
 - Hooks, servidores MCP, plugins y servicios externos (Agent Memory, OpenViking) nunca se activan.
 
+## Hooks (gestor propio)
+
+- `registry/HOOK_REGISTRY.json` registra todos los hooks encontrados con procedencia (repo, commit fijado, sha256, licencia), dependencias, riesgo y estado (`approved`, `rejected`, `inventory-only`). Se regenera con `python scripts/hub.py hooks registry` (`--check` detecta desviaciones); las decisiones viven en `registry/hook_decisions.json` y la revisión en `docs/HOOK_SECURITY_REPORT.md`.
+- Aprobados e instalados por `bootstrap` (perfil `full`): `model_guard` (obligatorio, no se puede desactivar; también aplica el presupuesto de tokens de ejecutores), `command_guard` (comandos destructivos, ejecución remota, cambios globales y manipulación de guardas), `file_guard` (archivos de política/hooks y credenciales), `usage_tracker` (solo cifras de tokens por modelo y subagente en `.agent-hub/usage/`) y `config-protection` de ECC (revisado; requiere `node`). El perfil `core` instala solo `model_guard`.
+- Por proyecto, sin cambios globales: `python scripts/hub.py hooks list|enable|disable|verify --target PATH`; los cambios crean copia de seguridad y se revierten con `python scripts/hub.py rollback --target PATH`. Nunca se duplican hooks y los hooks propios del proyecto se conservan.
+- Los hooks de memoria, sesión, telemetría o captura de conversaciones de ECC, Agent Memory y OpenViking quedan solo en el inventario (ver `docs/ECC_INTEGRATION_REPORT.md`).
+
+## Informes consolidados por fase
+
+Al terminar cada fase se genera `docs/reports/PHASE_NN_REPORT.md` (19 secciones, plantilla `templates/PHASE_REPORT.md`) desde `docs/reports/data/PHASE_NN.json` con `python scripts/hub.py report render --data ...`, y `python scripts/hub.py report latest` actualiza `docs/reports/LATEST_REPORT.md`. Los proyectos instalados heredan el generador (`.agent-hub/bin/phase_report.py`) y la plantilla (`docs/reports/PHASE_REPORT_TEMPLATE.md`).
+
 ## Instalación por proyecto
 
 `python scripts/hub.py install --target /ruta/proyecto` (perfil `full` por defecto) copia agentes, skills, `MODEL_POLICY.json` y el hook `model_guard`; fusiona `.claude/settings.json` conservando las claves y hooks del proyecto (añade `env.CLAUDE_CODE_SUBAGENT_MODEL: sonnet` si falta; un valor del proyecto fuera de sonnet/haiku es un conflicto de política); por defecto descarga los ocho submódulos y cataloga skills externas sin activarlas. `--no-fetch` usa el checkout actual. `new` instala automáticamente el contenido propio y cataloga los submódulos ya descargados, sin red.

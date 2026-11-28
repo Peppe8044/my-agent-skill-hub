@@ -62,3 +62,23 @@ Están en `AGENTS.md` (sección "Token rules"), en `skills/token-budget/SKILL.md
 | Esfuerzo del orquestador | `effort: high` en el frontmatter y `--effort high` en `launch` |
 | Ejecutores en paralelo | 1 por defecto y máximo 3 (`MODEL_POLICY.json`) |
 | Skills precargadas del orquestador | Solo las 2 obligatorias; el resto se cargan bajo demanda |
+
+## 5. Fase 4
+
+| Ejecutor | Modelo | Esfuerzo | Tokens | Herramientas | Duración |
+|---|---|---|---|---|---|
+| E1 gestor de hooks e instalador | sonnet → claude-sonnet-5-5 | medium | 117 606 | 24 | 636,1 s |
+| E2 hooks propios e informes | haiku → claude-haiku-5-5 | medium | 122 093 | 33 | 398,3 s |
+| **Total fase 4** | | | **239 699** | 57 | |
+
+- **Objetivo superado.** El total fue 2,4 veces el objetivo orientativo de 100 000. E2 consumió 3 veces su objetivo de 40 000.
+- **Medidas tras la medición:**
+  - No se lanzaron más ejecutores.
+  - El resto lo hizo el orquestador con comandos deterministas.
+  - El owner autorizó un **presupuesto real**: `model_guard` bloquea nuevas delegaciones al alcanzar `max_executor_tokens_per_session` (100 000), medido en las transcripciones de los subagentes. Cuenta los tokens de entrada, de salida y de creación de caché; excluye las lecturas de caché.
+- **Causa raíz:**
+  - La skill `token-budget` es texto y esta sesión no se inició dentro del hub, así que no se cargó en los ejecutores.
+  - No existe un tope automático por subagente en el runtime.
+  - El contexto acumulado del orquestador, que no se puede medir, es probablemente el mayor consumo.
+- **Coste medido:** la prueba real de hooks costó 0,2947 USD.
+- **Total acumulado de ejecutores en las fases 1–4:** 1 140 075 tokens.

@@ -116,3 +116,78 @@ El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fil
   - Ejecutores: S1 Sonnet, S2 Sonnet y S3 Haiku, todos con `effort: medium`.
   - La fusión del nuevo PR está pendiente.
 
+### 2026-11-28 — HUB-011 — Fase 4: ECC selectivo, gestor de hooks, presupuesto de tokens e informes por fase
+- **Objetivo:**
+  - Cerrar la fase 3.
+  - Integrar los hooks de ECC de forma selectiva con un gestor reutilizable.
+  - Aplicar un control efectivo de tokens.
+  - Implantar informes consolidados heredables.
+- **Decisión y por qué:**
+  - Se aprueba solo `pre:config-protection` de ECC, tras revisar su código.
+  - Se usan guardas propias deterministas (`command_guard`, `file_guard`, `usage_tracker`) en lugar de hooks complejos o globales de ECC.
+  - Los hooks de memoria, sesión y telemetría quedan solo en el inventario.
+  - Presupuesto de tokens en `model_guard`, autorizado por el owner.
+  - Hashes de contenido con LF normalizado.
+  - Ver `docs/reports/PHASE_04_REPORT.md`.
+- **Archivos afectados:**
+  - Scripts: `hooks_manager.py` y `phase_report.py`.
+  - Hooks propios en `.claude/hooks`.
+  - Registros: `HOOK_REGISTRY.json` y `hook_decisions.json`.
+  - Instalador, hub, doctor y `model_policy`.
+  - Documentación: `docs/reports`, ECC_INTEGRATION_REPORT y HOOK_SECURITY_REPORT.
+  - Reglas: AGENTS, CLAUDE, `documentation-ledger` y `documentation-keeper`.
+- **Comandos/pruebas realmente ejecutados y resultado:**
+  - Suite completa sin submódulos: 137 OK.
+  - Prueba de humo end-to-end y comprobaciones de hooks en un proyecto temporal: todo correcto, rollback incluido.
+  - Prueba real `claude -p`: 4 bloqueos de hooks y 1 delegación Haiku.
+  - Proyecto temporal eliminado.
+- **Revisión de seguridad y documentación:**
+  - Ver HOOK_SECURITY_REPORT.
+  - Sin cambios globales: el hash de la configuración de usuario no varió.
+- **Bloqueos, riesgos y próximas acciones:**
+  - CI final del PR #4.
+  - La próxima fase debe iniciarse con `hub.py launch` en una sesión nueva.
+  - Consumo de la fase: 239 699 tokens de ejecutores, por encima del objetivo.
+- **Responsable/aprobación:**
+  - El owner autorizó la fase 4 y el presupuesto de tokens.
+  - Ejecutores: E1 Sonnet y E2 Haiku, con `effort: medium`.
+
+### 2026-11-28 — HUB-012 — Fase 4.1: corrección del consumo de tokens y herencia obligatoria
+- **Objetivo:**
+  - Corregir los hallazgos de consumo confirmados (sin repetir la auditoría).
+  - Incorporar las optimizaciones al núcleo reutilizable, para que todos los proyectos nuevos y existentes las hereden.
+- **Decisión y por qué:**
+  - El presupuesto pasa a ser técnico y persistente (`model_guard` y un libro por fase), ya que la skill por sí sola no limitaba el consumo.
+  - Solo se delega en agentes del proyecto que precargan `token-budget`: los built-ins no pueden precargar skills.
+  - `update` conserva únicamente las claves ajustables; las claves centrales siempre provienen del hub.
+  - La fuente única de verdad es `MODEL_POLICY.json`.
+  - Ver `docs/reports/PHASE_04_1_REPORT.md` y la sección "Herencia obligatoria" de GOVERNANCE.
+- **Archivos afectados:**
+  - Código: `model_guard`, instalador, bootstrap (`update`/`launch`), hub, `model_policy`, `hooks_manager`, `phase_report`, `catalog.py` y `external_scan`.
+  - Configuración y registros: `MODEL_POLICY.json`, `settings.json`, `hook_decisions` y los registros regenerados.
+  - Reglas y documentación: AGENTS, CLAUDE, GOVERNANCE, orquestador y supervisor, `token-budget`, protocolos y guías.
+  - Pruebas: `test_inheritance` (nueva), `model_guard`, `hooks_manager`, `bootstrap`, `external_scan` y `phase_report`.
+- **Comandos/pruebas realmente ejecutados y resultado:**
+  - Pruebas focalizadas: correctas.
+  - Prueba real de `claude -p` en un proyecto temporal actualizado con `update`:
+    - Delegación a Haiku permitida, con `token-budget` cargada.
+    - Segunda delegación bloqueada por el presupuesto de la sesión.
+    - `general-purpose` bloqueado.
+    - La sesión nueva quedó bloqueada por el presupuesto de la fase (23 876 tokens medidos).
+  - Proyecto temporal eliminado.
+  - Suite completa: ver el informe.
+- **Revisión de seguridad y documentación:**
+  - Sin cambios globales.
+  - Los agentes externos no pueden ampliar modelos, concurrencia ni skills obligatorias.
+- **Bloqueos, riesgos y próximas acciones:**
+  - Un ejecutor ya en marcha puede superar el presupuesto, porque el hook solo actúa antes de delegar.
+  - No existe un tope de tokens por subagente.
+- **Responsable/aprobación:**
+  - El owner autorizó la fase 4.1, el cambio de gobernanza y el requisito permanente.
+  - Ejecutores de la fase en el hub: ninguno (0 tokens). La prueba real usó 23 876 tokens de Haiku.
+- **Cierre (ajuste del owner):**
+  - Se corrige la desviación del orquestador, que implementó directamente: unos 2,2 M tokens ponderados.
+  - AGENTS, el orquestador y token-budget limitan su rol a coordinar. Solo puede ejecutar comandos deterministas cortos; Sonnet implementa.
+  - Los informes separan el consumo del orquestador del de los ejecutores.
+  - Pruebas focalizadas OK.
+  - Fusión del PR #4 autorizada.

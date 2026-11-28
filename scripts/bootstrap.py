@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import urllib.request
 from pathlib import Path
 
@@ -88,15 +89,32 @@ def bootstrap(root,target,fetch_external=True,*,runtime_scan=True,home=None,runn
     path.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     return report
 
-def launch(target,environ=None):
+def update(root,target,fetch_external=False,*,runtime_scan=False,home=None,runner=None,which=None):
+    """Safe update of an installed project: same profile, project values for tunable keys kept."""
+    root,target=Path(root).resolve(),Path(target).resolve()
+    manifest=target/".agent-hub/manifest.json"
+    if not manifest.is_file():
+        raise ValueError("Not an Agent Hub project (no .agent-hub/manifest.json); use install")
+    profile=json.loads(manifest.read_text(encoding="utf-8")).get("profile","full")
+    result=install(root,target,profile,fetch_external,home=home,runtime_scan=runtime_scan,runner=runner,which=which)
+    return {"installation":result,"static_errors":verify_project(target),
+            "pending_reconciliation":pending_reconciliation(target)}
+def launch(target,environ=None,phase=None,root=None):
     environ=os.environ if environ is None else environ
     problems=mp.check_runtime_env(environ)
-    problems+=check_target_settings(Path(target).resolve())
+    target=Path(target).resolve()
+    root=Path(__file__).resolve().parents[1] if root is None else Path(root).resolve()
+    if target!=root and (target/".agent-hub/manifest.json").is_file() and not problems:
+        # Every launch applies the current central rules (policy, hooks, agents, skills, budget).
+        report=update(root,target)
+        if report["installation"]["conflicts"]:
+            problems.append("update left changed managed files in .agent-hub/incoming: "
+                            +", ".join(report["installation"]["conflicts"]))
+    problems+=check_target_settings(target)
     if problems:
         for problem in problems:
             print("PROBLEM:",problem)
         return 3
-    target=Path(target).resolve()
     errors=verify_project(target)
     if errors:
         raise ValueError("; ".join(errors))
@@ -107,5 +125,10 @@ def launch(target,environ=None):
     # (observed: xhigh) otherwise wins over the agent frontmatter for the main session.
     orchestrator=target/".claude/agents/orchestrator.md"
     effort=mp.parse_effort(orchestrator.read_text(encoding="utf-8")) if orchestrator.is_file() else None
-    effort=effort if effort in mp.ORCHESTRATOR_EFFORTS else "high"
-    return subprocess.call([executable,"--agent","orchestrator","--model","opus","--effort",effort],cwd=target)
+    effort=effort if effort in mp.ORCHESTRATOR_EFFORTS else "medium"
+    cmd=[executable,"--agent","orchestrator","--model","opus","--effort",effort]
+    if phase:
+        # The phase ledger survives sessions; a new phase id starts a new budget.
+        subprocess.call([sys.executable,str(target/".claude/hooks/model_guard.py"),"--budget","start-phase",str(phase),"--keep-if-same","--project",str(target)])
+        cmd.append(f"Fase {phase}: usa docs/reports/LATEST_REPORT.md como traspaso; no releas fases anteriores ni repitas auditorias.")
+    return subprocess.call(cmd,cwd=target)

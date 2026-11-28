@@ -1,0 +1,55 @@
+{
+  "phase": 1,
+  "title": "Preparación y validación de My Agent Skill Hub",
+  "objective": "Preparar el entorno de desarrollo asistido por IA: clonar el hub y el repositorio del estudio, inicializar submódulos, validar el hub, revisar el PR #2, auditar la política de modelos y el entorno local (GPU, Ollama, Docker, Godot) sin instalar ni modificar nada.",
+  "executive_summary": [
+    "Hub clonado en la rama feat/indie-studio-agent-library con sus 8 submódulos fijados; indie-game-studio clonado.",
+    "validate y doctor PASS; 16/16 pruebas; inventario 30 agentes y 42 skills propias con copias runtime idénticas.",
+    "PR #2 no listo: draft, conflictos con main en 3 archivos y escritura por defecto de .mcp.json.",
+    "Se detectaron contradicciones de política de modelos (una de ellas, sobre CLAUDE_CODE_SUBAGENT_MODEL, se refutó en la fase 2).",
+    "Bloqueos: gh sin autenticar y motor Docker detenido."
+  ],
+  "initial_state": ["Directorio de trabajo vacío.", "GitHub CLI sin autenticar."],
+  "final_state": ["Repositorios clonados y limpios.", "Informe de entorno local generado fuera de los repositorios (no versionado)."],
+  "components": ["Ninguno implementado: fase de auditoría."],
+  "files": {"created": ["ENVIRONMENT_AUDIT.md (local, fuera de los repositorios)"], "modified": []},
+  "versions": ["Git 2.55.0.windows.5", "Python 3.13.15", "Node.js 24.20.0", "uv 0.13.1", "Claude Code 2.1.332 (se declaró 2.1.309)", "GitHub CLI 2.96.0", "Docker CLI 29.7.2", "Ollama 0.40.17", "Godot 4.7.2.stable.steam", "NVIDIA 621.24 / CUDA 13.5 (RTX 3060 12 GB)"],
+  "commands": [
+    {"cmd": "python scripts/hub.py validate", "result": "PASS (30 agentes, 42 skills, 10 stacks)"},
+    {"cmd": "python scripts/hub.py doctor", "result": "PASS (mismo código que validate)"},
+    {"cmd": "python -m unittest discover -s tests -v", "result": "16 tests OK"},
+    {"cmd": "git submodule status", "result": "8 submódulos en el commit fijado"},
+    {"cmd": "nvidia-smi / ollama list / docker version", "result": "9 GB VRAM libres; 3 modelos; motor Docker no disponible"}
+  ],
+  "tests": [
+    {"name": "hub.py validate", "status": "passed", "evidence": "PASS"},
+    {"name": "hub.py doctor", "status": "passed", "evidence": "PASS"},
+    {"name": "unittest", "status": "passed", "evidence": "16/16"},
+    {"name": "Inventario y copias runtime", "status": "passed", "evidence": "42/42 copias idénticas; registros coinciden"},
+    {"name": "Commits fijados de los submódulos", "status": "passed", "evidence": "gitlink = documentación = HEAD (8/8)"},
+    {"name": "Autenticación de gh", "status": "failed", "evidence": "sin sesión"},
+    {"name": "Motor Docker", "status": "failed", "evidence": "Docker Desktop detenido"}
+  ],
+  "evidence": ["Inventario cruzado por script propio de solo lectura.", "Revisión del PR #2 confirmada con git merge-tree y la API pública."],
+  "risks": ["El instalador del PR #2 escribía .mcp.json con MCP remotos por defecto.", "Repositorios dentro de una ruta de OneDrive.", "core.longpaths sin definir.", "Distro WSL por defecto en WSL 1.", "awesome-harness-engineering sin licencia; OpenViking AGPL-3.0."],
+  "decisions": [
+    {"decision": "Clonar por HTTPS sin gh", "why": "gh no estaba autenticado; el acceso funcionó."},
+    {"decision": "Informe de entorno fuera de los repositorios", "why": "Contiene datos de la máquina; el hub es público."}
+  ],
+  "tokens": [
+    {"agent": "Auditoría de política de modelos", "model": "claude-sonnet-5-5", "tokens": 71261, "tool_uses": 10, "duration_s": 229.5, "source": "task-notification"},
+    {"agent": "Revisión del PR #2", "model": "claude-sonnet-5-5", "tokens": 71404, "tool_uses": 8, "duration_s": 343.5, "source": "task-notification"},
+    {"agent": "Hardware y runtime", "model": "claude-haiku-5-5", "tokens": 60477, "tool_uses": 12, "duration_s": 547.4, "source": "task-notification"}
+  ],
+  "costs": [],
+  "duration": "No medida con precisión; los ejecutores corrieron entre 01:57 y 02:07 UTC del 2026-11-28.",
+  "problems": [
+    {"problem": "ollama list arrancó automáticamente la app de Ollama", "solution": "Se informó; en la fase 2 doctor consulta Ollama solo por HTTP."},
+    {"problem": "Se informó indie-game-studio como público", "solution": "Corregido en la fase 2: es privado; el acceso venía del askpass de VS Code."},
+    {"problem": "doctor repetía validate", "solution": "Reimplementado en la fase 2."}
+  ],
+  "pending": ["Autenticar gh.", "Resolver conflictos del PR #2.", "Iniciar Docker.", "Resolver contradicciones de política."],
+  "authorizations": ["Autenticación de gh", "Política de modelos definitiva", "Perfil del instalador", "CLAUDE_CODE_SUBAGENT_MODEL", "Inicio de Docker Desktop"],
+  "github": {"commits": [], "prs": ["#2 revisado (sin cambios)"], "links": ["https://github.com/Peppe8044/my-agent-skill-hub/pull/2"]},
+  "next_phase": "Autenticar gh, resolver los conflictos del PR #2 y corregir la política de modelos con pruebas reales de delegación."
+}

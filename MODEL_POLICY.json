@@ -1,11 +1,31 @@
 {
   "orchestrator": "opus",
-  "executors": ["sonnet", "haiku"],
+  "executors": [
+    "sonnet",
+    "haiku"
+  ],
   "allow_inherit": false,
   "allow_executor_opus": false,
   "default_parallel_agents": 1,
-  "max_parallel_agents": 3,
-  "max_retries": 2,
-  "executor_efforts": ["low", "medium", "high"],
-  "default_executor_effort": "medium"
+  "max_parallel_agents": 2,
+  "max_retries": 1,
+  "executor_efforts": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "default_executor_effort": "medium",
+  "mandatory_agent_skills": [
+    "token-budget",
+    "documentation-ledger"
+  ],
+  "executor_budget_per_phase": 50000,
+  "executor_budget_per_session": 50000,
+  "executor_budget_reserve_per_active": 10000,
+  "budget_weights": {
+    "input": 1.0,
+    "output": 1.0,
+    "cache_creation": 1.0,
+    "cache_read": 0.1
+  }
 }

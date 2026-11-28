@@ -56,7 +56,8 @@ DOMAIN_ORDER = ["general", "data-science", "games", "web", "sre-devops", "securi
 DOMAIN_KEYWORDS = {
     "general": ["testing", "tdd", "unit test", "code review", "review", "refactor", "refactoring",
                 "debugging", "debug", "git", "documentation", "architecture", "planning", "python",
-                "typescript", "javascript", "golang", "rust", "java", "kotlin", "c#", "sql"],
+                "typescript", "javascript", "golang", "rust", "java", "kotlin", "c#", "sql", "compaction", "context window", "context budget",
+                "token budget", "token usage"],
     "data-science": ["data", "dataset", "statistics", "statistical", "pandas", "numpy", "scipy", "ml",
                      "machine learning", "notebook", "visualization", "bioinformatics", "genomics",
                      "chemistry", "scientific", "simulation"],
@@ -131,11 +132,8 @@ def read_text(path: Path) -> str:
 
 
 def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 16), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    # Content hash independent of line endings (git autocrlf checks out CRLF on Windows, LF elsewhere).
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def norm_name(name: str) -> str:
@@ -322,6 +320,12 @@ REPO_DEFAULT_DOMAINS = {"Anthropic-Cybersecurity-Skills": "security-defensive",
 ACTIVE_EXCLUDE_RE = re.compile(r"(?<![a-z0-9])(?:ecc|dmux|tmux|multi-agent|orchestrat\w*|harness)(?![a-z0-9])")
 
 
+# Orchestrator decisions (phase 4.1): context-efficiency skills that help every session are active;
+# skills that only work with a rejected hook are rejected.
+ACTIVE_INCLUDE = {"ECC--strategic-compact", "ECC--context-budget"}
+SKILL_RULES = {"ECC--cost-tracking": "requires-service:ecc-cost-tracker-hook"}
+
+
 def defensive_name(name: str) -> bool:
     return bool(DEFENSIVE_NAME_RE.search(name)) and not OFFENSIVE_NAME_RE.search(name)
 
@@ -355,6 +359,8 @@ def classify_common(fm: dict, text: str, repo_license: str, name: str, size: int
         reasons.append("description-too-short")
     if size > MAX_SKILL_BYTES:
         reasons.append("skill-too-large")
+    if f"{repo}--{name}" in SKILL_RULES:
+        reasons.append(SKILL_RULES[f"{repo}--{name}"])
     bad, kept = offensive_hits(f"{name} {desc}")
     if bad and defensive_name(name):
         bad, kept = [], sorted(set(kept) | set(bad))
@@ -663,6 +669,7 @@ def select_tiers(skills: list) -> list:
         for s in cands[:2]:
             if len(chosen) < MAX_ACTIVE:
                 chosen.append(s)
+    chosen += [s for s in approved if s["id"] in ACTIVE_INCLUDE and s not in chosen]
     ids = {id(s) for s in chosen}
     for s in approved:
         s["tier"] = "active" if id(s) in ids else "catalog"

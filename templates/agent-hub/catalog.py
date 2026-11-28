@@ -21,6 +21,9 @@ NOTE = "Note: start a new Claude Code session to detect newly enabled or disable
 DEFAULT_EXECUTORS = ("sonnet", "haiku")
 EFFORTS = ("low", "medium", "high")
 MODEL_RE = re.compile(r"(?m)^model:[ \t]*(\S+)[ \t]*$")
+MANDATORY_AGENT_SKILLS = ("token-budget", "documentation-ledger")  # fallback; MODEL_POLICY.json rules
+SKILLS_BLOCK_RE = re.compile(r"(?m)^skills:[ \t]*\n((?:[ \t]+-[ \t]*\S+[ \t]*\n)*)")
+SKILLS_INLINE_RE = re.compile(r"(?m)^skills:[ \t]*(\S[^\n]*)\n")
 EFFORT_RE = re.compile(r"(?m)^effort:[ \t]*(\S+)[ \t]*$")
 SKILL_DIRS = (".claude/skills", ".agents/skills")
 
@@ -75,6 +78,32 @@ def policy(project):
             default_effort if default_effort in EFFORTS else "medium")
 
 
+def mandatory_skills(project):
+    """MODEL_POLICY.json mandatory_agent_skills; token-budget is always required."""
+    listed = read_json(Path(project) / "MODEL_POLICY.json", {}).get("mandatory_agent_skills")
+    names = [s for s in listed if isinstance(s, str)] if isinstance(listed, list) else list(MANDATORY_AGENT_SKILLS)
+    return ["token-budget"] + [s for s in names if s != "token-budget"]
+
+
+def with_skills(front, required):
+    """Frontmatter with every required skill in the `skills:` list (existing entries kept)."""
+    block = SKILLS_BLOCK_RE.search(front)
+    if block and block.group(1):
+        listed = re.findall(r"-[ \t]*(\S+)", block.group(1))
+        extra = "".join("  - %s\n" % s for s in required if s not in listed)
+        return front[:block.end()] + extra + front[block.end():]
+    inline = SKILLS_INLINE_RE.search(front) if not block else None
+    listed = []
+    if inline:
+        listed = [x.strip(" '\"") for x in inline.group(1).strip().strip("[]").split(",") if x.strip(" '\"")]
+    items = listed + [s for s in required if s not in listed]
+    lines = "skills:\n" + "".join("  - %s\n" % s for s in items)
+    found = block or inline
+    if found:
+        return front[:found.start()] + lines + front[found.end():]
+    return front + ("" if front.endswith("\n") else "\n") + lines
+
+
 def frontmatter_split(text):
     text = text.replace("\r\n", "\n")
     if not text.startswith("---\n"):
@@ -91,21 +120,20 @@ def agent_model(data):
     return match.group(1) if match else None
 
 
-def agent_for_enable(data, default_effort="medium"):
-    """Return agent bytes carrying a valid `effort:` line (deterministic transform)."""
+def agent_for_enable(data, default_effort="medium", skills=MANDATORY_AGENT_SKILLS):
+    """Agent bytes with a valid `effort:` line and the mandatory skills preloaded (deterministic)."""
     text = data.decode("utf-8", "replace").replace("\r\n", "\n")
     front, body = frontmatter_split(text)
     if front is None:
         return data
     match = EFFORT_RE.search(front)
-    if match and match.group(1) in EFFORTS:
-        return text.encode("utf-8")
-    if match:
+    if match and match.group(1) not in EFFORTS:
         front = EFFORT_RE.sub("effort: " + default_effort, front, count=1)
-    else:
+    elif not match:
         model = MODEL_RE.search(front)
         line = "effort: " + default_effort
         front = (front[:model.end()] + "\n" + line + front[model.end():]) if model else front + line + "\n"
+    front = with_skills(front, list(skills))
     return ("---\n" + front + "---\n" + body).encode("utf-8")
 
 
@@ -121,7 +149,7 @@ def source_files(project, entry):
     return files
 
 
-def enable_targets(entry, files, default_effort="medium"):
+def enable_targets(entry, files, default_effort="medium", skills=MANDATORY_AGENT_SKILLS):
     """Map destination rel path -> bytes for enabling a catalog entry."""
     name = entry["name"]
     # Defence in depth: index entries must not be able to write outside the project.
@@ -132,7 +160,7 @@ def enable_targets(entry, files, default_effort="medium"):
         if f.startswith(("/", "\\")) or ":" in f or ".." in parts:
             raise ValueError("refusing catalog file with unsafe path %r" % (f,))
     if entry["kind"] == "agent":
-        return {".claude/agents/%s.md" % name: agent_for_enable(files["agent.md"], default_effort)}
+        return {".claude/agents/%s.md" % name: agent_for_enable(files["agent.md"], default_effort, skills)}
     return {"%s/%s/%s" % (rt, name, f): data for rt in SKILL_DIRS for f, data in files.items()}
 
 
@@ -228,7 +256,7 @@ def cmd_enable(project, args):
             if (project / rt / entry["name"]).exists():
                 print("refused: skill directory %s/%s already exists" % (rt, entry["name"]), file=sys.stderr)
                 return 1
-    targets = enable_targets(entry, files, default_effort)
+    targets = enable_targets(entry, files, default_effort, mandatory_skills(project))
     for rel, data in targets.items():
         dest = lp(project / rel)
         dest.parent.mkdir(parents=True, exist_ok=True)

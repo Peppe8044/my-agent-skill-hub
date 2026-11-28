@@ -147,6 +147,19 @@ def doctor(root, validate_fn, runner=None, environ=None, which=None, http_get=No
     finder = godot_finder or (lambda: find_godot(environ, which))
     path, how = finder()
     add("godot", "OK" if path else "WARN", f"{path} ({how})" if path else how)
+    if which("node"):
+        add("node", "OK", "node found")
+    else:
+        add("node", "WARN", "node not found: ECC config-protection hook disabled at runtime")
+    try:
+        hooks = json.loads((Path(root) / "registry/HOOK_REGISTRY.json").read_text(encoding="utf-8"))["hooks"]
+        counts = {}
+        for h in hooks:
+            counts[h["status"]] = counts.get(h["status"], 0) + 1
+        add("hooks", "OK", f"approved {counts.get('approved', 0)}, rejected {counts.get('rejected', 0)}, "
+                           f"inventory-only {counts.get('inventory-only', 0)}")
+    except (OSError, ValueError, KeyError):
+        add("hooks", "WARN", "registry/HOOK_REGISTRY.json missing or invalid")
     problems = mp.check_runtime_env(environ)
     add("model-env", "FAIL" if problems else "OK", "; ".join(problems) if problems else "no overriding model variables")
     if platform == "win32":

@@ -15,7 +15,7 @@ python -m unittest discover -s tests -v
 1. Usuario describe problema; analista redacta brief y criterios verificables.
 2. Arquitecto compara al menos dos diseños y un baseline simple. Documenta stack decidido y riesgos.
 3. Usuario/owner confirma alcance, costos y riesgos antes de cambios irreversibles.
-4. El orquestador (Opus, sesión principal) elige modo: un ejecutor por defecto, o hasta 3 en paralelo (tareas independientes, archivos sin solapar); `supervisor` (Sonnet, subagente) solo planifica y devuelve el plan. Cada delegación lleva `model` explícito `sonnet` o `haiku`; máximo 2 reintentos y luego bloqueado.
+4. El orquestador (Opus, sesión principal) elige modo: un ejecutor por defecto, o hasta 3 en paralelo (tareas independientes, archivos sin solapar); `supervisor` (Sonnet, subagente) solo planifica y devuelve el plan. Cada delegación lleva `model` explícito `sonnet` o `haiku`; máximo 1 reintento y luego bloqueado.
 5. Cada agente recibe tarea, input delimitado, salida y responsable de archivos.
 6. Implementación en cambios pequeños con pruebas, seguridad, revisión.
 7. Documentador actualiza registro de trabajo, ADR si procede, changelog, evidencias y handoff.

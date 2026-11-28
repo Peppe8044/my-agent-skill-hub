@@ -150,7 +150,7 @@ class InstallTests(Isolated, unittest.TestCase):
         self.assertEqual("sonnet", merged["env"]["CLAUDE_CODE_SUBAGENT_MODEL"])
         self.assertEqual("opus", merged["model"])
         self.assertEqual(project["hooks"]["PreToolUse"][0], merged["hooks"]["PreToolUse"][0])
-        self.assertEqual(project["hooks"]["Stop"], merged["hooks"]["Stop"])
+        self.assertEqual(project["hooks"]["Stop"][0], merged["hooks"]["Stop"][0])
         self.assertTrue(mp.has_model_guard(merged))
         self.assertEqual([], mp.validate_settings(merged, self.p))
         self.assertEqual([], verify_project(self.p))
