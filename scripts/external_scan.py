@@ -131,11 +131,8 @@ def read_text(path: Path) -> str:
 
 
 def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 16), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    # Content hash independent of line endings (git autocrlf checks out CRLF on Windows, LF elsewhere).
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def norm_name(name: str) -> str:

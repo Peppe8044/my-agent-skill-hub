@@ -28,7 +28,8 @@ def _json(path):
 
 
 def _sha(data):
-    return hashlib.sha256(data).hexdigest()
+    # Content hash independent of line endings (git autocrlf checks out CRLF on Windows, LF elsewhere).
+    return hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _git(repo, *args):

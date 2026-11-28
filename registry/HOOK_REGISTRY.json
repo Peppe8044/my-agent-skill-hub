@@ -1802,7 +1802,7 @@
       "files": [
         {
           "path": ".claude/hooks/model_guard.py",
-          "sha256": "54f29ed5ef5ffce81f21337a127881e8daf42941704d564defe6622dc788caad"
+          "sha256": "ed63f9ce7e34500b0c2552d1e33df9dc58ec9adf81aa04e62f506cf5b5a6d2de"
         }
       ],
       "install_paths": [
