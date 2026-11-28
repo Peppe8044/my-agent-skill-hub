@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | Anthropic-Cybersecurity-Skills | Apache-2.0 | allowed | Licencia Apache-2.0 permite redistribucion con atribucion. | LICENSE |
 | ECC | MIT | allowed | Licencia MIT permite redistribucion con atribucion. | LICENSE |
-| OpenViking | AGPL-3.0 | forbidden | Licencia AGPL-3.0 no esta en la lista permitida. | LICENSE |
+| OpenViking | AGPL-3.0 | excluded-by-policy | AGPL-3.0: la licencia permite redistribuir bajo sus condiciones copyleft; por politica del proyecto se mantiene separado y no se copia a proyectos instalados. | LICENSE |
 | agentmemory | Apache-2.0 | allowed | Licencia Apache-2.0 permite redistribucion con atribucion. | LICENSE |
 | awesome-harness-engineering | none | forbidden | Sin archivo LICENSE: todos los derechos reservados; solo referencia. | - |
 | diagram-design | MIT | allowed | Licencia MIT permite redistribucion con atribucion. | LICENSE |
@@ -15,7 +15,7 @@
 
 - Copiar LICENSE/NOTICE del repo de origen junto al contenido copiado.
 - Copias sin modificar (los hashes sha256 del registro permiten verificarlo).
-- Repos con redistribucion `forbidden` no se copian: solo referencia o inventario.
+- Repos `forbidden` (sin licencia: todos los derechos reservados) o `excluded-by-policy` (p. ej. AGPL-3.0, que si permite redistribuir bajo condiciones) no se copian: decision de politica del proyecto, no una prohibicion de la licencia AGPL.
 
 ## Licencias por skill (frontmatter) distintas de la del repo
 

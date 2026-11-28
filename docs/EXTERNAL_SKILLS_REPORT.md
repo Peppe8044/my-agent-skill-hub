@@ -2,13 +2,15 @@
 
 Generado por `scripts/external_scan.py` (solo lectura, sin timestamps). Regenerar con `python scripts/hub.py external-scan`.
 
+> La clasificación es automatizada por reglas deterministas; no es una auditoría de seguridad completa y el contenido aprobado no ha sido revisado manualmente línea por línea.
+
 ## Repositorios
 
 | Repo | Commit | Licencia | Redistribucion | Skills | Agentes | Hooks | MCP | Scripts | Manifiestos deps | Configs |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Anthropic-Cybersecurity-Skills | 54a798831d22 | Apache-2.0 | allowed | 818 | 0 | 0 | 0 | 1105 | 0 | 2 |
 | ECC | 4adeee6732a1 | MIT | allowed | 1089 | 311 | 244 | 43 | 1463 | 36 | 63 |
-| OpenViking | 600babf130a8 | AGPL-3.0 | forbidden | 96 | 1 | 43 | 11 | 4411 | 29 | 27 |
+| OpenViking | 600babf130a8 | AGPL-3.0 | excluded-by-policy | 96 | 1 | 43 | 11 | 4411 | 29 | 27 |
 | agentmemory | 5c9e2e698bda | Apache-2.0 | allowed | 17 | 0 | 35 | 8 | 771 | 7 | 12 |
 | awesome-harness-engineering | 0b14b85ab0fe | none | forbidden | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | diagram-design | 795eec47fd37 | MIT | allowed | 1 | 0 | 0 | 0 | 124 | 2 | 7 |

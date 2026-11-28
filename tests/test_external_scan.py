@@ -58,7 +58,7 @@ class ExternalScanTests(unittest.TestCase):
         it = self.f.items(inv, "r")["skills/a"]
         self.assertEqual("rejected", it["decision"])
         self.assertIn("license-not-allowed:AGPL-3.0", it["reasons"])
-        self.assertEqual("forbidden", inv["repos"]["r"]["redistribution"])
+        self.assertEqual("excluded-by-policy", inv["repos"]["r"]["redistribution"])
 
     def test_per_skill_license_override(self):
         self.f.repo("r", AGPL)

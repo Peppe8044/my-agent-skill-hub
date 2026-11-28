@@ -38,7 +38,7 @@
   - Seguridad: solo defensiva. 36 skills ofensivas rechazadas, tras corregir 10 falsos positivos defensivos con la regla R6b.
   - Se rechazan 22 skills y 1 agente con patrones inseguros.
   - Las escrituras del instalador se limitan al proyecto y no atraviesan symlinks. Se añadió validación de nombre y ruta en `catalog.py enable` con su prueba.
-  - El contenido sin licencia o con AGPL no se redistribuye. Las licencias MIT y Apache se copian junto al contenido.
+  - El contenido sin licencia no se redistribuye; OpenViking (AGPL-3.0, redistribuible bajo condiciones copyleft) queda separado por política del proyecto. La clasificación automatizada no equivale a una auditoría de seguridad completa. Las licencias MIT y Apache se copian junto al contenido.
 - **Documentación:** README, AGENTS/CLAUDE (reglas de tokens), token-budget, skill `skill-catalog`, ADR 0005, EXTERNAL_INTEGRATIONS, EXTERNAL_SKILLS_REPORT, SKILL_COMPATIBILITY_REPORT, LICENSE_REGISTRY, TOKEN_USAGE_REPORT, WORK_LOG (HUB-010) y CHANGELOG.
 - **No ejecutado:**
   - Revisión humana de las 181 skills que requieren revisión de scripts y de los 45 agentes de catálogo. Quedan fuera de los activos.

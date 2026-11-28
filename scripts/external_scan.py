@@ -707,7 +707,11 @@ def scan(hub_root: Path) -> dict:
         elif lic == "none":
             redis, reason = "forbidden", "Sin archivo LICENSE: todos los derechos reservados; solo referencia."
         else:
-            redis, reason = "forbidden", f"Licencia {lic} no esta en la lista permitida."
+            redis = "excluded-by-policy"
+            reason = (f"{lic}: la licencia permite redistribuir bajo sus condiciones copyleft; por politica del "
+                      "proyecto se mantiene separado y no se copia a proyectos instalados."
+                      if any(x in lic for x in ("GPL",)) else
+                      f"Licencia {lic} fuera de la lista permitida; excluida por politica del proyecto.")
         repos[r] = {"commit": gitlink(hub_root, r), "license": lic, "license_files": i["license_files"],
                     "redistribution": redis, "reason": reason,
                     "repo_rule": REPO_RULES.get(r, "reference-only" if r == "awesome-harness-engineering" else ""),
@@ -803,7 +807,8 @@ def report_main(inv: dict, reg: dict) -> str:
     s = inv["summary"]
     L = ["# Reporte de skills externas", "",
          "Generado por `scripts/external_scan.py` (solo lectura, sin timestamps). "
-         "Regenerar con `python scripts/hub.py external-scan`.", "", "## Repositorios", ""]
+         "Regenerar con `python scripts/hub.py external-scan`.", "",
+         "> La clasificación es automatizada por reglas deterministas; no es una auditoría de seguridad completa y el contenido aprobado no ha sido revisado manualmente línea por línea.", "", "## Repositorios", ""]
     rows = []
     for r, d in inv["repos"].items():
         p = s["per_repo"][r]
@@ -838,11 +843,11 @@ def report_main(inv: dict, reg: dict) -> str:
 
 RULES_ES = [
     ("R1", "Licencia efectiva = frontmatter `license` normalizada o LICENSE del repo. Permitidas: "
-           + ", ".join(ALLOWED_LICENSES) + ". AGPL/GPL/LGPL, NC/ND, propietaria, desconocida o repo sin LICENSE: `license-not-allowed:<valor>`."),
+           + ", ".join(ALLOWED_LICENSES) + ". AGPL/GPL/LGPL (permiten redistribuir bajo condiciones copyleft; excluidas por politica del proyecto), NC/ND, propietaria, desconocida o repo sin LICENSE: `license-not-allowed:<valor>`."),
     ("R2", "Copias/ports/traducciones (`docs/<lang>/`, `.kiro/`, `.cursor/`, `.cursor-plugin/`, `.agents/`, `.codex/`, `pi/`, `examples/`, `tests/`, `fixtures/`) con otra copia canonica del mismo nombre: `non-canonical-copy`. Prioridad canonica: `skills/`|`agents/` raiz > `plugin(s)/.../skills` > otros."),
     ("R3", "Duplicados por nombre normalizado o hash identico de SKILL.md. Las propias siempre ganan (`duplicate-of-own:<n>`); entre externas: scientific-agent-skills > Anthropic-Cybersecurity-Skills > diagram-design > ECC > otras, luego ruta canonica y ruta mas corta (`duplicate-of:<id>`)."),
     ("R4", "Skill con codigo (" + " ".join(sorted(CODE_EXTS)) + ") referenciado en su SKILL.md (nombre de archivo o `scripts/`): `requires-script-review`. Si no, se aprueba como solo instrucciones: `files` solo incluye .md/.txt/.json/.yaml/.yml/.csv/.toml y el codigo queda en `excluded_code`."),
-    ("R5", "agentmemory: `requires-service:agentmemory`; rea: `requires-toolchain:rea`; OpenViking cae por R1 (AGPL); awesome-harness-engineering solo referencia (sin licencia)."),
+    ("R5", "agentmemory: `requires-service:agentmemory`; rea: `requires-toolchain:rea`; OpenViking queda separado por politica del proyecto (R1, AGPL-3.0); awesome-harness-engineering solo referencia (sin licencia)."),
     ("R6", "Solo seguridad defensiva: terminos ofensivos fuertes (exploit development, red team, c2, credential dumping, lateral movement, privilege escalation, ddos, jailbreak, keylogger...) en nombre+descripcion; terminos debiles (payload, shellcode, ransomware, evasion) solo con verbo ofensivo previo (build, create, deploy...). Se exime si hay contexto defensivo (detect, hunt, investigate, analyze, respond, mitigate, defend, prevent, against... antes o detection/mitigation/analysis... despues). Resultado `offensive-security`."),
     ("R7", "Patrones inseguros en SKILL.md/agente: " + ", ".join(p for p, _ in UNSAFE) + " (`rm -rf /` solo raiz). Resultado `unsafe-pattern:<id>`."),
     ("R8", "Calidad: nombre `^[a-z0-9][a-z0-9-]{0,63}$` (`invalid-name`), descripcion >= 20 caracteres, SKILL.md <= 100 KB."),
@@ -893,7 +898,7 @@ def report_licenses(inv: dict, reg: dict) -> str:
          "## Obligaciones de atribucion", "",
          "- Copiar LICENSE/NOTICE del repo de origen junto al contenido copiado.",
          "- Copias sin modificar (los hashes sha256 del registro permiten verificarlo).",
-         "- Repos con redistribucion `forbidden` no se copian: solo referencia o inventario.",
+         "- Repos `forbidden` (sin licencia: todos los derechos reservados) o `excluded-by-policy` (p. ej. AGPL-3.0, que si permite redistribuir bajo condiciones) no se copian: decision de politica del proyecto, no una prohibicion de la licencia AGPL.",
          "", "## Licencias por skill (frontmatter) distintas de la del repo", ""]
     rows = []
     for r, d in inv["repos"].items():

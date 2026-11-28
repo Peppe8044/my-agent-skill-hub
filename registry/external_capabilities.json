@@ -561,8 +561,8 @@
    "commit":"600babf130a8dcb1b2ec811e8211c582ca0ae83b",
    "license":"AGPL-3.0",
    "license_files":["LICENSE"],
-   "reason":"Licencia AGPL-3.0 no esta en la lista permitida.",
-   "redistribution":"forbidden"
+   "reason":"AGPL-3.0: la licencia permite redistribuir bajo sus condiciones copyleft; por politica del proyecto se mantiene separado y no se copia a proyectos instalados.",
+   "redistribution":"excluded-by-policy"
   },
   "agentmemory":{
    "commit":"5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb",

@@ -5,7 +5,7 @@ Audit exact commit, source, license, permissions, dependencies and hooks before 
 - rohitg00/agentmemory: isolated memory pilot.
 - K-Dense-AI/scientific-agent-skills: selective statistics.
 - mukul975/Anthropic-Cybersecurity-Skills: defensive subset.
-- volcengine/OpenViking: isolated later evaluation (AGPL).
+- volcengine/OpenViking: isolated later evaluation. AGPL-3.0 allows redistribution under copyleft conditions; keeping it out of installed projects is a project policy, not a licence prohibition.
 - harness-engineer/awesome-harness-engineering: reference.
 - cathrynlavery/diagram-design: selective diagram skill.
 - affaan-m/ECC: selective hooks and skills after conflict audit.

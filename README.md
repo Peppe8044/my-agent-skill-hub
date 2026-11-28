@@ -43,6 +43,7 @@ Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GOVERNANCE.md](docs/GOVE
 ## Capacidades externas
 
 - `python scripts/hub.py external-scan` regenera el inventario determinista y el registro central (`registry/EXTERNAL_SKILLS_INVENTORY.json`, `registry/external_capabilities.json`) y los informes `docs/EXTERNAL_SKILLS_REPORT.md`, `docs/SKILL_COMPATIBILITY_REPORT.md` y `LICENSE_REGISTRY.md`.
+- La clasificación es automatizada por reglas deterministas; no es una auditoría de seguridad completa y el contenido aprobado no ha sido revisado manualmente línea por línea.
 - La aprobación es por reglas: allow-list de licencias, solo copias canónicas, las skills propias ganan los duplicados, los archivos de código nunca se importan y las skills que dependen de código requieren revisión humana, solo seguridad defensiva, patrones inseguros rechazados, agentes externos solo `sonnet` o `haiku`.
 - `install`, `new` y `bootstrap` (perfil `full`) instalan automáticamente las capacidades aprobadas en dos niveles:
   - **activas:** unas pocas skills que Claude Code detecta de forma nativa;

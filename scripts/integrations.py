@@ -89,7 +89,7 @@ def _read_source(repo, rel):
 def repo_problem(root, name, info):
     """Return (kind, reason) when a repo cannot be used, else None."""
     if info.get("redistribution") != "allowed":
-        return "forbidden", "redistribution forbidden: " + str(info.get("reason", "no reason given"))
+        return "forbidden", "redistribution %s: %s" % (info.get("redistribution"), info.get("reason", "no reason given"))
     repo = Path(root) / "external" / name
     if not (repo / ".git").exists():
         return "uninit", "submodule not initialized"
