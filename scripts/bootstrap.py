@@ -11,10 +11,12 @@ try:
     from .project_install import install, digest, lp
     from .integrations import status
     from . import model_policy as mp
+    from . import memory as agent_memory
 except ImportError:
     from project_install import install, digest, lp
     from integrations import status
     import model_policy as mp
+    import memory as agent_memory
 
 INCOMING = ".agent-hub/incoming"
 
@@ -55,10 +57,12 @@ def verify_project(target):
     errors+=check_target_settings(target)
     return errors
 
-def probe_memory():
+def probe_memory(target=None):
+    cfg=agent_memory.read_config(target) if target else None
+    port=cfg["port"] if cfg else 3111
     try:
         opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
-        with opener.open("http://127.0.0.1:3111/agentmemory/health",timeout=3) as response:
+        with opener.open(f"http://127.0.0.1:{port}/agentmemory/health",timeout=3) as response:
             return {"http_status":response.status,"state":"endpoint-reachable; persistence and isolation unverified"}
     except (OSError,ValueError):
         return {"state":"unreachable"}
@@ -66,9 +70,10 @@ def probe_memory():
 def bootstrap(root,target,fetch_external=True,*,runtime_scan=True,home=None,runner=None,which=None):
     root,target=Path(root).resolve(),Path(target).resolve()
     result=install(root,target,fetch_external=fetch_external,home=home,runtime_scan=runtime_scan,runner=runner,which=which)
+    result["memory"]=agent_memory.configure(root,target)
     errors=verify_project(target)
     report={"installation":result,"static_errors":errors,"environment":status(root,target),
-            "agentmemory":probe_memory(),
+            "agentmemory":probe_memory(target),
             "openviking":"provider, isolated server and retrieval test required",
             "ecc":"review project-local hooks and model routing before activation",
             "mcp":"configuration only; interactive authentication and tool calls required",
@@ -97,6 +102,7 @@ def update(root,target,fetch_external=False,*,runtime_scan=False,home=None,runne
         raise ValueError("Not an Agent Hub project (no .agent-hub/manifest.json); use install")
     profile=json.loads(manifest.read_text(encoding="utf-8")).get("profile","full")
     result=install(root,target,profile,fetch_external,home=home,runtime_scan=runtime_scan,runner=runner,which=which)
+    result["memory"]=agent_memory.configure(root,target)
     return {"installation":result,"static_errors":verify_project(target),
             "pending_reconciliation":pending_reconciliation(target)}
 def verify_hub(root):

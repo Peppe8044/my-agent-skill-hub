@@ -206,3 +206,19 @@ El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fil
   - `python -m unittest discover -s tests` → Ran 154 tests, OK.
   - `python scripts/hub.py validate` → PASS.
 - **Ejecución:** orchestrator (self), cambio de pocas líneas; ejecutores: ninguno (0 tokens). Riesgo bajo-medio (lanzador; sin cambios en hooks ni en la política): verificación por diff y pruebas focalizadas.
+
+### 2026-11-28 — HUB-014 — Fase 5 (P5-T1): Agent Memory local y aislado por proyecto
+- **Objetivo:** integrar `external/agentmemory` (commit 5c9e2e6) como componente reutilizable: sin APIs de pago, datos y puerto por proyecto, solo MCP, sin hooks de captura, sin cambios globales. ADR-0006.
+- **Cambios:** `scripts/memory.py` (nuevo: configure/start/stop/status/recover), `scripts/hub.py` (subcomando `memory`), `scripts/bootstrap.py` (`bootstrap`/`update` llaman a `memory.configure`; `probe_memory` usa el puerto del proyecto), `tests/test_memory.py` (12 pruebas), `docs/decisions/0006-agent-memory.md`, `docs/CHANGELOG.md`. `project_install.py` e `integrations.py` sin cambios (la fusión de `.mcp.json` se hace en `memory.py`).
+- **Dependencias:** `cd external/agentmemory && npm install --ignore-scripts && npm run build` (311 paquetes; `node_modules`/`dist` ignorados en el submódulo). El build modificó archivos rastreados de `plugin/scripts` en el submódulo (pendiente de restaurar; el sistema denegó `git checkout` automático).
+- **Pruebas en vivo (2 proyectos temporales, Windows, Node 24):** (1) health OK en 127.0.0.1:3430 y :3530; (2) `remember` 201; (3) `smart-search` devuelve la decisión; (4) persiste tras stop/start; (5) el otro proyecto no la ve; (7) `bootstrap` dos veces: `.mcp.json` con una sola entrada `agentmemory` y otros servidores preservados, `.gitignore` con una línea, sin cambios en la segunda ejecución. `~/.agentmemory` no se creó.
+- **Hallazgos:** el CLI se demoniza (el PID lanzado no sirve; se registran los PID que escuchan) y `agentmemory stop` oficial es necesario para reapar el demonio Compose; sin él el siguiente arranque falla ("Worker Compose daemon alive but REST not ready"). Corregido en `stop`/`recover`.
+- **Verificación:** `python -m unittest tests.test_memory` → 12 OK; `python -m unittest discover -s tests` → Ran 166 tests, OK; `python scripts/hub.py validate` → PASS.
+- **Seguridad:** solo loopback; claves de proveedores eliminadas del entorno del servicio; secreto en `data/secret` (ignorado por git), nunca en `.mcp.json`; sin hooks de captura. Riesgo residual: rutas absolutas en `.mcp.json`; descarga del motor `iii` en el primer arranque; comprobación MCP real con Claude Code pendiente (orquestador).
+- **Responsable:** backend-engineer (sonnet). Consumo de tokens: no medido.
+- **Verificación del orquestador (self):**
+  - Prueba MCP con Claude Code (`claude -p --model haiku --strict-mcp-config --mcp-config .mcp.json`) en un proyecto temporal: recuperó la decisión sintética KIWIOBSIDIAN (`claude-haiku-5-5`, 4 turnos, 29 737 tokens ponderados, USD 0,0051). Sin memoria: respondió «unknown» (2 turnos, 21 448 tokens ponderados, USD 0,0038).
+  - Hallazgo en la revisión del diff, corregido: `stop` podía matar un PID reutilizado tras un reinicio, a partir de un `memory.pid` obsoleto. Ahora solo mata los PID que siguen escuchando en los puertos del proyecto. Prueba nueva: `test_stop_never_kills_reused_pid`. Comprobado en vivo: start, stop, sin puertos en LISTENING.
+  - `python -m unittest tests.test_memory` → Ran 13 tests, OK. `python -m unittest discover -s tests` → Ran 167 tests, OK. `python scripts/hub.py validate` → PASS.
+  - Consumo del ejecutor: 827 116 tokens ponderados (transcripción; harness: 126 243), 63 herramientas, 1 932 s. El libro de presupuesto registró 0, así que la medición falló y el presupuesto de 50 000 se superó sin bloqueo.
+  - Sin revisión de seguridad por presupuesto agotado (ver EXCEPTIONS).

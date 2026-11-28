@@ -1,0 +1,120 @@
+{
+  "phase": "5",
+  "title": "Agent Memory local y aislado por proyecto",
+  "objective": "Instalar, integrar y validar Agent Memory (external/agentmemory, commit fijado 5c9e2e6) como componente reutilizable del hub: almacenamiento local, sin APIs de pago, aislado por proyecto e integrado mediante MCP en bootstrap y update.",
+  "executive_summary": [
+    "Nuevo scripts/memory.py con configure, start, stop, status y recover; se expone como python scripts/hub.py memory <acción> --target <dir>.",
+    "Aislamiento por proyecto:",
+    "  - Datos y HOME del servicio en <proyecto>/.agent-hub/memory/ (ignorado por git).",
+    "  - Puerto estable por proyecto.",
+    "  - Servicio ligado a 127.0.0.1.",
+    "Sin cambios globales y sin ~/.agentmemory.",
+    "bootstrap y update añaden la entrada MCP en .mcp.json de forma idempotente y conservan los demás servidores. No arrancan el servicio.",
+    "No se instalan hooks de captura ni se importan conversaciones. No hay skills compatibles que registrar. Los embeddings locales quedan desactivados: requieren descargar un modelo y no hay un beneficio medido.",
+    "Pruebas 1 a 7 superadas, incluida la recuperación desde Claude Code mediante MCP (Haiku).",
+    "Desviación de presupuesto: el ejecutor consumió 827.116 tokens ponderados según su transcripción, frente a los 50.000 de la fase, y el libro de presupuesto registró 0. El orquestador superó también el objetivo de 15.000. La revisión de seguridad queda pendiente (EXCEPTIONS)."
+  ],
+  "initial_state": [
+    "external/agentmemory estaba clonado en el commit fijado, sin compilar ni integrar.",
+    "bootstrap solo sondeaba 127.0.0.1:3111 con un puerto fijo y sin aislamiento."
+  ],
+  "final_state": [
+    "Servicio por proyecto gestionado por el hub, con configuración MCP automática en install, bootstrap y update.",
+    "probe_memory usa el puerto configurado del proyecto.",
+    "13 pruebas unitarias nuevas; suite completa: 167 OK."
+  ],
+  "components": [
+    "scripts/memory.py: configuración, puertos, ciclo de vida del servicio y parada segura limitada a los PID del proyecto.",
+    "scripts/hub.py: subcomando memory.",
+    "scripts/bootstrap.py: integración en bootstrap y update, y probe_memory por proyecto.",
+    "docs/decisions/0006-agent-memory.md: ADR."
+  ],
+  "files": {
+    "created": [
+      "scripts/memory.py",
+      "tests/test_memory.py",
+      "docs/decisions/0006-agent-memory.md",
+      "docs/reports/data/PHASE_05.json",
+      "docs/reports/PHASE_05_REPORT.md"
+    ],
+    "modified": [
+      "scripts/hub.py",
+      "scripts/bootstrap.py",
+      "docs/WORK_LOG.md",
+      "docs/CHANGELOG.md",
+      "docs/EXCEPTIONS.md",
+      "docs/reports/LATEST_REPORT.md"
+    ]
+  },
+  "versions": [
+    "agentmemory en el commit fijado 5c9e2e6",
+    "Node 24",
+    "Claude Code (claude-haiku-5-5 para la prueba MCP)",
+    "Python 3"
+  ],
+  "commands": [
+    {"cmd": "cd external/agentmemory && npm install --ignore-scripts && npm run build", "result": "311 paquetes; build OK (lo ejecutó el ejecutor)"},
+    {"cmd": "python scripts/hub.py memory start|stop|status --target <proyecto temporal>", "result": "healthy true en 127.0.0.1:3430; tras stop, healthy false y ningún puerto en LISTENING"},
+    {"cmd": "claude -p ... --model haiku --strict-mcp-config --mcp-config .mcp.json --allowedTools mcp__agentmemory", "result": "recuperó la decisión sintética KIWIOBSIDIAN"},
+    {"cmd": "python -m unittest tests.test_memory", "result": "Ran 13 tests, OK"},
+    {"cmd": "python -m unittest discover -s tests", "result": "Ran 167 tests, OK"},
+    {"cmd": "python scripts/hub.py validate", "result": "PASS"}
+  ],
+  "tests": [
+    {"name": "1. Servicio operativo", "status": "passed", "evidence": "livez OK en 127.0.0.1:3430 y 127.0.0.1:3530"},
+    {"name": "2. Guardar una decisión técnica", "status": "passed", "evidence": "POST /remember devolvió 201 (marcador sintético KIWIOBSIDIAN)"},
+    {"name": "3. Recuperarla mediante una consulta", "status": "passed", "evidence": "POST /smart-search devolvió 200 con el marcador"},
+    {"name": "4. Persistencia tras reiniciar", "status": "passed", "evidence": "el marcador se encontró después de stop y start"},
+    {"name": "5. Aislamiento entre dos proyectos", "status": "passed", "evidence": "el proyecto p2 no ve el marcador de p1"},
+    {"name": "6. Recuperación mediante Claude Code y su MCP", "status": "passed", "evidence": "claude -p (claude-haiku-5-5) respondió 'Decision KIWIOBSIDIAN: use SQLite WAL for the billing ledger store'"},
+    {"name": "7. Instalación repetida sin duplicados", "status": "passed", "evidence": "dos bootstrap: una sola entrada agentmemory, una línea en .gitignore y la segunda ejecución sin cambios"}
+  ],
+  "evidence": [
+    "Consulta pequeña con memoria: 4 turnos, 29.737 tokens ponderados, USD 0,0051.",
+    "La misma consulta sin memoria: 2 turnos, 21.448 tokens ponderados, USD 0,0038, sin respuesta útil.",
+    "Recuperar la memoria cuesta unos 8.300 tokens ponderados más (+39 %) y aporta la respuesta correcta."
+  ],
+  "risks": [
+    "El libro de presupuesto no registró el consumo del ejecutor (0 frente a 827.116 ponderados según la transcripción), así que el presupuesto de fase no protegió esta ejecución.",
+    "Revisión de seguridad pendiente (excepción abierta).",
+    "npm run build modificó archivos rastreados en external/agentmemory/plugin/scripts. Al ejecutor se le denegó el checkout y queda pendiente que el owner restaure el submódulo.",
+    "La entrada MCP contiene rutas absolutas de la máquina; un proyecto movido requiere ejecutar update.",
+    "El primer arranque de cada proyecto descarga el motor iii (unos 6 MB) en su HOME local."
+  ],
+  "decisions": [
+    {"decision": "Una instancia de servicio y un directorio de datos por proyecto", "why": "Aislamiento verificable sin depender de espacios de nombres compartidos."},
+    {"decision": "Solo MCP, sin hooks de captura de agentmemory", "why": "Evita capturar conversaciones y duplicar hooks del hub."},
+    {"decision": "Embeddings locales desactivados", "why": "Requieren descargar un modelo y no hay un beneficio medido."},
+    {"decision": "HOME y USERPROFILE redirigidos al proyecto", "why": "El CLI escribiría en ~/.agentmemory (configuración global)."},
+    {"decision": "stop solo mata los PID que escuchan en los puertos del proyecto", "why": "Un memory.pid obsoleto podría nombrar un PID reutilizado."}
+  ],
+  "tokens": [
+    {"agent": "orchestrator (Opus, sesión principal; incluye la corrección previa del lanzador, PR #5)", "model": "claude-opus-5-5", "tokens": 262101, "tool_uses": 0, "duration_s": 0, "source": "usage_tracker (transcripción): input 46, output 14.667, cache creation 90.870, cache read 1.565.178 x0,1; medición parcial, anterior a los últimos pasos"},
+    {"agent": "P5-T1 backend-engineer", "model": "claude-sonnet-5-5 (observado en la transcripción)", "tokens": 827116, "tool_uses": 63, "duration_s": 1932, "source": "usage_tracker (transcripción): input 126, output 42.277, cache creation 200.350, cache read 5.843.634 x0,1; el harness informó 126.243 sin ponderar"},
+    {"agent": "Prueba MCP con claude -p (2 ejecuciones)", "model": "claude-haiku-5-5", "tokens": 51185, "tool_uses": 0, "duration_s": 0, "source": "usage de --output-format json, ponderado (cache read x0,1)"}
+  ],
+  "costs": [
+    {"item": "Prueba MCP con y sin memoria (Haiku)", "usd": 0.009, "source": "total_cost_usd"}
+  ],
+  "duration": "Ejecutor: 1.932 s. Fase completa: unos 45 minutos (de 13:51 a 14:35 aprox.).",
+  "problems": [
+    {"problem": "El CLI se demoniza, así que el PID lanzado no sirve", "solution": "Se registran los PID que escuchan en los puertos REST, del visor y del motor."},
+    {"problem": "Matar el proceso dejaba vivo el demonio Worker Compose", "solution": "stop ejecuta primero el agentmemory stop oficial."},
+    {"problem": "Riesgo de matar un PID reutilizado", "solution": "stop filtra por los PID que escuchan en los puertos del proyecto; prueba de regresión añadida."}
+  ],
+  "pending": [
+    "Revisión de seguridad (security-reviewer, sonnet) antes de fusionar, con presupuesto autorizado.",
+    "Restaurar external/agentmemory: git -C external/agentmemory checkout -- .",
+    "Corregir la medición del libro de presupuesto para subagentes.",
+    "Fusionar primero el PR #5 (esta rama parte de él)."
+  ],
+  "authorizations": [
+    "El owner autorizó la fase 5 con un presupuesto de ejecutores de 50.000 tokens ponderados; ese presupuesto se superó (ver los riesgos)."
+  ],
+  "github": {
+    "commits": ["feat(memory): integración de Agent Memory local y aislada por proyecto"],
+    "prs": ["feat/agent-memory-integration (sin fusionar; depende del PR #5)"],
+    "links": ["https://github.com/Peppe8044/my-agent-skill-hub/pull/5"]
+  },
+  "next_phase": "Resolver los pendientes (revisión de seguridad, submódulo y medición del presupuesto) antes de fusionar, y después iniciar la siguiente fase con: python scripts/hub.py launch --target . --phase <id>."
+}

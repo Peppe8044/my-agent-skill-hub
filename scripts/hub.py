@@ -431,6 +431,9 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("rest", nargs=argparse.REMAINDER)
     bg = sub.add_parser("budget", add_help=False)
     bg.add_argument("rest", nargs=argparse.REMAINDER)
+    mem = sub.add_parser("memory")
+    mem.add_argument("action", choices=("start", "stop", "status", "recover", "configure"))
+    mem.add_argument("--target", required=True, type=Path)
     back = sub.add_parser("rollback")
     back.add_argument("--target", required=True, type=Path)
     back.add_argument("--backup")
@@ -503,6 +506,13 @@ def main(argv: list[str] | None = None) -> int:
                 print("ERROR: scripts/external_scan.py is not available", file=sys.stderr)
                 return 2
             return external_scan.main(args.rest) or 0
+        if args.cmd == "memory":
+            try:
+                from . import memory as agent_memory
+            except ImportError:
+                import memory as agent_memory
+            print(json.dumps(agent_memory.run(ROOT, args.target, args.action), indent=2))
+            return 0
         if args.cmd == "rollback":
             result = rollback(args.target, args.backup)
             print(json.dumps(result, indent=2))

@@ -1,5 +1,8 @@
 # Changelog del hub
 
+## Unreleased — fase 5 (2026-11-28)
+- Agent Memory por proyecto: `scripts/memory.py` y `hub.py memory start|stop|status|recover|configure --target <dir>`. Servicio local en 127.0.0.1, datos en `.agent-hub/memory/` (git-ignorado), sin APIs de pago, sin hooks de captura. `bootstrap`/`update` escriben config, entrada MCP `agentmemory` en `.mcp.json` y `.gitignore` de forma idempotente (no arrancan el servicio); `probe_memory` usa el puerto del proyecto. ADR-0006.
+
 ## Unreleased — corrección del lanzador (2026-11-28)
 - `launch` valida el hub central con `hub.validate` en lugar de exigir `.agent-hub/manifest.json`; los proyectos instalados mantienen la validación del manifiesto. Si `start-phase` falla, no se inicia Claude.
 
