@@ -1,0 +1,45 @@
+# QUALITY_REPORT — my-agent-skill-hub (PR #2, fase 2)
+
+- **Versión/commit revisado:** rama `feat/indie-studio-agent-library`.
+  - Merge de `main`: `da57564`.
+  - Código: `f6c37f8`.
+  - Documentación: `aef24f4`.
+  - Informes, registro y ajuste del mensaje del hook: commit siguiente.
+- **Formato y lint:** no hay linter configurado en el repositorio (solo stdlib, sin dependencias). No se ejecutó. Riesgo bajo: el CI tampoco lo exige.
+- **Tipado / análisis estático:** no configurado. No se ejecutó.
+- **Pruebas unitarias e integración:**
+  - `python -m unittest discover -s tests -v`: **Ran 57 tests in 170.501s — OK** (checkout principal, código final).
+  - Verificación por commit en worktrees limpios:
+    - `f6c37f8`: validate PASS, 57 tests OK (59,6 s).
+    - `aef24f4`: validate PASS, 57 tests OK (59,3 s).
+  - `python scripts/hub.py validate`: PASS (30 agentes, 42 skills, 10 perfiles de stack). Ahora incluye la coherencia de los commits fijados de los submódulos.
+  - `python scripts/hub.py doctor`: exit 0. 11 OK y 2 WARN (`core.longpaths` no activado; repositorio dentro de OneDrive).
+  - `git submodule status`: los 8 submódulos en el commit fijado, sin `-`, `+` ni `U`.
+  - Integración en runtime real: 3 ejecuciones `claude -p --agent orchestrator --model opus` (antes, control y después). Detalle en `docs/MODEL_ROUTING_REPORT.md`.
+- **Criterios de aceptación verificados:**
+  - Un ejecutor con `model: opus` es rechazado por `validate` (`tests/test_model_policy.py`).
+  - Una llamada `model: opus` es bloqueada por el hook, tanto en las pruebas unitarias como en runtime real (llamada 5).
+  - La política no impide usar Haiku: hay prueba unitaria de un ejecutor haiku aceptado, y en runtime researcher y memory-curator corrieron en `claude-haiku-5-5`.
+  - Hay exactamente un agente Opus (orchestrator). Se rechazan `inherit`, IDs completos, `fork` y built-ins sin modelo.
+  - El esquema de `MODEL_POLICY.json` exige tipos y rangos: 1 ejecutor por defecto, máximo 3 en paralelo y máximo 2 reintentos.
+  - El perfil `full` sigue siendo el predeterminado. Omite MCP duplicados por nombre o URL en los ámbitos proyecto, usuario, local y runtime. Conserva los servidores y la configuración del proyecto. Deja en `.agent-hub/incoming/` las versiones del hub de los archivos que el proyecto modificó.
+  - `doctor` comprueba el entorno y nunca invoca el CLI de Ollama.
+  - Ningún agente, skill, submódulo ni componente del instalador se perdió en la fusión. `validate` confirma 30/42/8.
+- **Security review** (orquestador Opus, revisión del diff):
+  - El hook falla de forma cerrada ante cualquier excepción o entrada malformada.
+  - `MODEL_POLICY.json` puede restringir la lista de modelos permitidos, pero no ampliarla más allá de sonnet/haiku (prueba `test_policy_file_cannot_widen_executors`).
+  - Ningún `subprocess` usa `shell=True`; todos tienen tiempo límite.
+  - El escaneo de MCP solo informa nombres y URLs normalizadas, nunca cabeceras, variables de entorno ni tokens de `~/.claude.json`. Las pruebas no leen el `~/.claude.json` real.
+  - No se activó código externo de `external/`. El único hook instalado es el propio.
+  - No hay secretos en los commits. El token de `gh` está en el keyring del sistema y no se ha impreso.
+- **Documentación:**
+  - Actualizados: AGENTS.md, CLAUDE.md, README.md, agents/, orchestrator y supervisor, la skill token-budget (3 copias idénticas), AGENT_RUNS, documentación en docs/, ADR 0003 y ADR 0004, WORK_LOG (HUB-009), CHANGELOG y MODEL_ROUTING_REPORT.
+  - El historial (HUB-002, 0.2.0 y 0.3.1) se conserva marcado como sustituido.
+- **Pruebas NO ejecutadas, motivo y riesgo:**
+  - `install`/`bootstrap` sobre un proyecto real: no se ejecutaron porque escribirían `.mcp.json`. La restricción vigente prohíbe instalar MCP nuevos. Riesgo medio, cubierto por pruebas con directorios temporales.
+  - `launch` real: no se ejecutó porque abre una sesión interactiva. Las comprobaciones de entorno de `launch` sí están cubiertas por pruebas.
+  - `ANTHROPIC_DEFAULT_*_MODEL` y Agent Teams en runtime: no se probaron; solo hay rechazo estático.
+  - Lint y tipado: no configurados.
+  - GitHub Actions: pendiente; se comprueba tras el push.
+- **Estado:** APROBADO para revisión. La fusión está BLOQUEADA hasta que el owner la autorice y la CI pase en verde.
+- **Revisor / fecha:** orquestador Opus (claude-opus-5-5), 2026-11-28. Ejecutores: claude-sonnet-5-5 (código y documentación) y claude-haiku-5-5 (entorno).

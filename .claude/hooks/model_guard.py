@@ -68,7 +68,8 @@ def decide(event, project):
                 return 0
             return deny("project agent %r has model %r outside MODEL_POLICY.json executors"
                         % (subagent, model))
-    return deny("subagent %r would inherit the Opus parent model; pass model: sonnet or haiku "
+    return deny("subagent %r has no explicit model and is not a project agent with an allowed "
+                "model (built-ins may inherit the Opus parent); pass model: sonnet or haiku "
                 "explicitly (MODEL_POLICY.json)" % (subagent,))
 
 

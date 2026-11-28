@@ -37,3 +37,39 @@ Added bootstrap, local report, managed-file verification, explicit Opus launcher
 
 ## 2026-11-27 — Nota de fusión (HUB-004 duplicado)
 El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fila de la tabla superior) y en esta rama (especialistas de juego, sección anterior). Ambos registros se conservan sin cambios; las referencias posteriores usan `HUB-004/main` y `HUB-004/feat`.
+
+### 2026-11-28 — HUB-009 — Fase 2: conflictos del PR #2, política de modelos verificada en runtime, instalador y doctor
+- Objetivo: resolver los conflictos del PR #2 con `main` sin perder mejoras; corregir todos los hallazgos de la auditoría de fase 1 (política de modelos, instalador, doctor); verificar el ruteo con delegaciones reales.
+- Decisión y por qué:
+  - Merge (no rebase) de `origin/main` para no forzar el push.
+  - Política final del owner: Opus solo orquestador, Sonnet ejecución especializada, Haiku tareas simples, sin escalada (ADR 0003).
+  - `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` se **conserva**. La prueba real en Claude Code 2.1.332 mostró que solo actúa como respaldo de subagentes sin modelo y no anula el frontmatter. El hallazgo alto de la fase 1 era incorrecto para este runtime.
+  - Se añade el hook propio `model_guard`, que es la única defensa ante un `model: opus` explícito.
+  - El instalador mantiene `full` por defecto, con detección de MCP duplicados y preservación de archivos del proyecto (ADR 0004).
+- Archivos afectados:
+  - Merge `da57564`: orchestrator.md, CHANGELOG.md y WORK_LOG.md.
+  - `f6c37f8`: scripts/{model_policy,doctor}.py (nuevos), hub.py, bootstrap.py, project_install.py, .claude/hooks/model_guard.py, .claude/settings.json, MODEL_POLICY.json y tests/.
+  - `aef24f4`: AGENTS.md, CLAUDE.md, README.md, agents/, .claude/agents/{orchestrator,supervisor}.md, skill token-budget (3 copias), templates/project/AGENT_RUNS.md, docs/ y ADR 0003/0004.
+  - Este registro: docs/MODEL_ROUTING_REPORT.md, docs/QUALITY_REPORT.md, CHANGELOG.md, endurecimiento y mensaje del hook.
+- Comandos/pruebas realmente ejecutados y resultado:
+  - `python scripts/hub.py validate`: PASS.
+  - `python scripts/hub.py doctor`: exit 0, con 11 OK y 2 WARN (`core.longpaths`, repositorio dentro de OneDrive).
+  - `python -m unittest discover -s tests -v`: 57 tests OK (170,5 s).
+  - `git submodule status`: 8 submódulos en los commits fijados.
+  - Commits verificados por separado en worktrees limpios: `f6c37f8` y `aef24f4`, ambos con validate PASS y 57 tests OK.
+  - Pruebas reales de delegación `claude -p --agent orchestrator --model opus` antes, de control y después: ver docs/MODEL_ROUTING_REPORT.md. Costo total 1,0461 USD.
+- Revisión de seguridad y documentación:
+  - Revisado por el orquestador:
+    - El hook falla de forma cerrada y no puede ampliarse a Opus desde MODEL_POLICY.json.
+    - Ningún `subprocess` usa `shell=True`.
+    - El instalador no imprime secretos de `~/.claude.json` (solo nombres y URLs normalizadas).
+    - `doctor` nunca invoca el CLI de Ollama, que arranca la app de escritorio.
+  - Documentación alineada en el commit `aef24f4`.
+- Bloqueos, riesgos y próximas acciones:
+  - Resultado del CI tras el push: ver el PR #2.
+  - Hallazgo de la fase 1 pendiente: indie-game-studio aún no tiene la política instalada. Depende de fusionar el PR y de instalar MCP (restricción vigente).
+  - Repositorios bajo una ruta de OneDrive: el proceso no está activo, pero hay riesgo si se reanuda la sincronización.
+  - `core.longpaths` no está activado.
+  - Repetir MODEL_ROUTING_REPORT al actualizar Claude Code.
+- Responsable/aprobación: owner (Peppe8044) aprobó la fase 2 y la política; ejecución delegada por el orquestador Opus a ejecutores Sonnet/Haiku; merge del PR pendiente de autorización.
+
