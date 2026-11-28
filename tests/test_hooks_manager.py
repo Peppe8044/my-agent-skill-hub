@@ -198,3 +198,15 @@ class ToggleRollbackTests(unittest.TestCase):
             state = target / ".agent-hub/hooks.json"
             disabled = _json.loads(state.read_text(encoding="utf-8")).get("disabled", []) if state.is_file() else []
             self.assertNotIn("own:command-guard", disabled)
+
+
+class RegistryWithoutEccTests(unittest.TestCase):
+    def test_registry_equal_ignores_ecc_entries_without_checkout(self):
+        from scripts import hooks_manager as hm
+        stored = {"schema": 1, "hooks": [{"id": "own:x", "source": "own", "files": []},
+                                         {"id": "ecc:y", "source": "ECC", "files": [{"path": "a", "sha256": "1"}]}]}
+        built = {"schema": 1, "hooks": [{"id": "own:x", "source": "own", "files": []}]}
+        self.assertTrue(hm.registry_equal(stored, built, ignore_ecc_sha=True))
+        self.assertFalse(hm.registry_equal(stored, built, ignore_ecc_sha=False))
+        changed = {"schema": 1, "hooks": [{"id": "own:x", "source": "own", "files": [{"path": "b"}]}]}
+        self.assertFalse(hm.registry_equal(stored, changed, ignore_ecc_sha=True))

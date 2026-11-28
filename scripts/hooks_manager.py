@@ -176,8 +176,12 @@ def _strip_ecc_sha(registry):
 
 
 def registry_equal(a, b, ignore_ecc_sha=False):
+    """Compare registries. Without an ECC checkout (e.g. CI) the ECC entries cannot be rebuilt,
+    so only the non-ECC entries are compared; ECC entries are verified where ECC is present."""
     if ignore_ecc_sha:
-        return _strip_ecc_sha(a) == _strip_ecc_sha(b)
+        def non_ecc(reg):
+            return {**reg, "hooks": [h for h in reg.get("hooks", []) if h.get("source") != "ECC"]}
+        return _strip_ecc_sha(non_ecc(a)) == _strip_ecc_sha(non_ecc(b))
     return a == b
 
 
