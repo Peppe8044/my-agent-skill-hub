@@ -8,10 +8,10 @@ description: Use for all agent work to minimize needless context, model calls, r
 ## Procedure
 1. Identify the exact question and minimal relevant paths; list top sources before reading full files.
 2. Prefer filtered searches, line ranges, concise tool outputs and deterministic scripts over copying massive logs into prompts.
-3. Default to one agent. Delegate only if subtasks can work independently or need context isolation; record cost/coordination reasons.
+3. Model routing: Opus only for the main-session orchestrator; Sonnet for specialized execution (implementation, architecture, security, QA, review); Haiku for simple bounded tasks (research, documentation, validation, lookups). Pass `model` explicitly on every delegation; never escalate an executor to Opus. Default to 1 executor; at most 3 in parallel, only for independent tasks with non-overlapping files.
 4. When delegating pass objective, limited context paths, acceptance criteria, output format and stop conditions. Handoff only summary + artifact references.
-5. After 2 ineffective attempts, change strategy or report a blocker rather than blindly retrying.
-6. If the runtime exposes prompt/completion tokens and costs, log them in the project report. If unavailable write **not measured**; never invent savings.
+5. At most 2 retries (`max_retries: 2`); then change strategy or report the task as blocked rather than blindly retrying.
+6. Record durations and tokens only from harness evidence (task-notification `duration_ms`/`subagent_tokens`/`tool_uses`, or stream-json `modelUsage`) and the effective model from runtime evidence (`message.model`), never from estimates or agent names. If unavailable write **not measured**; never invent savings.
 7. Optimize **cost per correctly verified outcome**, not raw answer length. Never drop security, QA or documentation to save tokens.
 
 ## Final gate

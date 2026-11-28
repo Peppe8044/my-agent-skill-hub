@@ -4,8 +4,8 @@
 |---|---|---|---|---|
 | 2026-11-08 | HUB-001 | Creación de biblioteca de agentes y skills portables, selección de stack por proyecto, documentación obligatoria y CI | Configuración inicial y validación por CLI/CI prevista; verificar ejecución de workflow tras publicar | Aún no hay motor autónomo multiagente ni protecciones de rama activadas |
 | 2026-11-26 | HUB-002 | Agrega agente `orchestrator` (sesión principal, `model: opus`) que decide y delega; asigna modelo por rol: opus a supervisor/solution-architect/security-reviewer, sonnet a ejecutores y revisores (antes todos `inherit`) | `python scripts/hub.py validate` y `python -m unittest discover -s tests -v` (ver commit) | Validar en un proyecto real que `claude --agent orchestrator` delega con el ruteo esperado |
-
 | 2026-11-26 | HUB-003 | Skills obligatorias por agente vía campo `skills` (preload documentado de Claude Code), contrato `### Run report` (modelo, skills, tiempos, comandos), reglas de delegación del orquestador y plantilla `AGENT_RUNS.md`. Origen: en un proyecto real los subagentes no aplicaron skills porque las definiciones solo decían "consult relevant skills" y el orquestador no las nombró en los encargos | `python scripts/hub.py validate` -> PASS; `python -m unittest discover -s tests` -> 9 OK (incluye 2 pruebas nuevas del validador) | Verificar en la próxima ejecución real que cada entrega trae el Run report; la duración/tokens solo existen si el runtime los expone |
+| 2026-11-27 | HUB-004 | Ruteo de modelos: solo orchestrator en opus, resto en sonnet; skills deben invocarse con Skill; qa-engineer no reemplazable por otro revisor. Pedido del usuario tras detectar solution-architect en opus en Support Hub/Arcana | `python scripts/hub.py validate` PASS; `python -m unittest` OK | Sincronizar agentes en Support Hub y en `~/.claude/agents` |
 
 
 ## Plantilla para nuevos registros
@@ -19,4 +19,57 @@
 - Bloqueos, riesgos y próximas acciones:
 - Responsable/aprobación:
 ```
-| 2026-11-27 | HUB-004 | Ruteo de modelos: solo orchestrator en opus, resto en sonnet; skills deben invocarse con Skill; qa-engineer no reemplazable por otro revisor. Pedido del usuario tras detectar solution-architect en opus en Support Hub/Arcana | `python scripts/hub.py validate` PASS; `python -m unittest` OK | Sincronizar agentes en Support Hub y en `~/.claude/agents` |
+
+## 2026-11-27 — HUB-004
+Added 15 game specialists and 24 original portable skills. Runtime tests pending; external packages not installed. Review CI before merge.
+
+## 2026-11-27 — HUB-005
+Added eight upstream repositories as pinned Git submodules under external/. No upstream hooks, packages or MCP servers activated. Git checkout and runtime verification pending.
+
+## 2026-11-27 — HUB-006
+Project installer and automatic new-project bootstrap; external discovery only, no automatic activation. Tests added; runtime/CI results pending.
+
+## 2026-11-27 — HUB-007
+Added central external skill approval/copy mechanism, default remote MCP definitions, integration status command and local service setup guidance. No upstream skills approved or services executed yet. Tests added; execution pending.
+
+## 2026-11-27 — HUB-008
+Added bootstrap, local report, managed-file verification, explicit Opus launcher and tests. Previous CI run 46030114336 completed successfully. New CI and actual runtime checks pending.
+
+## 2026-11-27 — Nota de fusión (HUB-004 duplicado)
+El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fila de la tabla superior) y en esta rama (especialistas de juego, sección anterior). Ambos registros se conservan sin cambios; las referencias posteriores usan `HUB-004/main` y `HUB-004/feat`.
+
+### 2026-11-28 — HUB-009 — Fase 2: conflictos del PR #2, política de modelos verificada en runtime, instalador y doctor
+- Objetivo: resolver los conflictos del PR #2 con `main` sin perder mejoras; corregir todos los hallazgos de la auditoría de fase 1 (política de modelos, instalador, doctor); verificar el ruteo con delegaciones reales.
+- Decisión y por qué:
+  - Merge (no rebase) de `origin/main` para no forzar el push.
+  - Política final del owner: Opus solo orquestador, Sonnet ejecución especializada, Haiku tareas simples, sin escalada (ADR 0003).
+  - `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` se **conserva**. La prueba real en Claude Code 2.1.332 mostró que solo actúa como respaldo de subagentes sin modelo y no anula el frontmatter. El hallazgo alto de la fase 1 era incorrecto para este runtime.
+  - Se añade el hook propio `model_guard`, que es la única defensa ante un `model: opus` explícito.
+  - El instalador mantiene `full` por defecto, con detección de MCP duplicados y preservación de archivos del proyecto (ADR 0004).
+- Archivos afectados:
+  - Merge `da57564`: orchestrator.md, CHANGELOG.md y WORK_LOG.md.
+  - `f6c37f8`: scripts/{model_policy,doctor}.py (nuevos), hub.py, bootstrap.py, project_install.py, .claude/hooks/model_guard.py, .claude/settings.json, MODEL_POLICY.json y tests/.
+  - `aef24f4`: AGENTS.md, CLAUDE.md, README.md, agents/, .claude/agents/{orchestrator,supervisor}.md, skill token-budget (3 copias), templates/project/AGENT_RUNS.md, docs/ y ADR 0003/0004.
+  - Este registro: docs/MODEL_ROUTING_REPORT.md, docs/QUALITY_REPORT.md, CHANGELOG.md, endurecimiento y mensaje del hook.
+- Comandos/pruebas realmente ejecutados y resultado:
+  - `python scripts/hub.py validate`: PASS.
+  - `python scripts/hub.py doctor`: exit 0, con 11 OK y 2 WARN (`core.longpaths`, repositorio dentro de OneDrive).
+  - `python -m unittest discover -s tests -v`: 57 tests OK (170,5 s).
+  - `git submodule status`: 8 submódulos en los commits fijados.
+  - Commits verificados por separado en worktrees limpios: `f6c37f8` y `aef24f4`, ambos con validate PASS y 57 tests OK.
+  - Pruebas reales de delegación `claude -p --agent orchestrator --model opus` antes, de control y después: ver docs/MODEL_ROUTING_REPORT.md. Costo total 1,0461 USD.
+- Revisión de seguridad y documentación:
+  - Revisado por el orquestador:
+    - El hook falla de forma cerrada y no puede ampliarse a Opus desde MODEL_POLICY.json.
+    - Ningún `subprocess` usa `shell=True`.
+    - El instalador no imprime secretos de `~/.claude.json` (solo nombres y URLs normalizadas).
+    - `doctor` nunca invoca el CLI de Ollama, que arranca la app de escritorio.
+  - Documentación alineada en el commit `aef24f4`.
+- Bloqueos, riesgos y próximas acciones:
+  - Resultado del CI tras el push: ver el PR #2.
+  - Hallazgo de la fase 1 pendiente: indie-game-studio aún no tiene la política instalada. Depende de fusionar el PR y de instalar MCP (restricción vigente).
+  - Repositorios bajo una ruta de OneDrive: el proceso no está activo, pero hay riesgo si se reanuda la sincronización.
+  - `core.longpaths` no está activado.
+  - Repetir MODEL_ROUTING_REPORT al actualizar Claude Code.
+- Responsable/aprobación: owner (Peppe8044) aprobó la fase 2 y la política; ejecución delegada por el orquestador Opus a ejecutores Sonnet/Haiku; merge del PR pendiente de autorización.
+

@@ -4,10 +4,10 @@
 Own the decisions; delegate the execution. Runs as the main session on the most capable model, decides scope, architecture and acceptance criteria, and hands bounded tasks to specialist agents running on execution-optimized models.
 
 ## Difference from supervisor
-`supervisor` is a subagent that plans and routes. `orchestrator` is the top-level session (`claude --agent orchestrator`) that can actually delegate, because Claude Code subagents cannot spawn subagents. It also carries an explicit model-routing table: decision roles on the strongest model, executors on a fast and highly capable model, read-only lookups on the cheapest one.
+`supervisor` is a subagent that plans and routes. `orchestrator` is the top-level session (`claude --agent orchestrator`) that can actually delegate, because Claude Code subagents cannot spawn subagents. It also carries an explicit model-routing table: the orchestrator is the only Opus agent, specialized executors run on Sonnet and simple bounded tasks on Haiku. Every delegation passes an explicit `model` (built-ins included, no `fork`, no `inherit`); no executor is ever escalated to Opus (enforced by `MODEL_POLICY.json`, `hub.py validate` and the `model_guard` hook). Default 1 executor, at most 3 in parallel on non-overlapping files, at most 2 retries.
 
 ## Procedure
-Read brief, policies and status; restate goal and acceptance criteria; record decisions as ADRs; write a task plan with owner, model, files owned and tests per task; delegate self-contained briefs; parallelize only non-overlapping work; verify by re-running tests and reading diffs rather than trusting summaries; route risky changes to security review and all material changes to QA; integrate sequentially; close with a truthful handoff.
+Read brief, policies and status; restate goal and acceptance criteria; record decisions as ADRs; write a task plan with owner, model, files owned and tests per task; delegate self-contained briefs; parallelize (max 3) only non-overlapping work; verify by re-running tests and reading diffs rather than trusting summaries; route risky changes to security review and all material changes to QA; integrate sequentially; close with a truthful handoff.
 
 ## Deliverables
 Task plan, ADRs, quality-gate summary and an evidence-backed HANDOFF.

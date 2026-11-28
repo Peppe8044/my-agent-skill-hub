@@ -88,5 +88,125 @@
     "name": "web-ui",
     "description": "Use when building frontend experiences, forms, data fetching and accessible component systems.",
     "mandatory": false
+  },
+  {
+    "name": "godot-development",
+    "description": "Use for godot development tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "create-card",
+    "description": "Use for create card tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "create-enemy",
+    "description": "Use for create enemy tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "create-tower",
+    "description": "Use for create tower tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "create-rune",
+    "description": "Use for create rune tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "create-biome",
+    "description": "Use for create biome tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "generate-sprite",
+    "description": "Use for generate sprite tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "sprite-animation",
+    "description": "Use for sprite animation tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "asset-validation",
+    "description": "Use for asset validation tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "game-balancing",
+    "description": "Use for game balancing tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "run-simulation",
+    "description": "Use for run simulation tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "game-testing",
+    "description": "Use for game testing tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "clickup-workflow",
+    "description": "Use for clickup workflow tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "release-management",
+    "description": "Use for release management tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "steam-publishing",
+    "description": "Use for steam publishing tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "game-design",
+    "description": "Use for game design tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "audio-design",
+    "description": "Use for audio design tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "localization",
+    "description": "Use for localization tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "memory-curation",
+    "description": "Use for memory curation tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "mcp-security-audit",
+    "description": "Use for mcp security audit tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "harness-engineering",
+    "description": "Use for harness engineering tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "diagram-design",
+    "description": "Use for diagram design tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "market-research",
+    "description": "Use for market research tasks.",
+    "mandatory": false
+  },
+  {
+    "name": "authorized-binary-analysis",
+    "description": "Use for authorized binary analysis tasks.",
+    "mandatory": false
   }
 ]

@@ -1,0 +1,11 @@
+# Local completion checklist
+
+Run bootstrap in a personal test project first. Review its report. Existing divergent AGENTS.md, CLAUDE.md, settings or MCP files cause a safe stop; merge them deliberately before installing. Never delete project-specific rules to resolve a conflict.
+
+In VS Code, use Claude Code on the pinned Agent Hub checkout to audit external skill directories, including supporting scripts and licenses. Record reviewed entries in registry/integrations.json; test at least one positive install and a rejected dirty checkout. Do not bulk-approve all discovered skills. Preserve own names and policy.
+
+For Agent Memory, inspect pinned source and supported Windows/WSL2 installation; choose isolated project storage and no global session import. Verify health, authenticated save/retrieve and restart persistence with synthetic data. For OpenViking, choose a provider and isolated storage, obtain credentials locally, bind to loopback, verify indexing and retrieval. For ECC, review exact version and hooks, run documented dry-run first, ensure project/local scope, reject conflicting agents or model inheritance. No global changes without permission.
+
+Use actual Claude Code MCP listing and authenticated read-only calls for GitHub and ClickUp, and actual runtime traces for Opus/Sonnet/Haiku delegation. Report observed model IDs; don't infer from configuration. Only mark operational after successful checks. Record commands, outcomes and blockers in the work log. Do not merge to main before CI and review.
+
+The bootstrap command does not execute third-party installers or configure credentials. The launch command checks installed files, refuses to start when the process environment sets `CLAUDE_CODE_SUBAGENT_MODEL` to anything other than sonnet/haiku, or sets `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL` or `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` are set, and starts Opus explicitly; runtime delegation is additionally guarded by the `model_guard` PreToolUse hook (see ADR 0003 and docs/MODEL_ROUTING_REPORT.md). Settings or shell-level overrides outside the project can still exist; confirm with runtime traces. If `bootstrap` reports `ready: false`, reconcile the files staged in `.agent-hub/incoming/` first.

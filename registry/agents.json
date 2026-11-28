@@ -88,5 +88,95 @@
     "claude_path": ".claude/agents/integration-engineer.md",
     "profile_path": "agents/integration-engineer.md",
     "mandatory_role": false
+  },
+  {
+    "name": "game-designer",
+    "claude_path": ".claude/agents/game-designer.md",
+    "profile_path": "agents/game-designer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "godot-developer",
+    "claude_path": ".claude/agents/godot-developer.md",
+    "profile_path": "agents/godot-developer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "gameplay-engineer",
+    "claude_path": ".claude/agents/gameplay-engineer.md",
+    "profile_path": "agents/gameplay-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "combat-system-engineer",
+    "claude_path": ".claude/agents/combat-system-engineer.md",
+    "profile_path": "agents/combat-system-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "game-balance-engineer",
+    "claude_path": ".claude/agents/game-balance-engineer.md",
+    "profile_path": "agents/game-balance-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "art-director",
+    "claude_path": ".claude/agents/art-director.md",
+    "profile_path": "agents/art-director.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "pixel-art-engineer",
+    "claude_path": ".claude/agents/pixel-art-engineer.md",
+    "profile_path": "agents/pixel-art-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "animation-engineer",
+    "claude_path": ".claude/agents/animation-engineer.md",
+    "profile_path": "agents/animation-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "audio-designer",
+    "claude_path": ".claude/agents/audio-designer.md",
+    "profile_path": "agents/audio-designer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "game-qa-engineer",
+    "claude_path": ".claude/agents/game-qa-engineer.md",
+    "profile_path": "agents/game-qa-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "asset-validator",
+    "claude_path": ".claude/agents/asset-validator.md",
+    "profile_path": "agents/asset-validator.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "memory-curator",
+    "claude_path": ".claude/agents/memory-curator.md",
+    "profile_path": "agents/memory-curator.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "localization-agent",
+    "claude_path": ".claude/agents/localization-agent.md",
+    "profile_path": "agents/localization-agent.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "steam-release-engineer",
+    "claude_path": ".claude/agents/steam-release-engineer.md",
+    "profile_path": "agents/steam-release-engineer.md",
+    "mandatory_role": false
+  },
+  {
+    "name": "marketing-strategist",
+    "claude_path": ".claude/agents/marketing-strategist.md",
+    "profile_path": "agents/marketing-strategist.md",
+    "mandatory_role": false
   }
 ]
