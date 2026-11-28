@@ -5,9 +5,10 @@ import unittest
 from pathlib import Path
 
 from scripts import hub
+from tests.support import Isolated
 
 
-class HubTests(unittest.TestCase):
+class HubTests(Isolated, unittest.TestCase):
     def test_repository_validation(self):
         self.assertEqual([], hub.validate(), "Hub registry, agents and skills must be consistent")
 

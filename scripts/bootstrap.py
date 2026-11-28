@@ -1,6 +1,6 @@
 """One-command project bootstrap and truthful local diagnostics."""
 import json
-import re
+import os
 import shutil
 import subprocess
 import urllib.request
@@ -9,25 +9,49 @@ from pathlib import Path
 try:
     from .project_install import install, digest
     from .integrations import status
+    from . import model_policy as mp
 except ImportError:
     from project_install import install, digest
     from integrations import status
+    import model_policy as mp
+
+INCOMING = ".agent-hub/incoming"
+
+def check_target_settings(target):
+    path=Path(target)/".claude/settings.json"
+    if not path.is_file():
+        return ["Missing .claude/settings.json"]
+    try:
+        settings=json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        return ["Invalid JSON in .claude/settings.json: "+str(exc)]
+    return mp.validate_settings(settings,target)
+
+def pending_reconciliation(target):
+    base=Path(target)/INCOMING
+    if not base.is_dir():
+        return []
+    return sorted(p.relative_to(base).as_posix() for p in base.rglob("*") if p.is_file())
 
 def verify_project(target):
     target=Path(target).resolve()
     manifest=json.loads((target/".agent-hub/manifest.json").read_text(encoding="utf-8"))
     errors=[]
+    merged=set(manifest.get("merged",[]))
     for rel, expected in manifest["files"].items():
+        if rel in merged:
+            continue
         p=target/rel
         if not p.resolve().is_relative_to(target) or not p.is_file() or digest(p.read_bytes())!=expected:
             errors.append("Missing or changed managed file: "+rel)
-    agents=target/".claude/agents"
-    for p in agents.glob("*.md"):
-        front=p.read_text(encoding="utf-8").split("---",2)
-        match=re.search(r"(?m)^model:\s*(\S+)\s*$",front[1]) if len(front)==3 else None
-        allowed={"opus"} if p.stem=="orchestrator" else {"sonnet","haiku"}
-        if not match or match.group(1) not in allowed:
-            errors.append("Invalid agent model: "+p.name)
+    policy=target/"MODEL_POLICY.json"
+    if policy.is_file():
+        try:
+            errors+=mp.validate_policy(json.loads(policy.read_text(encoding="utf-8")))
+        except ValueError as exc:
+            errors.append("Invalid MODEL_POLICY.json: "+str(exc))
+    errors+=mp.validate_agents(target/".claude/agents")
+    errors+=check_target_settings(target)
     return errors
 
 def probe_memory():
@@ -38,9 +62,9 @@ def probe_memory():
     except (OSError,ValueError):
         return {"state":"unreachable"}
 
-def bootstrap(root,target,fetch_external=True):
+def bootstrap(root,target,fetch_external=True,*,runtime_scan=True,home=None,runner=None,which=None):
     root,target=Path(root).resolve(),Path(target).resolve()
-    result=install(root,target,fetch_external=fetch_external)
+    result=install(root,target,fetch_external=fetch_external,home=home,runtime_scan=runtime_scan,runner=runner,which=which)
     errors=verify_project(target)
     report={"installation":result,"static_errors":errors,"environment":status(root,target),
             "agentmemory":probe_memory(),
@@ -48,6 +72,15 @@ def bootstrap(root,target,fetch_external=True):
             "ecc":"review project-local hooks and model routing before activation",
             "mcp":"configuration only; interactive authentication and tool calls required",
             "model_runtime":"not verified"}
+    pending=pending_reconciliation(target)
+    report["pending_reconciliation"]=pending
+    blockers=[]
+    if pending:
+        blockers.append("pending_reconciliation: review .agent-hub/incoming")
+    if errors:
+        blockers.append("policy or integrity checks failed")
+    blockers.append("model runtime not verified")
+    report["ready_blockers"]=blockers
     report["ready"]=False
     path=target/".agent-hub/bootstrap-report.json"
     if path.is_symlink():
@@ -55,7 +88,14 @@ def bootstrap(root,target,fetch_external=True):
     path.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     return report
 
-def launch(target):
+def launch(target,environ=None):
+    environ=os.environ if environ is None else environ
+    problems=mp.check_runtime_env(environ)
+    problems+=check_target_settings(Path(target).resolve())
+    if problems:
+        for problem in problems:
+            print("PROBLEM:",problem)
+        return 3
     target=Path(target).resolve()
     errors=verify_project(target)
     if errors:

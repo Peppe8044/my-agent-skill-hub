@@ -13,10 +13,14 @@ try:
     from .project_install import install
     from .integrations import status as integration_status
     from .bootstrap import bootstrap, launch
+    from . import model_policy as mp
+    from . import doctor as doctor_mod
 except ImportError:
     from project_install import install
     from integrations import status as integration_status
     from bootstrap import bootstrap, launch
+    import model_policy as mp
+    import doctor as doctor_mod
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +28,7 @@ SKILL_ROOT = ROOT / "skills"
 RUNTIMES = [ROOT / ".claude" / "skills", ROOT / ".agents" / "skills"]
 REQUIRED = (
     "AGENTS.md", "CLAUDE.md", "README.md", "MODEL_POLICY.json", ".claude/settings.json",
+    ".claude/hooks/model_guard.py",
     "docs/GOVERNANCE.md", "docs/WORK_LOG.md", "docs/CHANGELOG.md",
     "docs/EXCEPTIONS.md", "docs/ARCHITECTURE.md",
     "templates/project/PROJECT_BRIEF.md",
@@ -85,7 +90,48 @@ def check_agent_skills(path: Path, known_skills: set[str]) -> list[str]:
     return errors
 
 
-def validate(root: Path = ROOT) -> list[str]:
+def check_external_pins(root: Path, notes: list[str] | None = None) -> list[str]:
+    """.gitmodules == registry repositories == gitlinks == pins in docs."""
+    notes = notes if notes is not None else []
+    errors = []
+    gm_path = root / ".gitmodules"
+    gm = gm_path.read_text(encoding="utf-8") if gm_path.is_file() else ""
+    paths = set(re.findall(r"(?m)^\s*path\s*=\s*(\S+)\s*$", gm))
+    registry = {f"external/{r}" for r in load_json(root / "registry/integrations.json")["repositories"]}
+    if paths != registry:
+        errors.append(f"External pins: .gitmodules vs registry differ: {sorted(paths ^ registry)}")
+    doc_path = root / "docs/EXTERNAL_INTEGRATIONS.md"
+    doc_text = doc_path.read_text(encoding="utf-8") if doc_path.is_file() else ""
+    docs = dict(re.findall(r"`(external/[^`]+)`:\s*`([0-9a-f]{40})`", doc_text))
+    if set(docs) != registry:
+        errors.append("External pins: docs/EXTERNAL_INTEGRATIONS.md vs registry differ: "
+                      f"{sorted(set(docs) ^ registry)}")
+    try:
+        top = subprocess.run(["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, timeout=30)
+        inside = top.returncode == 0 and Path(top.stdout.strip()).resolve() == root.resolve()
+    except (OSError, subprocess.SubprocessError):
+        inside = False
+    if not inside:
+        notes.append("external pin gitlink check skipped: not inside a git checkout")
+        return errors
+    tree = subprocess.run(["git", "-C", str(root), "ls-tree", "HEAD", "external/"],
+                          capture_output=True, text=True, timeout=30)
+    links = {}
+    for line in tree.stdout.splitlines():
+        meta, _, name = line.partition("\t")
+        parts = meta.split()
+        if len(parts) == 3 and parts[0] == "160000":
+            links[name] = parts[2]
+    if set(links) != registry:
+        errors.append(f"External pins: gitlinks vs registry differ: {sorted(set(links) ^ registry)}")
+    for name in sorted(set(links) & set(docs)):
+        if links[name] != docs[name]:
+            errors.append(f"External pin mismatch for {name}: gitlink {links[name]} != docs {docs[name]}")
+    return errors
+
+
+def validate(root: Path = ROOT, notes: list[str] | None = None) -> list[str]:
     errors = [f"Missing required file: {p}" for p in REQUIRED if not (root / p).is_file()]
     if errors:
         return errors
@@ -129,18 +175,10 @@ def validate(root: Path = ROOT) -> list[str]:
     for name in MANDATORY_SKILLS:
         if name not in policy:
             errors.append(f"AGENTS.md missing mandatory skill route: {name}")
-    policy = load_json(root / "MODEL_POLICY.json")
-    settings = load_json(root / ".claude/settings.json")
-    if policy.get("orchestrator") != "opus" or set(policy.get("executors", [])) != {"sonnet", "haiku"} or policy.get("allow_inherit") is not False or policy.get("allow_executor_opus") is not False:
-        errors.append("Invalid model policy")
-    if settings.get("model") != "opus" or settings.get("env", {}).get("CLAUDE_CODE_SUBAGENT_MODEL") not in {"sonnet", "haiku"}:
-        errors.append("Invalid Claude model defaults")
-    for path in (root / ".claude/agents").glob("*.md"):
-        front = path.read_text(encoding="utf-8").split("---", 2)
-        match = re.search(r"(?m)^model: ([a-z]+)\s*$", front[1]) if len(front) == 3 else None
-        allowed = {"opus"} if path.stem == "orchestrator" else {"sonnet", "haiku"}
-        if not match or match.group(1) not in allowed:
-            errors.append(f"{path}: forbidden or missing model")
+    errors += mp.validate_policy(load_json(root / "MODEL_POLICY.json"))
+    errors += mp.validate_settings(load_json(root / ".claude/settings.json"), root)
+    errors += mp.validate_agents(root / ".claude/agents")
+    errors += check_external_pins(root, notes)
     return errors
 
 
@@ -234,12 +272,14 @@ def check_docs(base: str) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("doctor")
+    diag = sub.add_parser("doctor")
+    diag.add_argument("--json", action="store_true")
     sub.add_parser("validate")
     sub.add_parser("sync")
     boot = sub.add_parser("bootstrap")
     boot.add_argument("--target", required=True, type=Path)
     boot.add_argument("--no-fetch", action="store_true")
+    boot.add_argument("--no-runtime-mcp-scan", action="store_true")
     start = sub.add_parser("launch")
     start.add_argument("--target", required=True, type=Path)
     integration = sub.add_parser("integrations")
@@ -248,6 +288,7 @@ def main(argv: list[str] | None = None) -> int:
     setup.add_argument("--target", required=True, type=Path)
     setup.add_argument("--profile", choices=("full", "core"), default="full")
     setup.add_argument("--no-fetch", action="store_true")
+    setup.add_argument("--no-runtime-mcp-scan", action="store_true")
     make = sub.add_parser("new")
     make.add_argument("--name", required=True)
     make.add_argument("--kind", required=True, choices=PROJECT_KINDS)
@@ -259,8 +300,18 @@ def main(argv: list[str] | None = None) -> int:
     checks.add_argument("--base", required=True)
     args = parser.parse_args(argv)
     try:
-        if args.cmd in {"doctor", "validate"}:
-            errors = validate()
+        if args.cmd == "doctor":
+            checks = doctor_mod.doctor(ROOT, lambda notes: validate(ROOT, notes))
+            if args.json:
+                print(json.dumps(checks, indent=2))
+            else:
+                print(doctor_mod.format_checks(checks))
+            return 1 if any(c["status"] == "FAIL" for c in checks) else 0
+        if args.cmd == "validate":
+            notes = []
+            errors = validate(ROOT, notes)
+            for note in notes:
+                print("NOTE:", note)
             print(f"Agent profiles: {len(list((ROOT/'.claude/agents').glob('*.md')))}")
             print(f"Skills: {len(list((ROOT/'skills').glob('*/SKILL.md')))}")
             print(f"Stack profiles: {len(load_json(ROOT/'stacks/catalog.json'))}")
@@ -274,7 +325,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Updated {sync()} skill runtime copies")
             return 0
         if args.cmd == "bootstrap":
-            report = bootstrap(ROOT, args.target, not args.no_fetch)
+            report = bootstrap(ROOT, args.target, not args.no_fetch, runtime_scan=not args.no_runtime_mcp_scan)
             print(json.dumps(report, indent=2))
             return 1 if report["static_errors"] else 0
         if args.cmd == "launch":
@@ -283,7 +334,8 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(integration_status(ROOT, args.target), indent=2))
             return 0
         if args.cmd == "install":
-            print(json.dumps(install(ROOT, args.target, args.profile, not args.no_fetch), indent=2))
+            print(json.dumps(install(ROOT, args.target, args.profile, not args.no_fetch,
+                                        runtime_scan=not args.no_runtime_mcp_scan), indent=2))
             return 0
         if args.cmd == "new":
             print(new_project(args.name, args.kind, args.directory))
