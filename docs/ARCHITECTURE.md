@@ -23,7 +23,8 @@ flowchart TD
 - `skills/`: fuente canónica de procedimientos portables (Agent Skills); `.claude/skills/` y `.agents/skills/` son copias generadas por `hub.py sync`.
 - `stacks/catalog.json`: alternativas y factores de idoneidad; **no** es un mandato tecnológico.
 - `templates/project/`: evidencia de evaluación, decisiones, implementación y control.
-- `scripts/hub.py`: utilidades deterministas sin modelos LLM.
+- `scripts/hub.py`: utilidades deterministas sin modelos LLM (`validate`, `doctor` con chequeos de entorno, `install`, `bootstrap`, `launch`).
+- `MODEL_POLICY.json` y `.claude/hooks/model_guard.py`: política de modelos (Opus solo orquestador; ejecutores sonnet/haiku) y su guardia de runtime; ver ADR 0003.
 - `.github/workflows/quality.yml`: puertas técnicas reproducibles; el owner aún debe habilitar protecciones de rama.
 
 ## Coordinacion y alcance real
@@ -33,6 +34,12 @@ flowchart TD
 4. Nunca editar simultáneamente el mismo archivo entre agentes sin coordinación y revisión de merge.
 5. Documentación y evidencias persistentes en el repositorio del **proyecto**, no en conversaciones privadas.
 6. La biblioteca **no** ejecuta por sí misma agentes remotos ni implementa bus de mensajes: Claude Code / Codex son runtimes externos. Agent Teams de Claude es experimental y opt-in.
+
+## Enrutamiento de modelos
+Opus solo en el orquestador de la sesión principal; Sonnet para ejecución especializada; Haiku para tareas simples y acotadas. Capas de cumplimiento: `hub.py validate` (estático), hook PreToolUse `model_guard` con matcher `Agent|Task` (runtime) y comprobaciones de entorno en `hub.py launch`. El supervisor es un subagente Sonnet de planificación que no crea subagentes. Ver `docs/decisions/0003-model-routing-policy.md`.
+
+## Instalación
+Perfil `full` por defecto; no sobrescribe archivos del proyecto (los deja en `.agent-hub/incoming/`), fusiona settings y declara MCP solo sin duplicados. Ver `docs/decisions/0004-installer-mcp-dedup-and-preservation.md`.
 
 ## Controles
 - Requisitos y stack aprobados antes de cambios amplios.

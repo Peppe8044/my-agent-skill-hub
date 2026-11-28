@@ -25,6 +25,7 @@ El usuario puede indicar explícitamente que se omita un control de proceso **pa
 
 ## Enforcement
 - `python scripts/hub.py validate`: estructura, metadatos, sincronización de skills y documentos base.
+- Política de modelos: `MODEL_POLICY.json` validada por `hub.py validate` (un solo agente opus = orchestrator; el resto sonnet/haiku; settings del proyecto con `env.CLAUDE_CODE_SUBAGENT_MODEL` sonnet/haiku como respaldo y sin las demás variables de modelo), hook PreToolUse `.claude/hooks/model_guard.py` (deniega en runtime modelos no permitidos, `fork` o llamadas sin modelo explícito) y `hub.py launch` (rechaza variables de entorno de modelo prohibidas o `CLAUDE_CODE_SUBAGENT_MODEL` fuera de sonnet/haiku). No existe escalada de ejecutores a Opus, ni con aprobación; esto reemplaza la regla de aprobación explícita de CHANGELOG 0.3.1 (ADR 0003).
 - Tests `unittest`: comportamiento de CLI, selección, documentación.
 - CI: en PR con cambios de contenido exige que `docs/WORK_LOG.md` y `docs/CHANGELOG.md` hayan cambiado o que exista una excepción explícita registrada y revisada.
 - CI no puede comprobar la calidad semántica de todas las decisiones ni sustituye revisión humana.

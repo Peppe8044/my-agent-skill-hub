@@ -7,7 +7,7 @@ Biblioteca **reutilizable** de agentes, skills, perfiles de stack y controles de
 ## Inicio
 
 1. Lee [AGENTS.md](AGENTS.md) (Claude Code también lee [CLAUDE.md](CLAUDE.md)).
-2. Usa `python scripts/hub.py doctor` para comprobar la biblioteca.
+2. Usa `python scripts/hub.py doctor` para comprobar la biblioteca y el entorno (validate + Python, Git/submodulos, CLI de Claude Code, `gh`, Docker, Ollama por HTTP, Godot, variables prohibidas, ruta OneDrive; admite `--json`, sale con 1 solo ante FAIL).
 3. Usa `python scripts/hub.py new --name mi-idea --kind web` para generar un paquete de planificación en `workspaces/mi-idea/`.
 4. Completa `PROJECT_BRIEF.md` con el problema, criterios de éxito y restricciones.
 5. Usa `stack-selection` para investigar y documentar al menos dos alternativas antes de aprobar el stack.
@@ -42,10 +42,16 @@ Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/GOVERNANCE.md](docs/GOVE
 
 ## Instalación por proyecto
 
-`python scripts/hub.py install --target /ruta/proyecto` instala agentes, skills y política local; por defecto descarga los ocho submódulos y cataloga skills externas sin activarlas. `--no-fetch` usa el checkout actual. `new` instala automáticamente el contenido propio y cataloga los submódulos ya descargados, sin red. Los archivos existentes distintos se preservan y la instalación se detiene para reconciliarlos. No activa MCP, hooks ni ejecuta código externo. Iniciar con `claude --agent orchestrator --model opus`.
+`python scripts/hub.py install --target /ruta/proyecto` (perfil `full` por defecto) copia agentes, skills, `MODEL_POLICY.json` y el hook `model_guard`; fusiona `.claude/settings.json` conservando las claves y hooks del proyecto (añade `env.CLAUDE_CODE_SUBAGENT_MODEL: sonnet` si falta; un valor del proyecto fuera de sonnet/haiku es un conflicto de política); por defecto descarga los ocho submódulos y cataloga skills externas sin activarlas. `--no-fetch` usa el checkout actual. `new` instala automáticamente el contenido propio y cataloga los submódulos ya descargados, sin red.
+
+- **Archivos del proyecto nunca se sobrescriben:** la versión del hub se deja en `.agent-hub/incoming/<ruta>`, se lista en `conflicts` y `bootstrap` informa `ready: false` hasta reconciliar. Los conflictos de política (settings con modelo no opus o variables prohibidas) detienen la instalación antes de escribir.
+- **Hooks:** el único hook que se instala es el propio `model_guard` del hub. El código upstream de `external/` (hooks, instaladores, MCP) nunca se activa ni se ejecuta.
+- **MCP:** se declaran los servidores HTTP de GitHub y ClickUp en `.mcp.json` del proyecto **solo si no existe uno equivalente** (mismo nombre normalizado o URL) en el `.mcp.json` del proyecto, en el ámbito usuario/local (`~/.claude.json`) o en la lista de runtime de `claude mcp list` (incluye conectores de claude.ai). Los duplicados omitidos se listan en el informe de instalación y los servidores existentes nunca se eliminan ni reescriben. `--no-runtime-mcp-scan` omite `claude mcp list`. Declarar un servidor no lo autentica: Claude Code pide aprobación antes de usar servidores MCP del proyecto y las credenciales siguen siendo locales.
+
+Iniciar con `claude --agent orchestrator --model opus` (o `python scripts/hub.py launch`). Ver ADR 0004.
 
 ### External integrations
-Default full installation writes GitHub and ClickUp project MCP configuration and copies reviewed external skills from the central approval registry. Run `python scripts/hub.py integrations --target PATH` to inspect prerequisites. See docs/INTEGRATION_BOOTSTRAP.md for services requiring local setup and real verification.
+Default full installation declares GitHub and ClickUp project MCP servers (only when no equivalent exists in project, user/local or runtime scope) and copies reviewed external skills from the central approval registry. Run `python scripts/hub.py integrations --target PATH` to inspect prerequisites. See docs/INTEGRATION_BOOTSTRAP.md for services requiring local setup and real verification.
 
 ### One-command bootstrap
-`python scripts/hub.py bootstrap --target PATH` installs project-local files, verifies their hashes and model declarations, checks prerequisites and probes the local Agent Memory health endpoint. It writes `.agent-hub/bootstrap-report.json`. `python scripts/hub.py launch --target PATH` verifies managed files and starts Claude Code with Opus. External runtime setup and credentials remain local prerequisites; see docs/LOCAL_COMPLETION.md.
+`python scripts/hub.py bootstrap --target PATH` installs project-local files, verifies their hashes and model declarations, checks prerequisites and probes the local Agent Memory health endpoint. It writes `.agent-hub/bootstrap-report.json`. `python scripts/hub.py launch --target PATH` verifies managed files, refuses to start if forbidden model environment variables are set (`CLAUDE_CODE_SUBAGENT_MODEL` other than sonnet/haiku, `ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_*_MODEL`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) and starts Claude Code with Opus. External runtime setup and credentials remain local prerequisites; see docs/LOCAL_COMPLETION.md.

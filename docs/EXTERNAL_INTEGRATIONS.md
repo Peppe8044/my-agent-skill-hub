@@ -14,7 +14,7 @@ Audit exact commit, source, license, permissions, dependencies and hooks before 
 Local skills are original starter procedures, not imported upstream implementations.
 
 ## Upstream checkout
-All eight are pinned submodules in `external/`. Run `git submodule update --init` from the hub root to fetch their source. Do not execute upstream installers, hooks or scripts before review. The hub's own model policy remains authoritative. Upstream licenses remain separate; verify before redistribution.
+All eight are pinned submodules in `external/`. Run `git submodule update --init` from the hub root to fetch their source. Do not execute upstream installers, hooks or scripts before review. The hub's own model policy remains authoritative (Opus only for the orchestrator; no upstream hook, agent or installer is activated, and the only installed hook is the hub's `model_guard`). Upstream licenses remain separate; verify before redistribution.
 
 - `external/agentmemory`: `5c9e2e698bda138dcb7de50ee4dd3260ee4fb8eb`
 - `external/scientific-agent-skills`: `c21d13b3cc2894680229ba9959a53281acb9200e`
