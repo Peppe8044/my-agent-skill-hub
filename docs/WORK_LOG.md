@@ -191,3 +191,18 @@ El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fil
   - Los informes separan el consumo del orquestador del de los ejecutores.
   - Pruebas focalizadas OK.
   - Fusión del PR #4 autorizada.
+
+### 2026-11-28 — HUB-013 — Corrección del lanzador en el hub central
+- **Problema:** `python scripts/hub.py launch --target . --phase 5` fallaba en el propio hub porque `verify_project` leía `.agent-hub/manifest.json`, que solo existe en proyectos instalados.
+- **Cambio (`scripts/bootstrap.py`):**
+  - `launch` distingue el hub central (`target == root`) y lo valida con `hub.validate` (nueva `verify_hub`). Los proyectos instalados mantienen `verify_project` y la validación del manifiesto.
+  - Se comprueba el código de salida de `start-phase`; si falla, no se inicia Claude (código 4).
+  - Sin manifiestos artificiales ni autoinstalación del hub.
+- **Pruebas (`tests/test_bootstrap.py`):**
+  - Hub central con `--phase`: no se crea manifiesto, `start-phase` se ejecuta antes de Claude y un fallo de `hub.validate` bloquea el lanzamiento.
+  - Fallo de `start-phase`: Claude no se inicia.
+  - Un proyecto sin manifiesto sigue fallando.
+  - `python -m unittest tests.test_bootstrap` → Ran 7 tests, OK.
+  - `python -m unittest discover -s tests` → Ran 154 tests, OK.
+  - `python scripts/hub.py validate` → PASS.
+- **Ejecución:** orchestrator (self), cambio de pocas líneas; ejecutores: ninguno (0 tokens). Riesgo bajo-medio (lanzador; sin cambios en hooks ni en la política): verificación por diff y pruebas focalizadas.
