@@ -110,7 +110,7 @@ Modificados:
 | Desactivar hooks y rollback | ✅ pasó | disable elimina solo ese hook; rollback lo restaura con su estado |
 | Skills y agentes siguen disponibles | ✅ pasó | 57 skills (43 propias y 14 activas), 30 agentes, catálogo 981 y 45 |
 | Informes heredados por un proyecto nuevo | ✅ pasó | phase_report.py y la plantilla instalados; informe de 19 secciones generado en el proyecto |
-| GitHub Actions del PR #4 | ⏳ pendiente | la primera ejecución falló por hashes CRLF, ya corregido; falta la ejecución final |
+| GitHub Actions del PR #4 | ✅ pasó | la primera ejecución falló por hashes CRLF; tras la corrección, CI success en 6cc520e (validate, pruebas y check-docs) |
 | Bloqueo real por presupuesto en una sesión viva | ➖ no medido | solo probado con transcripciones sintéticas |
 
 ## 9. Evidencia de funcionamiento
@@ -160,7 +160,6 @@ No medida con precisión; ejecutores 636 s y 398 s; orquestador no medido.
 
 ## 16. Componentes pendientes
 
-- Ejecución final de la CI del PR #4.
 - Probar un bloqueo por presupuesto en una sesión viva.
 - Agent Memory y OpenViking (restricción vigente).
 - Revisión humana de las 181 skills con scripts y de los 45 agentes de catálogo.
@@ -181,6 +180,7 @@ No medida con precisión; ejecutores 636 s y 398 s; orquestador no medido.
 - 8df4e97 documentación e informes de las fases 1 a 3
 - e5be8b6 hashes independientes del salto de línea
 - 4631b96 comparación del registro sin ECC
+- 6cc520e informes y entregables de la fase 4
 
 **Pull Requests:**
 - #3 fusionado
