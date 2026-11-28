@@ -1,5 +1,14 @@
 # Changelog del hub
 
+## Unreleased — fase 4.1 (2026-11-28)
+- Presupuesto real y persistente de ejecutores en `model_guard`: 50.000 tokens ponderados por fase y por sesión, con reserva de 10.000 por ejecutor activo. Mide input, output, cache creation y 0,1 × cache read; el libro `.agent-hub/budget/state.json` sobrevive a las sesiones nuevas. Bloquea si no puede medir, salvo recuperación autorizada (`hub.py budget authorize-recovery`). Sustituye a `max_executor_tokens_per_session`.
+- Concurrencia: 1 ejecutor por defecto, 2 como máximo y 1 reintento; el hook aplica el tope de 2 aunque la política local indique otro valor.
+- Skills obligatorias efectivas: `mandatory_agent_skills` en `MODEL_POLICY.json`. `model_guard` deniega los agentes que no precargan `token-budget` o cuyo archivo de skill falta, así como los built-ins y `fork`; `catalog.py enable` inyecta las skills obligatorias en los agentes externos.
+- Herencia automática: nuevo `hub.py update` (actualización segura que conserva los valores ajustables del proyecto y restablece las claves centrales); `launch` actualiza antes de abrir la sesión y admite `--phase`. `usage_tracker` es obligatorio en todos los perfiles y se registra en Stop y SubagentStop, también en proyectos existentes.
+- Orquestador con effort `medium`. Se eliminan la delegación de operaciones deterministas, la reinvocación de skills precargadas y las revisiones redundantes (ahora proporcionales al riesgo); sesión nueva por fase usando `LATEST_REPORT.md` como traspaso.
+- ECC: se activan `strategic-compact` y `context-budget`; `cost-tracking` queda pendiente de su servicio.
+- Informes de subfase (`PHASE_04_1_REPORT.md`) y requisito permanente documentado en `docs/GOVERNANCE.md`, con pruebas de herencia (`tests/test_inheritance.py`).
+
 ## Unreleased — fase 4 (2026-11-28)
 - Gestor de hooks (`hub.py hooks registry|list|enable|disable|verify`):
   - `registry/HOOK_REGISTRY.json` contiene 110 hooks con procedencia, sha256, riesgo y estado.

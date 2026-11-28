@@ -25,7 +25,7 @@ Hooks, MCP, plugins, settings y dependencias son siempre `inventory-only` (nunca
 
 ## Decisiones
 
-- skills: approved=995, rejected=1028, requires-review=181
+- skills: approved=998, rejected=1025, requires-review=181
 - agents: approved=45, rejected=267
 
 ### Por motivo
@@ -40,9 +40,9 @@ Hooks, MCP, plugins, settings y dependencias son siempre `inventory-only` (nunca
 | model-opus-not-allowed | 20 |
 | non-canonical-copy | 1046 |
 | offensive-security | 36 |
-| out-of-scope-domain | 574 |
+| out-of-scope-domain | 565 |
 | requires-script-review | 218 |
-| requires-service | 17 |
+| requires-service | 19 |
 | requires-toolchain | 6 |
 | unsafe-pattern | 38 |
 
@@ -57,24 +57,26 @@ Hooks, MCP, plugins, settings y dependencias son siempre `inventory-only` (nunca
 | Anthropic-Cybersecurity-Skills--performing-docker-bench-security-assessment | security-defensive, sre-devops | Runs Docker Bench for Security, the open-source CIS Docker Benchmark audit script, across host configuration, daemon set |
 | Anthropic-Cybersecurity-Skills--securing-helm-chart-deployments | security-defensive, sre-devops | Secures Helm chart deployments by verifying chart signatures and provenance, rendering and linting templates for misconf |
 | ECC--backend-patterns | data-science, general, web | Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, a |
+| ECC--context-budget | security-defensive | Routes live context checks to the native Codex or Claude Code meter without scanning files, and performs a bounded stati |
 | ECC--django-tdd | general, web | Django testing strategies with pytest-django, TDD methodology, factory_boy, mocking, coverage, and testing Django REST F |
 | ECC--godot-patterns | games, web | Idiomatic Godot 4 GDScript patterns - static typing, scene and node design, signals, resources, autoloads, input, and li |
 | ECC--godot-testing | games, general | Testing Godot 4 GDScript projects - a zero-dependency headless check scene, gdUnit4 and GUT suites, scene-runner tests,  |
 | ECC--kotlin-testing | general | Kotlin testing patterns with Kotest, MockK, coroutine testing, property-based testing, and Kover coverage. Follows TDD m |
 | ECC--rust-testing | automation, general | Rust testing patterns including unit tests, integration tests, async testing, property-based testing, mocking, and cover |
+| ECC--strategic-compact | general | Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary au |
 | scientific-agent-skills--benchling-integration | automation, data-science, general, web | Benchling Python SDK and REST API integration for registry entities, inventory, ELN entries, workflows, Benchling Apps,  |
 | scientific-agent-skills--datalad | data-science, general | Retrieves, versions, and publishes scientific datasets with DataLad and git-annex, and captures computational provenance |
 
-## Skills catalogo por dominio (total 981)
+## Skills catalogo por dominio (total 982)
 
 | Dominio | Skills |
 |---|---|
-| general | 251 |
+| general | 254 |
 | data-science | 138 |
 | games | 0 |
 | web | 147 |
 | sre-devops | 253 |
-| security-defensive | 761 |
+| security-defensive | 760 |
 | automation | 102 |
 
 ## Agentes aprobados (45)

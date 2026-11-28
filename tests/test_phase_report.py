@@ -113,6 +113,15 @@ class PhaseReportTests(unittest.TestCase):
         self.assertEqual((d / "LATEST_REPORT.md").read_text(encoding="utf-8"),
                          "Copia de PHASE_04_REPORT.md\n\nnew\n")
 
+    def test_sub_phase_labels_and_latest(self):
+        self.assertEqual(("04", "04_1", "04.1"), (pr.phase_label(4), pr.phase_label("4.1"), pr.phase_label("4.1", ".")))
+        d = self.tmp / "sub"
+        d.mkdir()
+        for name in ("PHASE_04_REPORT.md", "PHASE_04_1_REPORT.md", "PHASE_03_REPORT.md"):
+            (d / name).write_text(name + chr(10), encoding="utf-8")
+        self.assertEqual(pr.main(["latest", "--dir", str(d)]), 0)
+        self.assertIn("Copia de PHASE_04_1_REPORT.md", (d / "LATEST_REPORT.md").read_text(encoding="utf-8"))
+
     def test_check_detects_drift(self):
         d = self.tmp / "docs"
         self.write_data(sample(), folder="docs/data")

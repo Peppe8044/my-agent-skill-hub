@@ -111,14 +111,14 @@ class HooksInstallTests(Isolated, unittest.TestCase):
         cmds = self.commands()
         for h in hm.load_registry(hub.ROOT)["hooks"]:
             if h["status"] == "approved" and h["default_enabled"] and h["id"] not in first["hooks"]["skipped"]:
-                self.assertEqual(1, cmds.count(h["command"]), h["id"])
+                self.assertEqual(len(h["events"]), cmds.count(h["command"]), h["id"])
         self.assertIn("own:model-guard", first["hooks"]["installed"])
         self.assertIsNone(self.go()["backup"])
 
     def test_core_profile_only_mandatory(self):
         result = self.go("core")
-        self.assertEqual(["own:model-guard"], result["hooks"]["installed"])
-        self.assertEqual(1, len(self.commands()))
+        self.assertEqual(["own:model-guard", "own:usage-tracker"], result["hooks"]["installed"])
+        self.assertEqual(3, len(self.commands()))  # guard + tracker on Stop and SubagentStop
 
     def test_disable_removes_only_hub_entry(self):
         self.write_settings({"hooks": {"PreToolUse": [

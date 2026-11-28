@@ -151,8 +151,11 @@ def usage_table(usage_dir):
 
 
 def render(data, usage_dir=None, repo="."):
-    if not isinstance(data, dict) or not isinstance(data.get("phase"), int) or not data.get("title"):
-        raise ValueError("el JSON requiere 'phase' (entero) y 'title'")
+    phase = data.get("phase") if isinstance(data, dict) else None
+    valid = (isinstance(phase, int) and not isinstance(phase, bool)) or (
+        isinstance(phase, str) and re.fullmatch(r"[0-9]+(?:[.][0-9]+)?", phase))
+    if not valid or not data.get("title"):
+        raise ValueError("el JSON requiere 'phase' (entero o subfase como \"4.1\") y 'title'")
     g = data.get
     github = g("github") or {}
     costs = [f"{c.get('item', '')}: USD {float(c.get('usd') or 0):.2f} (fuente: {c.get('source', '')})"
@@ -179,7 +182,7 @@ def render(data, usage_dir=None, repo="."):
         bullets(github.get("prs")) + "\n\n**Enlaces:**\n" + bullets(github.get("links")),
         g("next_phase") or EMPTY,
     ]
-    parts = [f"# Reporte de fase {data['phase']:02d}: {g('title')}", "",
+    parts = [f"# Reporte de fase {phase_label(data['phase'], '.')}: {g('title')}", "",
              "Documento sintético generado de forma determinista. No incluye registros completos."]
     for number, (name, body) in enumerate(zip(SECTIONS, bodies), 1):
         parts += ["", f"## {number}. {name}", "", body]
@@ -190,12 +193,23 @@ def render(data, usage_dir=None, repo="."):
     return text
 
 
+def phase_parts(phase):
+    """Phase 4 -> (4, 0); sub-phase "4.1" -> (4, 1)."""
+    major, _, minor = str(phase).partition(".")
+    return int(major), int(minor or 0)
+
+
+def phase_label(phase, sep="_"):
+    major, minor = phase_parts(phase)
+    return f"{major:02d}" + (f"{sep}{minor}" if minor else "")
+
+
 def find_reports(directory):
     found = {}
     for path in Path(directory).glob("PHASE_*_REPORT.md"):
-        match = re.fullmatch(r"PHASE_(\d+)_REPORT\.md", path.name)
+        match = re.fullmatch(r"PHASE_(\d+)(?:_(\d+))?_REPORT\.md", path.name)
         if match:
-            found[int(match.group(1))] = path
+            found[(int(match.group(1)), int(match.group(2) or 0))] = path
     return found
 
 
@@ -210,7 +224,7 @@ def load(path):
 def cmd_render(args):
     data_path = Path(args.data)
     text = render(load(data_path), args.usage_dir, args.repo)
-    out = Path(args.out) if args.out else data_path.parent.parent / f"PHASE_{load(data_path)['phase']:02d}_REPORT.md"
+    out = Path(args.out) if args.out else data_path.parent.parent / f"PHASE_{phase_label(load(data_path)['phase'])}_REPORT.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(text.encode("utf-8"))
     print(f"Escrito {out}")
@@ -239,7 +253,7 @@ def cmd_check(args):
         except PrivacyError as exc:
             problems += [f"{data_path.name}: {f}" for f in exc.findings]
             continue
-        report = directory / f"PHASE_{data['phase']:02d}_REPORT.md"
+        report = directory / f"PHASE_{phase_label(data['phase'])}_REPORT.md"
         if not report.exists():
             problems.append(f"falta {report.name}")
         elif report.read_bytes().decode("utf-8") != text:

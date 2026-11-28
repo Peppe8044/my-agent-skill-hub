@@ -19,7 +19,8 @@ except ImportError:
     from integrations import approved_files, mcp_config, plan_external
     import model_policy as mp
 
-MERGED = (".mcp.json", ".claude/settings.json")
+MERGED = (".mcp.json", ".claude/settings.json", "MODEL_POLICY.json")
+POLICY_REL = "MODEL_POLICY.json"
 INCOMING = ".agent-hub/incoming"
 BACKUPS = ".agent-hub/backups"
 ENABLED_REL = ".agent-hub/enabled.json"
@@ -218,6 +219,35 @@ def merge_settings(existing_bytes, hub_bytes, previous_digest):
     return (json.dumps(settings, indent=2, ensure_ascii=False) + "\n").encode("utf-8"), "merged", []
 
 
+def merge_policy(existing_bytes, hub_bytes, previous_digest, previous_overrides):
+    """Central MODEL_POLICY.json plus the project's own values for tunable keys only.
+
+    Returns (bytes, report, overrides). Central keys (models, efforts, concurrency caps,
+    mandatory skills) always come from the hub; invalid project values are dropped."""
+    hub = json.loads(hub_bytes.decode("utf-8"))
+    overrides = dict(previous_overrides) if isinstance(previous_overrides, dict) else {}
+    reset = []
+    if existing_bytes is not None and digest(existing_bytes) != previous_digest:
+        try:
+            current = json.loads(existing_bytes.decode("utf-8"))
+        except ValueError as exc:
+            raise PolicyConflictError(f"Install stopped, nothing written: invalid JSON in MODEL_POLICY.json: {exc}")
+        if not isinstance(current, dict):
+            raise PolicyConflictError("Install stopped, nothing written: MODEL_POLICY.json must be a JSON object")
+        overrides = {k: current[k] for k in mp.TUNABLE_KEYS if k in current and current[k] != hub.get(k)}
+        reset = sorted(k for k in current if k not in mp.TUNABLE_KEYS and current[k] != hub.get(k))
+    merged, rejected = dict(hub), []
+    for key in sorted(overrides):
+        trial = dict(merged, **{key: overrides[key]})
+        if mp.validate_policy(trial):
+            rejected.append(key)
+        else:
+            merged = trial
+    overrides = {k: v for k, v in overrides.items() if k not in rejected}
+    data = hub_bytes if not overrides else (json.dumps(merged, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    return data, {"preserved": sorted(overrides), "rejected": rejected, "reset_to_central": reset}, overrides
+
+
 def load_catalog_module(root):
     """Load the project-side helper template (shared enable transform)."""
     path = Path(root) / CATALOG_TEMPLATE
@@ -261,7 +291,7 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
     files = {}
     def add(rel, data):
         files[str(rel).replace("\\", "/")] = data
-    for rel in ("AGENTS.md", "CLAUDE.md", "MODEL_POLICY.json", mp.HOOK_REL):
+    for rel in ("AGENTS.md", "CLAUDE.md", mp.HOOK_REL):
         add(rel, (root / rel).read_bytes())
     for src in sorted((root / ".claude/agents").glob("*.md")):
         add(src.relative_to(root), src.read_bytes())
@@ -302,6 +332,13 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
     previous = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {"files": {}}
     prev_files = previous.get("files", {})
     prev_ext = previous.get("external", {}) if isinstance(previous.get("external"), dict) else {}
+    policy_path = safe_path(POLICY_REL)
+    if policy_path.exists() and not policy_path.is_file():
+        raise ValueError("Unsafe path: " + POLICY_REL)
+    policy_bytes, policy_report, policy_overrides = merge_policy(
+        policy_path.read_bytes() if policy_path.exists() else None, (root / POLICY_REL).read_bytes(),
+        prev_files.get(POLICY_REL), previous.get("policy_overrides"))
+    add(POLICY_REL, policy_bytes)
 
     # --- external capabilities (verified against registry hashes and pinned commits)
     ext_meta, groups, enabled_targets = {}, {}, {}
@@ -328,12 +365,13 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         if helper is not None:
             add(".agent-hub/bin/catalog.py", (root / CATALOG_TEMPLATE).read_bytes())
             _, default_effort = helper.policy(root)
+            skills = helper.mandatory_skills(root)
             for iid in sorted(_read_enabled(target)):
                 item = plan["catalog"].get(iid)
                 if not item:
                     continue
                 targets = helper.enable_targets({"kind": item["kind"], "name": item["name"]},
-                                                item["files"], default_effort)
+                                                item["files"], default_effort, skills)
                 enabled_targets[iid] = targets
                 for rel, data in targets.items():
                     add(rel, data)
@@ -385,7 +423,8 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         p = safe_path(rel)
         if p.exists() and not p.is_file():
             raise ValueError(f"Unsafe path: {rel}")
-        if p.exists() and p.read_bytes() != data and prev_files.get(rel) != digest(p.read_bytes()):
+        if (rel != POLICY_REL and p.exists() and p.read_bytes() != data
+                and prev_files.get(rel) != digest(p.read_bytes())):
             conflicts.append(rel)
     # A skill directory is staged as a whole: never mix hub files into a foreign directory.
     for prefix, rels in groups.items():
@@ -480,12 +519,14 @@ def install(root, target, profile="full", fetch_external=True, *, home=None,
         (ltarget / ENABLED_REL).write_text(json.dumps(enabled, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps({"profile": profile, "files": manifest_files, "merged": merged,
-                                         "external": manifest_ext}, indent=2)+"\n", encoding="utf-8")
+                                         "external": manifest_ext, "policy_overrides": policy_overrides},
+                                        indent=2)+"\n", encoding="utf-8")
     if backup_id:
         _prune_backups(ltarget / BACKUPS)
     return {"installed_files": len(manifest_files), "external_candidates": len(catalog),
             "external_activation": "review-required", "target": str(target),
-            "conflicts": sorted(conflicts), "settings": settings_status, "mcp": mcp_report,
+            "conflicts": sorted(conflicts), "settings": settings_status, "policy": policy_report,
+            "mcp": mcp_report,
             "external": ext, "backup": backup_id, "hooks": hplan["report"]}
 
 

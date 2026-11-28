@@ -340,7 +340,7 @@ def plan_hooks(hub_root, target, profile, prev_files, home):
         wanted = h["mandatory"] or (profile == "full" and h["default_enabled"])
         if not wanted:
             continue
-        if h["id"] in disabled:
+        if h["id"] in disabled and not h["mandatory"]:
             report["disabled"].append(h["id"])
             continue
         if h["source"] == "own":
@@ -408,18 +408,22 @@ def apply_settings(settings, register, remove_commands):
                     g = dict(g, hooks=new_inner)
             kept.append(g)
         hooks[event] = kept
-    present = set(_settings_commands(settings))
+    # Registered per (event, command): a hook that gained an event (usage tracker: Stop and
+    # SubagentStop) is added to the new event in projects that already have the old one.
+    present = {(event, x.get("command")) for event, groups in hooks.items() if isinstance(groups, list)
+               for g in groups if isinstance(g, dict) and isinstance(g.get("hooks"), list)
+               for x in g["hooks"] if isinstance(x, dict)}
     for h in register:
-        if h["command"] in present:
-            continue
         for ev in h["events"]:
+            if (ev["event"], h["command"]) in present:
+                continue
             group = {"hooks": [{"type": "command", "command": h["command"]}]}
             if ev.get("matcher"):
                 group = {"matcher": ev["matcher"], **group}
             if not isinstance(hooks.setdefault(ev["event"], []), list):
                 continue
             hooks[ev["event"]].append(group)
-        present.add(h["command"])
+            present.add((ev["event"], h["command"]))
     for event in [e for e, g in hooks.items() if g == []]:
         del hooks[event]
     if not hooks:
@@ -543,8 +547,12 @@ def verify(hub_root, target, which=shutil.which):
         eslint = Path(tmp) / ".eslintrc.json"
         eslint.write_text("{}\n", encoding="utf-8")
         tproj = str(target)
+        # Empty session transcript: measurable (0 executor tokens), so the budget check can pass.
+        transcript = Path(tmp) / "hooks-verify.jsonl"
+        transcript.write_text("{}\n", encoding="utf-8")
         cases = {
-            "own:model-guard": ({"tool_name": "Agent", "tool_input": {"subagent_type": "scout", "model": "sonnet"}},
+            "own:model-guard": ({"tool_name": "Agent", "session_id": "hooks-verify", "transcript_path": str(transcript),
+                                 "tool_input": {"subagent_type": "researcher", "model": "haiku"}},
                                 {"tool_name": "Agent", "tool_input": {"subagent_type": "scout", "model": "opus"}}),
             "own:command-guard": ({"tool_name": "Bash", "tool_input": {"command": "echo hello"}},
                                   {"tool_name": "Bash", "tool_input": {"command": "rm -rf /"}}),

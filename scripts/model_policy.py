@@ -8,8 +8,14 @@ POLICY_KEYS = {
     "allow_executor_opus": bool, "default_parallel_agents": int,
     "max_parallel_agents": int, "max_retries": int,
     "executor_efforts": list, "default_executor_effort": str,
-    "max_executor_tokens_per_session": int,
+    "executor_budget_per_phase": int, "executor_budget_per_session": int,
+    "executor_budget_reserve_per_active": int, "budget_weights": dict,
+    "mandatory_agent_skills": list,
 }
+TUNABLE_KEYS = (  # a project may keep its own values for these on update; the rest is central
+    "default_parallel_agents", "default_executor_effort", "executor_budget_per_phase",
+    "executor_budget_per_session", "executor_budget_reserve_per_active", "budget_weights",
+)
 EFFORTS = ("low", "medium", "high")
 ORCHESTRATOR_EFFORTS = ("high", "medium")
 DENIED_EFFORTS = ("xhigh", "max")
@@ -84,18 +90,29 @@ def validate_policy(policy):
         errors.append("MODEL_POLICY.json allow_inherit must be false")
     if policy["allow_executor_opus"] is not False:
         errors.append("MODEL_POLICY.json allow_executor_opus must be false")
-    if not 1 <= policy["default_parallel_agents"] <= policy["max_parallel_agents"] <= 3:
-        errors.append("MODEL_POLICY.json requires 1 <= default_parallel_agents <= max_parallel_agents <= 3")
+    if not 1 <= policy["default_parallel_agents"] <= policy["max_parallel_agents"] <= 2:
+        errors.append("MODEL_POLICY.json requires 1 <= default_parallel_agents <= max_parallel_agents <= 2")
     ef = policy["executor_efforts"]
     if (not ef or not all(isinstance(x, str) and x in EFFORTS for x in ef)
             or len(ef) != len(set(ef))):
         errors.append("MODEL_POLICY.json executor_efforts must list unique values from low, medium, high")
     elif policy["default_executor_effort"] not in ef:
         errors.append("MODEL_POLICY.json default_executor_effort must be one of executor_efforts")
-    if not 0 <= policy["max_retries"] <= 2:
-        errors.append("MODEL_POLICY.json max_retries must be between 0 and 2")
-    if policy["max_executor_tokens_per_session"] < 1000:
-        errors.append("MODEL_POLICY.json max_executor_tokens_per_session must be at least 1000")
+    if not 0 <= policy["max_retries"] <= 1:
+        errors.append("MODEL_POLICY.json max_retries must be between 0 and 1")
+    for key in ("executor_budget_per_phase", "executor_budget_per_session"):
+        if policy[key] < 1000:
+            errors.append(f"MODEL_POLICY.json {key} must be at least 1000")
+    if not 0 <= policy["executor_budget_reserve_per_active"] <= policy["executor_budget_per_session"]:
+        errors.append("MODEL_POLICY.json executor_budget_reserve_per_active must be between 0 and the session budget")
+    weights = policy["budget_weights"]
+    if set(weights) != {"input", "output", "cache_creation", "cache_read"} or not all(
+            isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 1 for v in weights.values()):
+        errors.append("MODEL_POLICY.json budget_weights needs input, output, cache_creation and cache_read between 0 and 1")
+    skills = policy["mandatory_agent_skills"]
+    if (not all(isinstance(s, str) and re.fullmatch(r"[a-z0-9][a-z0-9-]*", s) for s in skills)
+            or "token-budget" not in skills or len(skills) != len(set(skills))):
+        errors.append("MODEL_POLICY.json mandatory_agent_skills must be unique skill names including token-budget")
     return errors
 
 

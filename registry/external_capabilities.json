@@ -9636,7 +9636,7 @@
    "path":"skills/context-budget",
    "repo":"ECC",
    "sha256":{"SKILL.md":"793d51ac6639a466213800c228189a48b102c88d7cfb5b0651baa3480a577206"},
-   "tier":"catalog"
+   "tier":"active"
   },
   {
    "description":"Coordinate frontend/backend or service-to-service work through one authoritative machine-checkable contract (OpenAPI, AsyncAPI, Protocol Buffers, or JSON Schema), with generated consumer types and...",
@@ -10875,6 +10875,18 @@
    "tier":"catalog"
   },
   {
+   "description":"Operate and extend NanoClaw, ECC's zero-dependency session-aware REPL, with persistent markdown-backed sessions and slash commands for model switching, skill loading, session branching, cross-sessi...",
+   "domains":["general"],
+   "files":["SKILL.md"],
+   "id":"ECC--nanoclaw-repl",
+   "license":"MIT",
+   "name":"nanoclaw-repl",
+   "path":"skills/nanoclaw-repl",
+   "repo":"ECC",
+   "sha256":{"SKILL.md":"75786102fd1a49d1bbed11f75bc014a93e1bb2eed2cdc0088f1bad0e92d29291"},
+   "tier":"catalog"
+  },
+  {
    "description":"NestJS architecture patterns for modules, controllers, providers, DTO validation, guards, interceptors, config, and production-grade TypeScript backends. Use when building or reviewing a NestJS bac...",
    "domains":["general","web"],
    "files":["SKILL.md"],
@@ -11188,7 +11200,7 @@
   },
   {
    "description":"Optimize LLM prompt caching hit rate to reduce API costs and improve latency. Analyzes prompt structure, identifies cacheable vs non-cacheable content, and recommends restructuring to maximize cach...",
-   "domains":["web"],
+   "domains":["general","web"],
    "files":["SKILL.md"],
    "id":"ECC--prompt-caching-strategy",
    "license":"MIT",
@@ -11751,6 +11763,18 @@
    "tier":"catalog"
   },
   {
+   "description":"Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction. Use when a session is approaching a context limit and a task p...",
+   "domains":["general"],
+   "files":["SKILL.md"],
+   "id":"ECC--strategic-compact",
+   "license":"MIT",
+   "name":"strategic-compact",
+   "path":"skills/strategic-compact",
+   "repo":"ECC",
+   "sha256":{"SKILL.md":"1c3be090bffc100e31d185196cff0eb7075a877523cf41c19d781baca65b219f"},
+   "tier":"active"
+  },
+  {
    "description":"Thread-safe data persistence in Swift using actors — in-memory cache with file-backed storage, eliminating data races by design. Use when persisting data in Swift and a data race or thread-safety p...",
    "domains":["data-science"],
    "files":["SKILL.md"],
@@ -11844,6 +11868,18 @@
    "path":"skills/tinystruct-patterns",
    "repo":"ECC",
    "sha256":{"SKILL.md":"acd1f6712f8f81423a8e61d4f4e774dbc0963f8c2a91c7fce7db77a35d07152c","references/architecture.md":"6821df0fe22bfed26071e0a8386b47b820de7ff916275d6e0fffde6dc649a43e","references/data-handling.md":"4f14344808d3468228cb2f99215c6a340f25e3e34217147709c60f579742bdcf","references/database.md":"f258537d4882cb7dd5094946f43780c698b9a2c6d5016fa915995cdc9fc8191d","references/routing.md":"5accd76c48394eeb0b8f97733c1e928a58c0ee28080951c66979b35b0029cd24","references/system-usage.md":"6ff5f0ffab18340a298712e93170ff2e3207785c6ec3eb65b3e7f84cae2f06bf","references/testing.md":"a4c82b7b9b9877049dcba49b8dbfd88e2713e32ad90ac37f598f9be6b2b864f4"},
+   "tier":"catalog"
+  },
+  {
+   "description":"Offer a choice of response depth (25%/50%/75%/100%) with token estimates before answering, then answer at that level. Use when the user asks to control response length or token budget, such as 'tok...",
+   "domains":["general"],
+   "files":["SKILL.md"],
+   "id":"ECC--token-budget-advisor",
+   "license":"MIT",
+   "name":"token-budget-advisor",
+   "path":"skills/token-budget-advisor",
+   "repo":"ECC",
+   "sha256":{"SKILL.md":"7f037a58306a6bd5c5a024491a6c4529cd8373309e413eda517ad2430420e25a"},
    "tier":"catalog"
   },
   {

@@ -12,14 +12,14 @@ import sys
 try:
     from .project_install import install, rollback
     from .integrations import status as integration_status, load_external_registry, plan_external
-    from .bootstrap import bootstrap, launch
+    from .bootstrap import bootstrap, launch, update as update_project
     from . import model_policy as mp
     from . import doctor as doctor_mod
     from . import hooks_manager as hm
 except ImportError:
     from project_install import install, rollback
     from integrations import status as integration_status, load_external_registry, plan_external
-    from bootstrap import bootstrap, launch
+    from bootstrap import bootstrap, launch, update as update_project
     import model_policy as mp
     import doctor as doctor_mod
     import hooks_manager as hm
@@ -74,7 +74,7 @@ def check_frontmatter(path: Path, expected_name: str) -> list[str]:
     return errors
 
 
-def check_agent_skills(path: Path, known_skills: set[str]) -> list[str]:
+def check_agent_skills(path: Path, known_skills: set[str], mandatory: set[str] = MANDATORY_SKILLS) -> list[str]:
     """Cada agente ejecutable debe precargar skills existentes (campo `skills`),
     incluir las obligatorias y exigir el bloque `### Run report` en su entrega."""
     content = path.read_text(encoding="utf-8").replace("\r\n", "\n")
@@ -84,7 +84,7 @@ def check_agent_skills(path: Path, known_skills: set[str]) -> list[str]:
         return [f"{path}: missing `skills` frontmatter list"]
     listed = re.findall(r"  - ([a-z0-9-]+)", block.group(1))
     errors = [f"{path}: unknown skill `{s}`" for s in listed if s not in known_skills]
-    missing = MANDATORY_SKILLS - set(listed)
+    missing = mandatory - set(listed)
     if missing:
         errors.append(f"{path}: missing mandatory skills {sorted(missing)}")
     if "### Run report" not in content:
@@ -246,8 +246,10 @@ def validate(root: Path = ROOT, notes: list[str] | None = None) -> list[str]:
     }
     if registered_names != actual_skills:
         errors.append(f"Skill registry differs from filesystem: {registered_names ^ actual_skills}")
-    if not MANDATORY_SKILLS.issubset(actual_skills):
-        errors.append("Mandatory skills missing: " + str(MANDATORY_SKILLS - actual_skills))
+    listed_policy = load_json(root / "MODEL_POLICY.json").get("mandatory_agent_skills")
+    mandatory = set(listed_policy) if isinstance(listed_policy, list) else set(MANDATORY_SKILLS)
+    if not mandatory.issubset(actual_skills):
+        errors.append("Mandatory skills missing: " + str(mandatory - actual_skills))
     for name in sorted(actual_skills):
         canonical = root / "skills" / name / "SKILL.md"
         errors += check_frontmatter(canonical, name)
@@ -268,7 +270,7 @@ def validate(root: Path = ROOT, notes: list[str] | None = None) -> list[str]:
                 errors.append(f"Missing agent {name} path: {path}")
             elif key == "claude_path":
                 errors += check_frontmatter(path, name)
-                errors += check_agent_skills(path, actual_skills)
+                errors += check_agent_skills(path, actual_skills, mandatory)
     try:
         profiles = load_json(root / "stacks/catalog.json")
         if len({p["id"] for p in profiles}) != len(profiles):
@@ -276,7 +278,7 @@ def validate(root: Path = ROOT, notes: list[str] | None = None) -> list[str]:
     except (KeyError, ValueError, json.JSONDecodeError) as exc:
         errors.append(f"Invalid stack catalog: {exc}")
     policy = (root / "AGENTS.md").read_text(encoding="utf-8")
-    for name in MANDATORY_SKILLS:
+    for name in sorted(mandatory):
         if name not in policy:
             errors.append(f"AGENTS.md missing mandatory skill route: {name}")
     errors += mp.validate_policy(load_json(root / "MODEL_POLICY.json"))
@@ -375,6 +377,20 @@ def check_docs(base: str) -> list[str]:
     return [f"Missing documentation update: {path}" for path in sorted(required - changed)]
 
 
+def budget_cli(rest: list[str]) -> int:
+    """`hub.py budget status|start-phase ID|authorize-recovery N [--target P]` via the target's model_guard."""
+    rest, target = list(rest), ROOT
+    if "--target" in rest:
+        i = rest.index("--target")
+        target = Path(rest[i + 1])
+        del rest[i:i + 2]
+    guard = Path(target) / ".claude/hooks/model_guard.py"
+    if not guard.is_file():
+        print("ERROR: model_guard is not installed in the target", file=sys.stderr)
+        return 2
+    return subprocess.call([sys.executable, str(guard), "--budget", *rest, "--project", str(Path(target).resolve())])
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -388,6 +404,11 @@ def main(argv: list[str] | None = None) -> int:
     boot.add_argument("--no-runtime-mcp-scan", action="store_true")
     start = sub.add_parser("launch")
     start.add_argument("--target", required=True, type=Path)
+    start.add_argument("--phase")
+    upd = sub.add_parser("update")
+    upd.add_argument("--target", required=True, type=Path)
+    upd.add_argument("--fetch", action="store_true")
+    upd.add_argument("--runtime-mcp-scan", action="store_true")
     integration = sub.add_parser("integrations")
     integration.add_argument("--target", required=True, type=Path)
     setup = sub.add_parser("install")
@@ -408,6 +429,8 @@ def main(argv: list[str] | None = None) -> int:
     hk.add_argument("rest", nargs=argparse.REMAINDER)
     rp = sub.add_parser("report", add_help=False)
     rp.add_argument("rest", nargs=argparse.REMAINDER)
+    bg = sub.add_parser("budget", add_help=False)
+    bg.add_argument("rest", nargs=argparse.REMAINDER)
     back = sub.add_parser("rollback")
     back.add_argument("--target", required=True, type=Path)
     back.add_argument("--backup")
@@ -443,8 +466,12 @@ def main(argv: list[str] | None = None) -> int:
             report = bootstrap(ROOT, args.target, not args.no_fetch, runtime_scan=not args.no_runtime_mcp_scan)
             print(json.dumps(report, indent=2))
             return 1 if report["static_errors"] else 0
+        if args.cmd == "update":
+            report = update_project(ROOT, args.target, args.fetch, runtime_scan=args.runtime_mcp_scan)
+            print(json.dumps(report, indent=2))
+            return 1 if report["static_errors"] else 0
         if args.cmd == "launch":
-            return launch(args.target)
+            return launch(args.target, phase=args.phase)
         if args.cmd == "integrations":
             print(json.dumps(integration_status(ROOT, args.target), indent=2))
             return 0
@@ -454,6 +481,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.cmd == "hooks":
             return hm.main(args.rest, ROOT) or 0
+        if args.cmd == "budget":
+            return budget_cli(args.rest)
         if args.cmd == "report":
             try:
                 try:

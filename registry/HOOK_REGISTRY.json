@@ -1802,7 +1802,7 @@
       "files": [
         {
           "path": ".claude/hooks/model_guard.py",
-          "sha256": "ed63f9ce7e34500b0c2552d1e33df9dc58ec9adf81aa04e62f506cf5b5a6d2de"
+          "sha256": "f71c9418fa67b78bfa00eb113e5082ffe19da0d8795d17db9d33b610eadcff8f"
         }
       ],
       "install_paths": [
@@ -1817,18 +1817,22 @@
         "model-policy",
         "tool-validation"
       ],
-      "reason": "Denies subagents outside sonnet/haiku, fork, model-less built-ins and xhigh/max effort. Cannot be disabled."
+      "reason": "Denies subagents outside sonnet/haiku, fork, built-ins, agents without the mandatory skills (token-budget), xhigh/max effort and delegations over the persistent phase/session budget or that cannot be measured. Cannot be disabled."
     },
     {
       "id": "own:usage-tracker",
       "source": "own",
       "status": "approved",
-      "mandatory": false,
+      "mandatory": true,
       "default_enabled": true,
       "runtime": "python",
       "events": [
         {
           "event": "Stop",
+          "matcher": ""
+        },
+        {
+          "event": "SubagentStop",
           "matcher": ""
         }
       ],
@@ -1851,7 +1855,7 @@
         "context-control",
         "documentation"
       ],
-      "reason": "Own replacement for ECC stop:cost-tracker: stores only token counts per model and subagent in .agent-hub/usage/ (project-local, no content). Never blocks."
+      "reason": "Own replacement for ECC stop:cost-tracker: stores only token counts per model and subagent in .agent-hub/usage/ (project-local, no content) on Stop and SubagentStop. Never blocks. Mandatory (measurement) in every profile."
     },
     {
       "id": "post:dispatcher:async",

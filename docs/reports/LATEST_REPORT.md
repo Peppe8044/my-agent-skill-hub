@@ -1,195 +1,172 @@
-Copia de PHASE_04_REPORT.md
+Copia de PHASE_04_1_REPORT.md
 
-# Reporte de fase 04: Integración selectiva de ECC, gestor de hooks, presupuesto de tokens e informes consolidados
+# Reporte de fase 04.1: Corrección urgente del consumo de tokens y herencia obligatoria
 
 Documento sintético generado de forma determinista. No incluye registros completos.
 
 ## 1. Número de fase y objetivo
 
-Fase 4: Integración selectiva de ECC, gestor de hooks, presupuesto de tokens e informes consolidados
+Fase 4.1: Corrección urgente del consumo de tokens y herencia obligatoria
 
-Objetivo: Cerrar la fase 3, integrar de forma selectiva los hooks de ECC con un gestor de hooks propio y reutilizable, mantener la política de modelos, implantar informes consolidados por fase heredables y reducir de forma efectiva el consumo de tokens.
+Objetivo: Corregir sin nueva auditoría los hallazgos de consumo confirmados e incorporar las optimizaciones al núcleo reutilizable para que todos los proyectos, nuevos y existentes, las hereden y las cumplan de verdad.
 
 ## 2. Resumen ejecutivo
 
-- PR #3 fusionado (623b3ca) tras corregir la documentación de AGPL (OpenViking queda separado por política del proyecto, no por prohibición de la licencia).
-- Gestor de hooks: registro de 110 hooks con procedencia, sha256, riesgo y estado; 5 aprobados (4 propios y config-protection de ECC), 9 rechazados y 96 solo en inventario.
-- Hooks verificados dentro de Claude Code real: command_guard, file_guard, config-protection y model_guard bloquearon sus casos; usage_tracker registró el consumo real.
-- Límite real de tokens: model_guard bloquea nuevas delegaciones al alcanzar 100.000 tokens de ejecutores por sesión, medidos en las transcripciones.
-- Informes consolidados deterministas de 19 secciones; fases 1 a 3 reconstruidas sin repetir pruebas; los proyectos los heredan.
-- Los ejecutores consumieron 239.699 tokens, 2,4 veces el objetivo de 100.000.
+- El presupuesto de ejecutores ahora es técnico y persistente: model_guard bloquea antes de delegar con 50.000 tokens ponderados por fase y por sesión, una reserva de 10.000 por ejecutor activo y un libro que sobrevive a las sesiones nuevas.
+- Mide input, output, cache creation y cache read por separado (cache read con peso 0,1). Si no puede medir, bloquea salvo recuperación autorizada.
+- token-budget es obligatoria de forma efectiva: model_guard deniega los agentes que no la precargan, los built-ins y fork; catalog.py la inyecta en los agentes externos al activarlos.
+- install, new, bootstrap, update (nuevo) y launch aplican la política, los hooks de protección y medición, el effort por modelo, las skills ECC compatibles y los informes. update conserva solo los valores ajustables del proyecto.
+- Prueba real en Claude Code superada: delegación a Haiku con token-budget cargada, bloqueo por presupuesto de sesión, bloqueo de general-purpose y bloqueo de la fase en una sesión nueva.
+- Esta fase no lanzó ejecutores en el hub (0 tokens). La prueba real consumió 23.876 tokens de Haiku y USD 0,52 en total.
 
 ## 3. Estado inicial y estado final
 
 **Estado inicial:**
-- PR #3 abierto.
-- Sin gestor de hooks: solo model_guard.
-- Sin informes por fase.
-- Sin límite de tokens aplicable.
+- token-budget era solo texto; model_guard comprobaba un tope por sesión que se reiniciaba y excluía cache read.
+- Si no podía medir, model_guard permitía delegar; usage_tracker solo se ejecutaba en Stop.
+- orchestrator.md obligaba a delegar incluso las tareas sencillas y exigía reinvocar las skills precargadas; bootstrap lanzaba Opus con effort high.
+- Los proyectos existentes no tenían una vía de actualización que conservara sus valores ni que garantizara la herencia.
 
 **Estado final:**
-- PR #3 fusionado.
-- PR #4 con gestor de hooks, 4 hooks propios y 1 de ECC aprobados.
-- Presupuesto de tokens aplicado por model_guard.
-- docs/reports con las fases 1 a 4 y LATEST_REPORT.
+- MODEL_POLICY.json es la fuente única: presupuestos, pesos, reserva, concurrencia 1/2, 1 reintento y mandatory_agent_skills.
+- model_guard aplica el modelo, las skills obligatorias, la concurrencia (tope 2), el presupuesto de fase y sesión y el bloqueo sin medición, con valores centrales de respaldo para proyectos desactualizados.
+- hub.py update y launch con actualización previa; usage_tracker obligatorio en Stop y SubagentStop en todos los perfiles.
+- Requisito permanente documentado en docs/GOVERNANCE.md y verificado por tests/test_inheritance.py en proyectos temporales aislados.
 
 ## 4. Componentes implementados
 
-- scripts/hooks_manager.py (registro, list/enable/disable/verify, copias de seguridad de los cambios)
-- registry/HOOK_REGISTRY.json y registry/hook_decisions.json
-- .claude/hooks/command_guard.py
-- .claude/hooks/file_guard.py
-- .claude/hooks/usage_tracker.py
-- Hook ECC pre:config-protection (node, revisado)
-- Presupuesto max_executor_tokens_per_session en MODEL_POLICY.json
-- scripts/phase_report.py y templates/PHASE_REPORT.md
-- Instalación de hooks e informes en proyectos (bootstrap)
+- .claude/hooks/model_guard.py (presupuesto persistente, skills obligatorias, valores de respaldo y CLI --budget)
+- scripts/project_install.py (fusión segura de MODEL_POLICY.json con claves ajustables y overrides en el manifiesto)
+- scripts/bootstrap.py (update y launch con actualización previa, effort medium y --phase)
+- scripts/hub.py (comandos update y budget; skills obligatorias tomadas de la política)
+- templates/agent-hub/catalog.py (inyección de skills obligatorias en los agentes externos)
+- scripts/hooks_manager.py (registro por evento; usage_tracker obligatorio)
+- scripts/phase_report.py (informes de subfase PHASE_04_1)
+- scripts/external_scan.py (activación de ECC strategic-compact y context-budget)
+- Reglas: AGENTS.md, CLAUDE.md, GOVERNANCE.md, orchestrator.md y token-budget
 
 ## 5. Archivos creados y modificados
 
 Creados:
-- scripts/hooks_manager.py
-- scripts/phase_report.py
-- .claude/hooks/command_guard.py
-- .claude/hooks/file_guard.py
-- .claude/hooks/usage_tracker.py
-- registry/HOOK_REGISTRY.json
-- registry/hook_decisions.json
-- templates/PHASE_REPORT.md
-- templates/project/PHASE_REPORT.md
-- docs/ECC_INTEGRATION_REPORT.md
-- docs/HOOK_SECURITY_REPORT.md
-- docs/reports/*
-- tests/test_hooks_manager.py
-- tests/test_own_hooks.py
-- tests/test_phase_report.py
+- tests/test_inheritance.py
+- docs/reports/data/PHASE_04_1.json
+- docs/reports/PHASE_04_1_REPORT.md
 
 Modificados:
-- scripts/project_install.py
-- scripts/hub.py
-- scripts/doctor.py
-- scripts/model_policy.py
-- scripts/integrations.py
-- scripts/external_scan.py
 - .claude/hooks/model_guard.py
 - .claude/settings.json
+- .claude/agents/orchestrator.md
+- .claude/agents/supervisor.md
 - MODEL_POLICY.json
 - AGENTS.md
 - CLAUDE.md
-- README.md
-- skills/documentation-ledger (3 copias)
-- documentation-keeper (2 archivos)
+- docs/GOVERNANCE.md
+- docs/AGENT_PROTOCOL.md
+- docs/OPERATING_GUIDE.md
+- skills/token-budget/SKILL.md (y sus copias de runtime)
+- agents/README.md, agents/orchestrator.md y agents/supervisor.md
+- scripts/bootstrap.py, hub.py, model_policy.py, project_install.py, hooks_manager.py, phase_report.py y external_scan.py
+- templates/agent-hub/catalog.py y templates/project/TOKEN_METRICS.md
+- registry/hook_decisions.json y registros regenerados
+- tests de model_guard, hooks_manager, bootstrap, external_scan y phase_report
+- docs/WORK_LOG.md, docs/CHANGELOG.md y docs/reports/LATEST_REPORT.md
 
 ## 6. Versiones y dependencias
 
-- ECC en el commit fijado 4adeee6732a1 (MIT), sin volver a descargar
-- Node.js 24.20.0 para config-protection
-- Python 3.13.15
 - Claude Code 2.1.332
+- ECC en el commit fijado 4adeee6732a1 (solo se consultó el inventario existente)
+- Python 3 de la biblioteca estándar en los hooks
 
 ## 7. Comandos relevantes ejecutados
 
-- `python scripts/hub.py hooks registry --check`: registro determinista sin desviaciones
-- `python -m unittest discover -s tests`: 137 tests OK en un worktree limpio sin submódulos (condiciones de CI)
-- `python scripts/smoke_bootstrap.py <temporal>`: ok: true; segunda instalación sin cambios
-- `python scripts/hub.py hooks verify|disable|enable / rollback --target <temporal>`: verify 5/5; disable correcto; model_guard no se puede desactivar; rollback restaura hook y estado
-- `claude -p --agent orchestrator --model opus --effort high (proyecto temporal)`: 4 bloqueos de hooks reales y 1 delegación Haiku permitida
+- `python -m unittest discover -s tests`: 150 tests OK con submódulos
+- `python scripts/hub.py validate`: PASS
+- `python scripts/hub.py update --target <proyecto temporal>`: sin errores ni conflictos; presupuestos propios conservados; usage_tracker en SubagentStop
+- `claude -p --agent orchestrator --model opus --effort medium (2 sesiones)`: permitido, bloqueado por sesión, bloqueado por built-in y bloqueado por fase
+- `python scripts/hub.py hooks registry --check`: sin desviaciones
 
 ## 8. Resultados reales de pruebas
 
 | Prueba | Estado | Evidencia |
 |---|---|---|
-| Suite completa (sin submódulos, condiciones de CI) | ✅ pasó | 137 tests OK |
-| Suite completa con submódulos (antes de los ajustes finales) | ✅ pasó | 135 tests OK |
-| Bootstrap instala los hooks aprobados sin duplicados | ✅ pasó | 5 hooks registrados una sola vez |
-| Los hooks se ejecutan en Claude Code | ✅ pasó | command_guard, file_guard, config-protection (node) y model_guard bloquearon; el archivo de prueba no se creó |
-| model_guard bloquea Opus como ejecutor | ✅ pasó | researcher con model opus bloqueado |
-| Presupuesto de tokens | ✅ pasó | pruebas unitarias: bloquea al agotarse, deduplica por id de mensaje, permite si no puede medir |
-| Configuración global sin cambios | ✅ pasó | sha256 de la configuración de usuario igual antes y después |
-| Segunda instalación idempotente | ✅ pasó | 0 cambios, 0 conflictos, 0 copias de seguridad |
-| Desactivar hooks y rollback | ✅ pasó | disable elimina solo ese hook; rollback lo restaura con su estado |
-| Skills y agentes siguen disponibles | ✅ pasó | 57 skills (43 propias y 14 activas), 30 agentes, catálogo 981 y 45 |
-| Informes heredados por un proyecto nuevo | ✅ pasó | phase_report.py y la plantilla instalados; informe de 19 secciones generado en el proyecto |
-| GitHub Actions del PR #4 | ✅ pasó | la primera ejecución falló por hashes CRLF; tras la corrección, CI success en 6cc520e (validate, pruebas y check-docs) |
-| Bloqueo real por presupuesto en una sesión viva | ➖ no medido | solo probado con transcripciones sintéticas |
+| Suite completa con submódulos | ✅ pasó | 150 tests OK |
+| Herencia en proyectos new de los 10 tipos | ✅ pasó | tests/test_inheritance.py ejecuta el hook instalado en cada proyecto |
+| Proyecto de juego (install) y fase que sobrevive a una sesión nueva | ✅ pasó | bloqueo con el mensaje de fase |
+| Actualización de un proyecto existente | ✅ pasó | conserva executor_budget_per_phase; restablece executors y max_parallel_agents; un agente desactualizado sin token-budget queda denegado hasta update |
+| Agentes externos al activarse | ✅ pasó | skills obligatorias inyectadas en las formas sin lista, en bloque y en línea |
+| La política local no amplía los límites centrales | ✅ pasó | opus denegado, concurrencia limitada a 2, presupuesto por defecto y token-budget siempre exigida |
+| launch actualiza antes de abrir la sesión | ✅ pasó | mandatory_agent_skills restaurado y --effort pasado |
+| Presupuesto en model_guard | ✅ pasó | ponderación, reserva, fase persistente, paralelismo, bloqueo sin medición y recuperación, start-phase y valores por defecto |
+| Prueba real de presupuesto en Claude Code | ✅ pasó | 4 comprobaciones superadas en 2 sesiones reales |
 
 ## 9. Evidencia de funcionamiento
 
-- usage_tracker registró en el proyecto temporal los tokens por modelo (Opus principal y Haiku subagente) sin contenido de conversación.
-- Revisión de código de config-protection: lee stdin y hace lstat del destino; sin escrituras, red, procesos ni credenciales.
+- Sesión real 1: researcher (Haiku) permitido; respondió el título del paso 9 de token-budget («Budget and sessions»), lo que demuestra que la skill se cargó. La segunda delegación se denegó con «23876 used + 10000 reserved > 20000 (executor_budget_per_session)» y general-purpose con «not a project agent».
+- Sesión real 2 (sesión nueva, misma fase): denegada con «executor token budget for phase 4.1-real exhausted: 23876 used + 10000 reserved > 20000».
+- Lo medido por el libro (23.876) coincide con modelUsage de Claude Code para Haiku: input 2, output 220 y cache creation 23.654.
+- usage_tracker registró ambas sesiones, con el subagente researcher, solo con conteos y sin contenido.
 
 ## 10. Riesgos y hallazgos de seguridad
 
-- La clasificación de hooks inventariados no es una auditoría completa: solo se revisó el código de los aprobados.
-- config-protection deja de actuar (sin bloquear) si falta node.
-- El presupuesto se mide desde las transcripciones locales; si el runtime cambia su formato, deja de medir y permite (fail-open documentado).
-- Un usuario puede desactivar todos los hooks en su configuración.
+- Un ejecutor que ya está en marcha puede superar el presupuesto: el hook solo actúa antes de cada delegación y Claude Code no ofrece un tope de tokens por subagente.
+- --max-budget-usd solo existe en modo -p; no hay --max-turns en la ayuda de la CLI. La cancelación de tareas en segundo plano se hace con TaskStop.
+- Los agentes integrados quedan denegados; las búsquedas de solo lectura usan researcher (Haiku).
+- El consumo del orquestador no se limita técnicamente: solo se reduce con sesiones nuevas por fase y effort medium.
 
 ## 11. Decisiones técnicas y justificación
 
-- Aprobar solo pre:config-protection de ECC: Único hook con valor demostrable, código simple y sin efectos fuera del proyecto.
-- Guardas propias deterministas en lugar de gateguard, el dispatcher y cost-tracker de ECC: Mismo beneficio con mucha menos complejidad, sin node ni escrituras globales.
-- Presupuesto de tokens en model_guard: La skill token-budget es solo texto y no se cargó en los ejecutores de esta sesión; un hook sí se aplica.
-- Datos de las fases 1 a 3 redactados por el orquestador: Ya tenía la evidencia verificada; evita que un ejecutor relea unos 6 documentos.
-- Hashes de contenido con LF normalizado: autocrlf produce CRLF en Windows y LF en la CI.
+- Presupuesto técnico y persistente en model_guard: La skill es texto y no limitaba el consumo; el hook se ejecuta siempre antes de delegar.
+- Denegar los built-ins y los agentes sin token-budget: Es la única forma de que la skill sea obligatoria de verdad para cada ejecutor.
+- update conserva solo las claves ajustables: Preserva la configuración del proyecto sin permitir ampliar modelos, concurrencia ni skills obligatorias.
+- usage_tracker obligatorio en Stop y SubagentStop: La medición debe existir en todos los perfiles y por ejecutor.
+- Reutilizar solo strategic-compact y context-budget de ECC: Aportan control de contexto sin hooks nuevos; cost-tracking requiere su propio servicio.
 
 ## 12. Consumo de tokens por agente y modelo
 
 | Agente | Modelo | Tokens | Llamadas a herramientas | Duración (s) | Fuente |
 |---|---|---|---|---|---|
-| E1 gestor de hooks e instalador | claude-sonnet-5-5 (effort medium) | 117606 | 24 | 636.1 | task-notification |
-| E2 hooks propios e informes | claude-haiku-5-5 (effort medium) | 122093 | 33 | 398.3 | task-notification |
-| **Total** |  | 239699 | 57 | 1034.4 |  |
+| Ejecutores en el hub | ninguno (trabajo determinista hecho por el orquestador) | 0 | 0 | 0.0 | sin delegaciones |
+| Prueba real: researcher | claude-haiku-5-5 (effort medium) | 23876 | 0 | 0.0 | modelUsage de claude -p y libro de presupuesto |
+| Orquestador de esta sesión (fase 4.1) | claude-opus-5-5 | 2219632 | 0 | 0.0 | transcripción: input 134, output 120.203, cache creation 238.468 y cache read 18.608.274 (ponderado con cache read 0,1) |
+| **Total** |  | 2243508 | 0 | 0.0 |  |
 
 ## 13. Costos medidos
 
-- Prueba real de hooks en Claude Code: USD 0.29 (fuente: total_cost_usd)
+- Prueba real de presupuesto en Claude Code (2 sesiones): USD 0.52 (fuente: total_cost_usd)
 
 ## 14. Duración de la fase
 
-No medida con precisión; ejecutores 636 s y 398 s; orquestador no medido.
+No medida con precisión; la prueba real duró dos ejecuciones cortas de claude -p.
 
 ## 15. Problemas encontrados y soluciones
 
-- Los ejecutores superaron el objetivo de tokens (E2 3 veces su objetivo): No se lanzaron más ejecutores; se implementó el presupuesto real en model_guard (autorizado por el owner).
-- La skill token-budget no se aplicaba a los ejecutores: Esta sesión no arrancó dentro del hub; la próxima fase debe lanzarse con hub.py launch.
-- La CI falló por sha256 calculados sobre CRLF: Hashes de contenido con LF normalizado y registros regenerados.
-- Sin checkout de ECC, el registro aparecía desactualizado: La comparación excluye las entradas de ECC cuando no está presente.
-- rollback no deshacía un disable: enable/disable crean copia de seguridad de settings y estado.
-- Ediciones con heredoc insertaron saltos de línea reales en literales: Corregido escribiendo los cambios sin pasar por el shell.
+- La primera prueba real chocó con el límite de 5 horas de la cuenta: Se repitió después del reinicio del límite y fue correcta.
+- Las sesiones anteriores no reflejaban el gasto posterior a su última delegación: El libro guarda la transcripción de cada sesión y la recalcula en cada comprobación.
+- Los proyectos existentes no recibían SubagentStop porque el registro comparaba solo el comando: Los hooks se registran por par evento-comando.
+- Los proyectos con política propia quedaban sin presupuesto: Fusión segura en update y valores centrales de respaldo en el hook.
 
 ## 16. Componentes pendientes
 
-- Probar un bloqueo por presupuesto en una sesión viva.
-- Agent Memory y OpenViking (restricción vigente).
-- Revisión humana de las 181 skills con scripts y de los 45 agentes de catálogo.
+- Fusionar el PR #4 cuando el owner lo autorice.
+- Agent Memory, OpenViking, Codex y MCP nuevos (restricción vigente).
+- Tope por subagente: no existe en Claude Code; vigilar nuevas versiones.
 
 ## 17. Decisiones que requieren autorización
 
 - Fusionar el PR #4.
-- Mantener o ajustar el presupuesto de 100.000 tokens por sesión.
-- Bajar effortLevel global de xhigh a high.
-- Iniciar la fase 5 en una sesión nueva lanzada con hub.py launch.
+- Confirmar los presupuestos de 50.000 por fase y por sesión, y la denegación de los agentes integrados.
 
 ## 18. Commits, Pull Requests y enlaces
 
 **Commits:**
-- 4824f88 aclaración AGPL (cierre de la fase 3)
-- 623b3ca merge del PR #3
-- 6e22294 gestor de hooks, guardas, presupuesto e informes
-- 8df4e97 documentación e informes de las fases 1 a 3
-- e5be8b6 hashes independientes del salto de línea
-- 4631b96 comparación del registro sin ECC
-- 6cc520e informes y entregables de la fase 4
+- Fase 4.1: presupuesto persistente, skills obligatorias efectivas y herencia (ver el PR #4)
 
 **Pull Requests:**
-- #3 fusionado
-- #4 abierto (no fusionar sin autorización)
+- #4 feat/ecc-hooks-integration (actualizado, sin fusionar)
 
 **Enlaces:**
 - https://github.com/Peppe8044/my-agent-skill-hub/pull/4
-- https://github.com/Peppe8044/my-agent-skill-hub/blob/feat/ecc-hooks-integration/docs/reports/PHASE_04_REPORT.md
 
 ## 19. Recomendación para la siguiente fase
 
-Abrir una sesión nueva con python scripts/hub.py launch dentro del hub, usando LATEST_REPORT.md como traspaso, para que se apliquen token-budget, los hooks y el presupuesto. Después instalar el hub en indie-game-studio o abrir un piloto aislado de Agent Memory.
+Iniciar la siguiente fase en una sesión nueva con python scripts/hub.py launch --target . --phase <id>, usando LATEST_REPORT.md como traspaso, después de que el owner autorice la fusión del PR #4.
