@@ -1,6 +1,6 @@
 # External integration candidates
 
-Audit exact commit, source, license, permissions, dependencies and hooks before installation. No upstream code installed by this change.
+Audit exact commit, source, license, permissions, dependencies and hooks before installation. Installation follows the tiered model below: rule-based approval, a small active tier of skills detected natively by Claude Code, and an on-demand catalog (`.agent-hub/catalog/`) reached through `skill-catalog`. Upstream code is never executed; hooks, MCP servers, plugins and services (Agent Memory, OpenViking) are never activated. See docs/decisions/0005-external-capabilities.md.
 
 - rohitg00/agentmemory: isolated memory pilot.
 - K-Dense-AI/scientific-agent-skills: selective statistics.
@@ -12,6 +12,13 @@ Audit exact commit, source, license, permissions, dependencies and hooks before 
 - morluto/rea: authorized isolated lab.
 
 Local skills are original starter procedures, not imported upstream implementations.
+
+## Tiered installation model
+- Approval is rule-based: license allow-list, canonical copies only, own skills win duplicates, code files never imported, code-dependent skills need human review, defensive security only, unsafe patterns rejected, external agents only `sonnet` or `haiku`.
+- Active tier: a few approved skills installed in the project's `.claude/skills/` and `.agents/skills/`, detected natively by Claude Code.
+- Catalog tier: the rest in `.agent-hub/catalog/`, searched with `.agent-hub/bin/catalog.py` (`search`, `show`, `enable`, `disable`) through the `skill-catalog` skill; one catalog skill is loaded at a time.
+- Provenance (repository, pinned commit, sha256, license) is recorded in the manifest. Backups go to `.agent-hub/backups/`; `python scripts/hub.py rollback --target PATH` restores them.
+- Inventory and reports are regenerated with `python scripts/hub.py external-scan`.
 
 ## Upstream checkout
 All eight are pinned submodules in `external/`. Run `git submodule update --init` from the hub root to fetch their source. Do not execute upstream installers, hooks or scripts before review. The hub's own model policy remains authoritative (Opus only for the orchestrator; no upstream hook, agent or installer is activated, and the only installed hook is the hub's `model_guard`). Upstream licenses remain separate; verify before redistribution.
