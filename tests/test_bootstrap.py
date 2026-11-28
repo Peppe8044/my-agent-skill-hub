@@ -47,6 +47,40 @@ class BootstrapTests(Isolated, unittest.TestCase):
         self.assertEqual(["claude", "--agent", "orchestrator", "--model", "opus", "--effort", "medium"],
                          call.call_args[0][0])
 
+    @patch("scripts.bootstrap.subprocess.call", return_value=0)
+    @patch("scripts.bootstrap.shutil.which", return_value="claude")
+    def test_launch_central_hub_uses_hub_validation(self, which, call):
+        manifest = hub.ROOT / ".agent-hub/manifest.json"
+        self.assertFalse(manifest.exists())
+        env = {"CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"}
+        self.assertEqual(0, launch(hub.ROOT, env, phase="5", root=hub.ROOT))
+        self.assertFalse(manifest.exists())
+        self.assertIn("start-phase", call.call_args_list[0][0][0])
+        self.assertEqual("claude", call.call_args_list[1][0][0][0])
+        # Hub validation still guards the launch.
+        call.reset_mock()
+        with patch("scripts.hub.validate", return_value=["broken"]):
+            with self.assertRaises(ValueError):
+                launch(hub.ROOT, env, phase="5", root=hub.ROOT)
+        call.assert_not_called()
+
+    @patch("scripts.bootstrap.subprocess.call", return_value=2)
+    @patch("scripts.bootstrap.shutil.which", return_value="claude")
+    def test_launch_stops_when_start_phase_fails(self, which, call):
+        env = {"CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"}
+        self.assertEqual(4, launch(hub.ROOT, env, phase="5", root=hub.ROOT))
+        self.assertEqual(1, call.call_count)
+        self.assertIn("start-phase", call.call_args[0][0])
+
+    @patch("scripts.bootstrap.check_target_settings", return_value=[])
+    @patch("scripts.bootstrap.subprocess.call", return_value=0)
+    @patch("scripts.bootstrap.shutil.which", return_value="claude")
+    def test_launch_project_without_manifest_still_fails(self, which, call, settings):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(FileNotFoundError):
+                launch(tmp, {"CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"}, root=hub.ROOT)
+        call.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

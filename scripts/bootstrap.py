@@ -99,6 +99,14 @@ def update(root,target,fetch_external=False,*,runtime_scan=False,home=None,runne
     result=install(root,target,profile,fetch_external,home=home,runtime_scan=runtime_scan,runner=runner,which=which)
     return {"installation":result,"static_errors":verify_project(target),
             "pending_reconciliation":pending_reconciliation(target)}
+def verify_hub(root):
+    """The central hub has no install manifest; it is checked with the hub validators instead."""
+    try:
+        from . import hub
+    except ImportError:
+        import hub
+    return hub.validate(Path(root).resolve())
+
 def launch(target,environ=None,phase=None,root=None):
     environ=os.environ if environ is None else environ
     problems=mp.check_runtime_env(environ)
@@ -115,7 +123,7 @@ def launch(target,environ=None,phase=None,root=None):
         for problem in problems:
             print("PROBLEM:",problem)
         return 3
-    errors=verify_project(target)
+    errors=verify_hub(target) if target==root else verify_project(target)
     if errors:
         raise ValueError("; ".join(errors))
     executable=shutil.which("claude")
@@ -129,6 +137,9 @@ def launch(target,environ=None,phase=None,root=None):
     cmd=[executable,"--agent","orchestrator","--model","opus","--effort",effort]
     if phase:
         # The phase ledger survives sessions; a new phase id starts a new budget.
-        subprocess.call([sys.executable,str(target/".claude/hooks/model_guard.py"),"--budget","start-phase",str(phase),"--keep-if-same","--project",str(target)])
+        code=subprocess.call([sys.executable,str(target/".claude/hooks/model_guard.py"),"--budget","start-phase",str(phase),"--keep-if-same","--project",str(target)])
+        if code!=0:
+            print("PROBLEM: model_guard start-phase failed with exit code",code)
+            return 4
         cmd.append(f"Fase {phase}: usa docs/reports/LATEST_REPORT.md como traspaso; no releas fases anteriores ni repitas auditorias.")
     return subprocess.call(cmd,cwd=target)

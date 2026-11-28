@@ -1,5 +1,8 @@
 # Changelog del hub
 
+## Unreleased — corrección del lanzador (2026-11-28)
+- `launch` valida el hub central con `hub.validate` en lugar de exigir `.agent-hub/manifest.json`; los proyectos instalados mantienen la validación del manifiesto. Si `start-phase` falla, no se inicia Claude.
+
 ## Unreleased — fase 4.1 (2026-11-28)
 - Presupuesto real y persistente de ejecutores en `model_guard`: 50.000 tokens ponderados por fase y por sesión, con reserva de 10.000 por ejecutor activo. Mide input, output, cache creation y 0,1 × cache read; el libro `.agent-hub/budget/state.json` sobrevive a las sesiones nuevas. Bloquea si no puede medir, salvo recuperación autorizada (`hub.py budget authorize-recovery`). Sustituye a `max_executor_tokens_per_session`.
 - Concurrencia: 1 ejecutor por defecto, 2 como máximo y 1 reintento; el hook aplica el tope de 2 aunque la política local indique otro valor.
