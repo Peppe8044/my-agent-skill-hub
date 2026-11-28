@@ -23,12 +23,14 @@ Agents are optional specialists, not a permanent swarm. Model policy (MODEL_POLI
 
 ## Token rules (reusable config)
 - Permanent: these rules live in the reusable core (`MODEL_POLICY.json` is the single source of truth) and reach every project through `install`, `new`, `bootstrap`, `update` and `launch`; see "Herencia obligatoria" in `docs/GOVERNANCE.md`. No skill, agent, plugin or MCP may override them.
-- Opus only coordinates and decides; executors use `effort: medium` by default, `low`/`high` per task, never `xhigh` or `max`.
+- Opus only coordinates, plans, decides and accepts results. It may run existing short deterministic commands (validators, tests, generators, git/gh) and trivial edits of a few lines, but never takes on extensive implementation (new modules, multi-file or long changes) and never replaces Sonnet to stay under the executor budget: Sonnet implements, Haiku does simple bounded tasks; when the budget blocks, stop and report.
+- Executors use `effort: medium` by default, `low`/`high` per task, never `xhigh` or `max`.
 - One executor by default; at most 2 at the same time only with a stated justification.
 - Never repeat an audit already done; reuse its report.
 - Never read whole repositories into context; use Python or deterministic tools to inventory files and print counts.
 - Haiku for simple tasks; Sonnet only when complexity justifies it.
 - Skills load on demand: do not preload or read many skills at once; external skills are reached through `skill-catalog`.
+- Report the orchestrator (main session) and the executors separately (`usage_tracker` records `main` and `subagents`; phase reports show them by role). Apply `token-budget` always and `strategic-compact`/`context-budget` at logical breakpoints or when context grows.
 - Record real consumption (task-notification `subagent_tokens`/`duration_ms`, stream-json `modelUsage`) or write "not measured".
 - Hard budget: `model_guard` blocks new delegations when this phase's or this session's executor usage plus a reserve per active executor would exceed `MODEL_POLICY.json` (`executor_budget_per_phase` and `executor_budget_per_session`: 50000; weighted input + output + cache creation + 0.1 x cache read). Usage is persisted per phase in `.agent-hub/budget/state.json`, so a new session does not reset it. If usage cannot be measured, delegation is blocked until the user authorizes recovery (`python scripts/hub.py budget authorize-recovery`). It cannot stop an executor that is already running: an active executor can exceed the budget.
 - Start a new session per phase (`python scripts/hub.py launch --target . --phase <id>`) with `docs/reports/LATEST_REPORT.md` as handoff; do not carry long sessions across phases.

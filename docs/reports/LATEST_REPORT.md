@@ -18,6 +18,7 @@ Objetivo: Corregir sin nueva auditoría los hallazgos de consumo confirmados e i
 - install, new, bootstrap, update (nuevo) y launch aplican la política, los hooks de protección y medición, el effort por modelo, las skills ECC compatibles y los informes. update conserva solo los valores ajustables del proyecto.
 - Prueba real en Claude Code superada: delegación a Haiku con token-budget cargada, bloqueo por presupuesto de sesión, bloqueo de general-purpose y bloqueo de la fase en una sesión nueva.
 - Esta fase no lanzó ejecutores en el hub (0 tokens). La prueba real consumió 23.876 tokens de Haiku y USD 0,52 en total.
+- Desviación corregida: el orquestador asumió la implementación (unos 2,2 M tokens ponderados). Las reglas reutilizables limitan ahora a Opus a coordinar, planificar, decidir y aceptar resultados, y a ejecutar comandos deterministas cortos; la implementación corresponde a Sonnet. Los informes muestran el consumo del orquestador y el de los ejecutores por separado.
 
 ## 3. Estado inicial y estado final
 
@@ -120,6 +121,7 @@ Modificados:
 - update conserva solo las claves ajustables: Preserva la configuración del proyecto sin permitir ampliar modelos, concurrencia ni skills obligatorias.
 - usage_tracker obligatorio en Stop y SubagentStop: La medición debe existir en todos los perfiles y por ejecutor.
 - Reutilizar solo strategic-compact y context-budget de ECC: Aportan control de contexto sin hooks nuevos; cost-tracking requiere su propio servicio.
+- Rol del orquestador limitado a coordinar: Absorber la implementación en Opus evade el presupuesto de ejecutores y es más caro; Sonnet implementa y Haiku hace las tareas simples.
 
 ## 12. Consumo de tokens por agente y modelo
 
@@ -128,7 +130,8 @@ Modificados:
 | Ejecutores en el hub | ninguno (trabajo determinista hecho por el orquestador) | 0 | 0 | 0.0 | sin delegaciones |
 | Prueba real: researcher | claude-haiku-5-5 (effort medium) | 23876 | 0 | 0.0 | modelUsage de claude -p y libro de presupuesto |
 | Orquestador de esta sesión (fase 4.1) | claude-opus-5-5 | 2219632 | 0 | 0.0 | transcripción: input 134, output 120.203, cache creation 238.468 y cache read 18.608.274 (ponderado con cache read 0,1) |
-| **Total** |  | 2243508 | 0 | 0.0 |  |
+| Orquestador: ajuste mínimo de gobernanza y cierre | claude-opus-5-5 | 61331 | 0 | 0.0 | transcripción: output 6.179, cache creation 7.714 y cache read 474.339 (ponderado); sin delegación posible porque el presupuesto de la sesión está agotado |
+| **Total** |  | 2304839 | 0 | 0.0 |  |
 
 ## 13. Costos medidos
 
@@ -144,17 +147,18 @@ No medida con precisión; la prueba real duró dos ejecuciones cortas de claude 
 - Las sesiones anteriores no reflejaban el gasto posterior a su última delegación: El libro guarda la transcripción de cada sesión y la recalcula en cada comprobación.
 - Los proyectos existentes no recibían SubagentStop porque el registro comparaba solo el comando: Los hooks se registran por par evento-comando.
 - Los proyectos con política propia quedaban sin presupuesto: Fusión segura en update y valores centrales de respaldo en el hook.
+- Opus implementó directamente la fase (unos 2,2 M tokens ponderados del orquestador), sustituyendo a Sonnet: AGENTS.md, orchestrator.md y token-budget fijan el límite del rol (solo comandos deterministas cortos y ediciones triviales; la implementación va a Sonnet y nunca se absorbe para ahorrar presupuesto de ejecutores). usage_tracker y el informe separan el orquestador de los ejecutores.
 
 ## 16. Componentes pendientes
 
-- Fusionar el PR #4 cuando el owner lo autorice.
+- Iniciar la fase 5 en una sesión nueva cuando el owner lo indique.
 - Agent Memory, OpenViking, Codex y MCP nuevos (restricción vigente).
 - Tope por subagente: no existe en Claude Code; vigilar nuevas versiones.
 
 ## 17. Decisiones que requieren autorización
 
-- Fusionar el PR #4.
-- Confirmar los presupuestos de 50.000 por fase y por sesión, y la denegación de los agentes integrados.
+- Autorizados por el owner: presupuestos de 50.000 tokens ponderados, bloqueo de agentes integrados y política de herencia.
+- Fusión del PR #4 autorizada si todas las validaciones son satisfactorias.
 
 ## 18. Commits, Pull Requests y enlaces
 
@@ -169,4 +173,4 @@ No medida con precisión; la prueba real duró dos ejecuciones cortas de claude 
 
 ## 19. Recomendación para la siguiente fase
 
-Iniciar la siguiente fase en una sesión nueva con python scripts/hub.py launch --target . --phase <id>, usando LATEST_REPORT.md como traspaso, después de que el owner autorice la fusión del PR #4.
+En una sesión nueva, desde la raíz de my-agent-skill-hub: python scripts/hub.py launch --target . --phase 5 (usa LATEST_REPORT.md como traspaso; el libro de presupuesto abre la fase 5).

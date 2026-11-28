@@ -7,6 +7,7 @@
 - Herencia automática: nuevo `hub.py update` (actualización segura que conserva los valores ajustables del proyecto y restablece las claves centrales); `launch` actualiza antes de abrir la sesión y admite `--phase`. `usage_tracker` es obligatorio en todos los perfiles y se registra en Stop y SubagentStop, también en proyectos existentes.
 - Orquestador con effort `medium`. Se eliminan la delegación de operaciones deterministas, la reinvocación de skills precargadas y las revisiones redundantes (ahora proporcionales al riesgo); sesión nueva por fase usando `LATEST_REPORT.md` como traspaso.
 - ECC: se activan `strategic-compact` y `context-budget`; `cost-tracking` queda pendiente de su servicio.
+- Rol del orquestador: solo coordina, planifica, decide y acepta. Ejecuta comandos deterministas cortos; la implementación es de Sonnet. Los informes muestran el consumo del orquestador y el de los ejecutores por separado.
 - Informes de subfase (`PHASE_04_1_REPORT.md`) y requisito permanente documentado en `docs/GOVERNANCE.md`, con pruebas de herencia (`tests/test_inheritance.py`).
 
 ## Unreleased — fase 4 (2026-11-28)

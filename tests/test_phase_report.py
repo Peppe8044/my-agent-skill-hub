@@ -102,7 +102,14 @@ class PhaseReportTests(unittest.TestCase):
             "cache_read_input_tokens": 1, "messages": 1}}}), encoding="utf-8")
         text = pr.render(sample(), str(usage), ".")
         self.assertIn("Consumo medido por usage_tracker", text)
-        self.assertIn("| haiku | 7 | 2 | 0 | 1 | 1 |", text)
+        self.assertIn("| total | haiku | 7 | 2 | 0 | 1 | 1 |", text)
+        (usage / "s2.json").write_text(json.dumps({
+            "main": {"opus": {"input_tokens": 5, "output_tokens": 1, "messages": 1}},
+            "subagents": [{"models": {"sonnet": {"input_tokens": 3, "output_tokens": 4, "messages": 2}}}]}),
+            encoding="utf-8")
+        text = pr.render(sample(), str(usage), ".")
+        self.assertIn("| orquestador | opus | 5 | 1 | 0 | 0 | 1 |", text)
+        self.assertIn("| ejecutores | sonnet | 3 | 4 | 0 | 0 | 2 |", text)
 
     def test_latest_copies_newest_with_note(self):
         d = self.tmp / "reports"

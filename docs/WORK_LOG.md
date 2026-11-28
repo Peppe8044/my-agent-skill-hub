@@ -185,4 +185,9 @@ El identificador HUB-004 se asignó en paralelo en `main` (ruteo de modelos, fil
 - **Responsable/aprobación:**
   - El owner autorizó la fase 4.1, el cambio de gobernanza y el requisito permanente.
   - Ejecutores de la fase en el hub: ninguno (0 tokens). La prueba real usó 23 876 tokens de Haiku.
-
+- **Cierre (ajuste del owner):**
+  - Se corrige la desviación del orquestador, que implementó directamente: unos 2,2 M tokens ponderados.
+  - AGENTS, el orquestador y token-budget limitan su rol a coordinar. Solo puede ejecutar comandos deterministas cortos; Sonnet implementa.
+  - Los informes separan el consumo del orquestador del de los ejecutores.
+  - Pruebas focalizadas OK.
+  - Fusión del PR #4 autorizada.

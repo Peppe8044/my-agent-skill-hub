@@ -27,7 +27,7 @@ Claude Code subagents cannot spawn other subagents. The orchestrator must theref
 | Requirements, research, documentation | requirements-analyst | sonnet |
 | Research and documentation | researcher, documentation-keeper | haiku |
 | Simple bounded studio tasks | asset-validator, localization-agent, memory-curator | haiku |
-| Read-only codebase lookups | Explore (built-in) | haiku |
+| Read-only codebase lookups | researcher | haiku |
 
 Only the orchestrator runs on `opus`; exactly one Opus agent. Every subagent runs explicitly on `sonnet` (specialized execution) or `haiku` (simple, bounded tasks). A per-task override may only switch between those two.
 
@@ -52,7 +52,8 @@ Model rules (enforced by `MODEL_POLICY.json`, `hub.py validate` and the PreToolU
 - Skills preloaded through an agent's `skills` frontmatter are already in its context and count as applied; briefs ask the agent to invoke with the Skill tool only task-specific skills that are not preloaded. `skills_applied` lists the preloaded skills it followed plus any invoked ones.
 - Record every delegation in the project's agent run log (`AGENT_RUNS.md`, template in `templates/project/AGENT_RUNS.md` of my-agent-skill-hub): date, task id, agent, requested model (`sonnet`/`haiku`; `opus` only for your own row), model the agent reported, observed model from runtime evidence, skills applied, duration and tokens as reported by the harness (task notification `duration_ms`, `subagent_tokens`, `tool_uses`), status. Write **not measured** when the harness gives no number; never estimate.
 - Before accepting a change apply the risk-proportional verification of step 5: security-reviewer for high-risk changes (auth, permissions, data, input handling, infrastructure, hooks, model policy, external code) and qa-engineer when acceptance criteria are not covered by automated tests. Skipping a required review is an exception recorded in EXCEPTIONS; another reviewer (for example an ECC reviewer) does not replace them.
-- Do not delegate deterministic operations or trivial edits that a script or one bounded command resolves; do them yourself and record them in the run log as `orchestrator (self)`.
+- Role boundary: Opus only coordinates, plans, decides and accepts results. It may run existing short deterministic commands (validators, tests, generators, git/gh) and trivial edits of a few lines, but never takes on extensive implementation (new modules, multi-file or long changes) and never replaces Sonnet to stay under the executor budget: Sonnet implements, Haiku does simple bounded tasks; when the budget blocks, stop and report. Record what you ran yourself in the run log as `orchestrator (self)`.
+- Report your own consumption separately from the executors in every phase report (main session vs subagents). Apply `strategic-compact` and `context-budget` at logical breakpoints or when context grows.
 
 ## Hard limits
 - No production deploys, shared-infrastructure, DNS or third-party configuration changes without explicit user approval in chat for that specific action.

@@ -138,16 +138,29 @@ def usage_table(usage_dir):
             doc = json.loads(Path(path).read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
-        for model, counts in ((doc or {}).get("totals_by_model") or {}).items() if isinstance(doc, dict) else []:
+        for key, counts in usage_by_role(doc if isinstance(doc, dict) else {}):
             if isinstance(counts, dict):
-                acc = totals.setdefault(model, {f: 0 for f in USAGE_FIELDS})
+                acc = totals.setdefault(key, {f: 0 for f in USAGE_FIELDS})
                 for f in USAGE_FIELDS:
                     acc[f] += as_int(counts.get(f))
     if not totals:
         return ""
-    rows = [[m] + [t[f] for f in USAGE_FIELDS] for m, t in sorted(totals.items())]
-    return ("\n\n### Consumo medido por usage_tracker\n\n" +
-            table(["Modelo", "Entrada", "Salida", "Escritura caché", "Lectura caché", "Mensajes"], rows))
+    rows = [[role, m] + [t[f] for f in USAGE_FIELDS] for (role, m), t in sorted(totals.items())]
+    return ("\n\n### Consumo medido por usage_tracker (orquestador y ejecutores por separado)\n\n" +
+            table(["Rol", "Modelo", "Entrada", "Salida", "Escritura caché", "Lectura caché", "Mensajes"], rows))
+
+
+def usage_by_role(doc):
+    """((role, model), counts): main session = orquestador, subagents = ejecutores."""
+    if isinstance(doc.get("main"), dict) or isinstance(doc.get("subagents"), list):
+        for model, counts in (doc.get("main") or {}).items():
+            yield ("orquestador", model), counts
+        for sub in doc.get("subagents") or []:
+            for model, counts in ((sub.get("models") or {}).items() if isinstance(sub, dict) else []):
+                yield ("ejecutores", model), counts
+        return
+    for model, counts in (doc.get("totals_by_model") or {}).items():
+        yield ("total", model), counts
 
 
 def render(data, usage_dir=None, repo="."):
